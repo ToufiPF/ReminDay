@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import ch.epfl.reminday.data.BirthdayDatabase
 import dagger.Module
+import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
@@ -14,6 +15,7 @@ import javax.inject.Singleton
 class BirthdayDatabaseDI {
 
     @Singleton
+    @Provides
     fun provideBirthdayDatabase(@ApplicationContext context: Context): BirthdayDatabase {
         return Room.databaseBuilder(context, BirthdayDatabase::class.java, "birthdays").build()
     }

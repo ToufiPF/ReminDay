@@ -19,7 +19,7 @@ interface BirthdayDao {
     fun getAllOrderedByMonthDayYear(): List<Birthday>
 
     @Query("SELECT * FROM birthday")
-    fun pagingSource(): PagingSource<String, Birthday>
+    fun pagingSource(): PagingSource<Int, Birthday>
 
     @Query("SELECT * FROM birthday WHERE personName LIKE :personName")
     fun findByName(personName: String): List<Birthday>
