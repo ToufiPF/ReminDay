@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<font-family xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <font
+        app:font="@font/caslon_antique_reg"
+        app:fontStyle="normal"
+        app:fontWeight="400" />
+    <font
+        app:font="@font/caslon_antique_reg_ita"
+        app:fontStyle="italic"
+        app:fontWeight="400" />
+
+</font-family>

@@ -2,11 +2,11 @@
 <font-family xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <font
-        app:font="@font/caslon_antique"
+        app:font="@font/goodfish_bd"
         app:fontStyle="normal"
         app:fontWeight="400" />
     <font
-        app:font="@font/caslon_antique_italic"
+        app:font="@font/goodfish_bd_ita"
         app:fontStyle="italic"
         app:fontWeight="400" />
 
