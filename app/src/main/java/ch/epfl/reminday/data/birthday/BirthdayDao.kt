@@ -1,4 +1,4 @@
-package ch.epfl.reminday.data
+package ch.epfl.reminday.data.birthday
 
 import androidx.paging.PagingSource
 import androidx.room.*
@@ -12,24 +12,38 @@ import java.time.Year
 @Dao
 interface BirthdayDao {
 
+    /**
+     * Returns a paging source with all birthdays, ordered by primary key (ie. [Birthday.personName])
+     * @return [PagingSource] with all birthdays
+     */
+    @Query("SELECT * FROM birthday")
+    fun pagingSource(): PagingSource<Int, Birthday>
+
+    /**
+     * Returns a paging source with all birthdays, ordered by (month, year, name)
+     * @return [PagingSource] with all birthdays
+     */
+    @Query("SELECT * FROM birthday ORDER BY monthDay, year")
+    fun pagingSourceOrderedByMonthDayYear(): PagingSource<Int, Birthday>
+
+
     @Query("SELECT * FROM birthday")
     fun getAll(): List<Birthday>
 
     @Query("SELECT * FROM birthday ORDER BY monthDay, year")
     fun getAllOrderedByMonthDayYear(): List<Birthday>
 
-    @Query("SELECT * FROM birthday")
-    fun pagingSource(): PagingSource<Int, Birthday>
 
     @Query("SELECT * FROM birthday WHERE personName LIKE :personName")
     fun findByName(personName: String): List<Birthday>
 
-    @Query("SELECT * FROM birthday WHERE monthDay = :monthDay AND year = :year")
-    fun findByDay(monthDay: MonthDay, year: Year): List<Birthday>
-
     @Query("SELECT * FROM birthday WHERE monthDay = :monthDay")
     fun findByDay(monthDay: MonthDay): List<Birthday>
 
+    @Query("SELECT * FROM birthday WHERE monthDay = :monthDay AND year = :year")
+    fun findByDay(monthDay: MonthDay, year: Year): List<Birthday>
+
+    
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertAll(vararg birthdays: Birthday)
 

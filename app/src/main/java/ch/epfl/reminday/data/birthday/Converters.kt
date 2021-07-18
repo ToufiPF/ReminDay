@@ -1,4 +1,4 @@
-package ch.epfl.reminday.data
+package ch.epfl.reminday.data.birthday
 
 import androidx.room.TypeConverter
 import java.time.MonthDay
