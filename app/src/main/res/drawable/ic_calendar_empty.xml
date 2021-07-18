@@ -1,0 +1,13 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="512"
+    android:viewportHeight="512">
+    <!-- Credits:
+    Icon made by <a href="https://www.flaticon.com/authors/pixel-perfect" title="Pixel perfect">Pixel perfect</a>
+    on https://www.flaticon.com/
+     -->
+    <path
+        android:fillColor="#FF000000"
+        android:pathData="m448,64h-21v-42c0,-11 -9,-21 -21,-21h-21c-11,0 -21,9 -21,21v42h-213v-42c0,-11 -9,-21 -21,-21h-21c-11,0 -21,9 -21,21v42h-21c-35,0 -64,28 -64,64v320c0,35 28,64 64,64h384c35,0 64,-28 64,-64v-320c0,-35 -28,-64 -64,-64zM469,448c0,11 -9,21 -21,21h-384c-11,0 -21,-9 -21,-21v-233h426zM469,448" />
+</vector>
