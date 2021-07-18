@@ -1,5 +1,6 @@
 package ch.epfl.reminday.format
 
+import ch.epfl.reminday.format.date.SimpleDateFormatter
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import java.time.Month.*
@@ -12,7 +13,7 @@ class FormatterTest {
 
     @Test
     fun shortFrenchDate() {
-        val f = SimpleFormatter(FormatStyle.SHORT, Locale.FRENCH)
+        val f = SimpleDateFormatter(FormatStyle.SHORT, Locale.FRENCH)
         assertEquals(
             "01/11/1904",
             f.format(MonthDay.of(NOVEMBER, 1), Year.of(1904))
@@ -29,7 +30,7 @@ class FormatterTest {
 
     @Test
     fun shortEnglishDate() {
-        val f = SimpleFormatter(FormatStyle.SHORT, Locale.ENGLISH)
+        val f = SimpleDateFormatter(FormatStyle.SHORT, Locale.ENGLISH)
         assertEquals(
             "12/1/1904",
             f.format(MonthDay.of(DECEMBER, 1), Year.of(1904))
@@ -50,7 +51,7 @@ class FormatterTest {
 
     @Test
     fun longFrenchDate() {
-        val f = SimpleFormatter(FormatStyle.LONG, Locale.FRENCH)
+        val f = SimpleDateFormatter(FormatStyle.LONG, Locale.FRENCH)
         assertEquals(
             "12 janvier 1987",
             f.format(MonthDay.of(JANUARY, 12), Year.of(1987))
@@ -71,7 +72,7 @@ class FormatterTest {
 
     @Test
     fun longEnglishDate() {
-        val f = SimpleFormatter(FormatStyle.LONG, Locale.ENGLISH)
+        val f = SimpleDateFormatter(FormatStyle.LONG, Locale.ENGLISH)
         assertEquals(
             "December 1, 1904",
             f.format(MonthDay.of(DECEMBER, 1), Year.of(1904))
