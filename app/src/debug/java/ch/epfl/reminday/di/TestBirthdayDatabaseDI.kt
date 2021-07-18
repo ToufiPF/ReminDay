@@ -1,4 +1,4 @@
-package ch.epfl.reminday.testdi
+package ch.epfl.reminday.di
 
 import android.content.Context
 import androidx.room.Room
@@ -12,13 +12,10 @@ import dagger.Provides
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import dagger.hilt.testing.TestInstallIn
-import io.github.serpro69.kfaker.faker
 import java.time.Month
 import java.time.MonthDay
 import java.time.Year
 import javax.inject.Singleton
-import kotlin.random.Random
-import kotlin.random.asJavaRandom
 
 @Module
 @TestInstallIn(
@@ -34,16 +31,10 @@ object TestBirthdayDatabaseDI {
 
     @Provides
     @Singleton
-    fun provideFakeBirthdayDao(db: BirthdayDatabase): BirthdayDao {
-        val rng = Random(2021L)
-        val faker = faker {
-            config {
-                random = rng.asJavaRandom()
-                uniqueGeneratorRetryLimit = 500
-            }
-        }
+    fun provideFakeBirthdayDao(db: BirthdayDatabase): BirthdayDao = db.birthdayDao()
 
-        val dao = db.birthdayDao()
+    fun fillIn(dao: BirthdayDao) {
+        val faker = Mocks.makeFaker()
         // add some predefined birthdays (with potential edge cases)
         dao.insertAll(
             Birthday(
@@ -68,9 +59,10 @@ object TestBirthdayDatabaseDI {
             ),
         )
         // and some random ones:
-        dao.insertAll(*Mocks.birthdays(10, false))
-        dao.insertAll(*Mocks.birthdays(10, true))
+        dao.insertAll(*Mocks.birthdays(20, yearKnown = { it % 3 != 0 }))
+    }
 
-        return dao
+    fun clear(dao: BirthdayDao) {
+        dao.getAll().forEach { dao.delete(it) }
     }
 }

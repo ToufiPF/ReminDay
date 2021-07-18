@@ -21,16 +21,17 @@ object Mocks {
         }
     }
 
-    fun birthdays(size: Int, yearKnown: Boolean): Array<Birthday> {
+    fun birthdays(size: Int, yearKnown: (Int) -> Boolean): Array<Birthday> {
         val faker = makeFaker()
-        return Array(size) {
+        return Array(size) { idx ->
             Birthday(
-                faker.pokemon.names(),
+                faker.name.unique.name(),
                 MonthDay.of(rng.nextInt(1, 13), rng.nextInt(1, 29)),
-                if (yearKnown) Year.of(rng.nextInt(1900, Year.now().value + 1)) else null
+                if (yearKnown(idx)) Year.of(rng.nextInt(1900, Year.now().value + 1))
+                else null,
             )
         }
     }
 
-    fun birthday(yearKnown: Boolean) = birthdays(1, yearKnown).first()
+    fun birthday(yearKnown: Boolean) = birthdays(1) { yearKnown }.first()
 }

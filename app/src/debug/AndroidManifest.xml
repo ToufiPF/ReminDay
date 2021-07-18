@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="ch.epfl.reminday">
+
+    <!--
+    This manifest is used for testing only.
+    EmptyHiltTestActivity is an EmptyActivity that allows
+    to launch fragments in it while using Hilt.
+     -->
+
+    <application>
+        <activity
+            android:name=".EmptyHiltTestActivity"
+            android:exported="false" /> <!-- Not exported, ie. not available in released app. -->
+    </application>
+
+</manifest>

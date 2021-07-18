@@ -10,9 +10,11 @@ import androidx.recyclerview.widget.RecyclerView
 import ch.epfl.reminday.R
 import ch.epfl.reminday.adapter.BirthdayAdapter
 import ch.epfl.reminday.viewmodel.BirthdayListViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class BirthdayListFragment : Fragment(R.layout.fragment_birthday_list) {
 
     private val adapter = BirthdayAdapter()
