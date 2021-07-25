@@ -6,7 +6,7 @@
     android:layout_height="@dimen/mini_calendar_size">
 
     <ImageView
-        android:id="@+id/mini_calendar_background"
+        android:id="@+id/background"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:contentDescription="@null"
@@ -20,7 +20,7 @@
     <!-- Hardcoded text is only for the demo, gimme a break here -->
 
     <TextView
-        android:id="@+id/mini_calendar_month"
+        android:id="@+id/month"
         android:layout_width="0dp"
         android:layout_height="20dp"
         android:layout_marginTop="3dp"
@@ -31,11 +31,11 @@
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/mini_calendar_background"
+        app:layout_constraintTop_toTopOf="@+id/background"
         tools:ignore="HardcodedText" />
 
     <TextView
-        android:id="@+id/mini_calendar_day"
+        android:id="@+id/day"
         android:layout_width="wrap_content"
         android:layout_height="36dp"
         android:fontFamily="@font/caslon_antique_bold"
@@ -46,18 +46,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        tools:ignore="HardcodedText" />
-
-    <TextView
-        android:id="@+id/mini_calendar_day_particle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:fontFamily="@font/caslon_antique_bold"
-        android:text="th"
-        android:textColor="@color/black"
-        android:textSize="18sp"
-        app:layout_constraintStart_toEndOf="@id/mini_calendar_day"
-        app:layout_constraintTop_toTopOf="@id/mini_calendar_day"
         tools:ignore="HardcodedText" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

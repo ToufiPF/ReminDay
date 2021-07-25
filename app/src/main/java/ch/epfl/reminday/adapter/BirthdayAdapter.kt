@@ -9,7 +9,9 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import ch.epfl.reminday.R
 import ch.epfl.reminday.data.birthday.Birthday
+import ch.epfl.reminday.databinding.FragmentBirthdayListItemBinding
 import ch.epfl.reminday.format.date.DateFormatter
+import ch.epfl.reminday.ui.view.MiniCalendarView
 
 class BirthdayAdapter : PagingDataAdapter<Birthday, BirthdayAdapter.ViewHolder>(DIFF_CALLBACK) {
 
@@ -27,14 +29,13 @@ class BirthdayAdapter : PagingDataAdapter<Birthday, BirthdayAdapter.ViewHolder>(
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
+        private val binding = FragmentBirthdayListItemBinding.bind(view)
         private val dateFormatter = DateFormatter.shortFormatter()
 
-        private val name: TextView = view.findViewById(R.id.birthday_list_item_name_view)
-        private val date: TextView = view.findViewById(R.id.birthday_list_item_date_view)
-
         fun bind(birthday: Birthday) {
-            name.text = birthday.personName
-            date.text = dateFormatter.format(birthday.monthDay, birthday.year)
+            binding.calendarView.monthDay = birthday.monthDay
+            binding.nameView.text = birthday.personName
+            binding.dateView.text = dateFormatter.format(birthday.monthDay, birthday.year)
         }
     }
 
