@@ -12,6 +12,8 @@ import dagger.Provides
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import dagger.hilt.testing.TestInstallIn
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
 import java.time.Month
 import java.time.MonthDay
 import java.time.Year
@@ -26,14 +28,12 @@ object TestBirthdayDatabaseDI {
 
     @Provides
     @Singleton
-    fun provideFakeBirthdayDatabase(@ApplicationContext context: Context): BirthdayDatabase =
-        Room.inMemoryDatabaseBuilder(context, BirthdayDatabase::class.java).build()
+    fun provideFakeBirthdayDao(@ApplicationContext context: Context): BirthdayDao {
+        val db = Room.inMemoryDatabaseBuilder(context, BirthdayDatabase::class.java).build()
+        return db.birthdayDao()
+    }
 
-    @Provides
-    @Singleton
-    fun provideFakeBirthdayDao(db: BirthdayDatabase): BirthdayDao = db.birthdayDao()
-
-    fun fillIn(dao: BirthdayDao) {
+    fun fillIn(dao: BirthdayDao): Unit = runBlocking(Dispatchers.IO) {
         val faker = Mocks.makeFaker()
         // add some predefined birthdays (with potential edge cases)
         dao.insertAll(
@@ -62,7 +62,7 @@ object TestBirthdayDatabaseDI {
         dao.insertAll(*Mocks.birthdays(20, yearKnown = { it % 3 != 0 }))
     }
 
-    fun clear(dao: BirthdayDao) {
+    fun clear(dao: BirthdayDao): Unit = runBlocking(Dispatchers.IO) {
         dao.getAll().forEach { dao.delete(it) }
     }
 }

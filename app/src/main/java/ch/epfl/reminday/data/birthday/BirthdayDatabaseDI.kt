@@ -13,12 +13,10 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object BirthdayDatabaseDI {
 
-    @Singleton
-    @Provides
-    fun provideBirthdayDatabase(@ApplicationContext context: Context): BirthdayDatabase =
-        Room.databaseBuilder(context, BirthdayDatabase::class.java, BirthdayDatabase.NAME).build()
-
     @Provides
     @Singleton
-    fun provideBirthdayDao(db: BirthdayDatabase): BirthdayDao = db.birthdayDao()
+    fun provideBirthdayDao(@ApplicationContext context: Context): BirthdayDao {
+        val db = Room.databaseBuilder(context, BirthdayDatabase::class.java, BirthdayDatabase.NAME).build()
+        return db.birthdayDao()
+    }
 }

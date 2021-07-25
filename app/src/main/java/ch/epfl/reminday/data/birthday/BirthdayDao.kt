@@ -28,25 +28,25 @@ interface BirthdayDao {
 
 
     @Query("SELECT * FROM birthday")
-    fun getAll(): List<Birthday>
+    suspend fun getAll(): List<Birthday>
 
     @Query("SELECT * FROM birthday ORDER BY monthDay, year")
-    fun getAllOrderedByMonthDayYear(): List<Birthday>
+    suspend fun getAllOrderedByMonthDayYear(): List<Birthday>
 
 
     @Query("SELECT * FROM birthday WHERE personName LIKE :personName")
-    fun findByName(personName: String): List<Birthday>
+    suspend fun findByName(personName: String): List<Birthday>
 
     @Query("SELECT * FROM birthday WHERE monthDay = :monthDay")
-    fun findByDay(monthDay: MonthDay): List<Birthday>
+    suspend fun findByDay(monthDay: MonthDay): List<Birthday>
 
     @Query("SELECT * FROM birthday WHERE monthDay = :monthDay AND year = :year")
-    fun findByDay(monthDay: MonthDay, year: Year): List<Birthday>
+    suspend fun findByDay(monthDay: MonthDay, year: Year): List<Birthday>
 
-    
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertAll(vararg birthdays: Birthday)
+    suspend fun insertAll(vararg birthdays: Birthday)
 
     @Delete
-    fun delete(birthday: Birthday)
+    suspend fun delete(birthday: Birthday)
 }

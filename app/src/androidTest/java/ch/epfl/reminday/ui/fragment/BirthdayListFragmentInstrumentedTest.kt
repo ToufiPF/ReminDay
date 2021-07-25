@@ -2,7 +2,6 @@ package ch.epfl.reminday.ui.fragment
 
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.assertion.ViewAssertions.matches
-import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.*
 import ch.epfl.reminday.R
 import ch.epfl.reminday.data.birthday.BirthdayDao
@@ -11,6 +10,7 @@ import ch.epfl.reminday.launchFragmentInHiltContainer
 import ch.epfl.reminday.utils.Mocks
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
+import kotlinx.coroutines.runBlocking
 import org.hamcrest.Matchers.allOf
 import org.junit.After
 import org.junit.Before
@@ -38,13 +38,15 @@ class BirthdayListFragmentInstrumentedTest {
     }
 
     @Test
-    fun listDisplaysBirthdays() {
+    fun listDisplaysBirthdays(): Unit = runBlocking {
         launchFragmentInHiltContainer<BirthdayListFragment>().use {
             val days = Mocks.birthdays(3) { true }
             fakeDao.insertAll(*days)
 
-            onView(allOf(withText(days[0].personName), withId(R.id.birthday_list_item_name_view)))
-                .check(matches(allOf(isDisplayed())))
+            for (day in days) {
+                onView(allOf(withText(day.personName), withId(R.id.name_view)))
+                    .check(matches(isDisplayed()))
+            }
         }
     }
 }

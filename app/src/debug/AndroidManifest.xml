@@ -9,9 +9,13 @@
      -->
 
     <application>
+        <!-- Not exported, ie. not available in released app. -->
+        <activity
+            android:name=".EmptyRegularTestActivity"
+            android:exported="false" />
         <activity
             android:name=".EmptyHiltTestActivity"
-            android:exported="false" /> <!-- Not exported, ie. not available in released app. -->
+            android:exported="false" />
     </application>
 
 </manifest>
