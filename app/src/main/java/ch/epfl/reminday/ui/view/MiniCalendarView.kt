@@ -10,12 +10,15 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.core.widget.ImageViewCompat.setImageTintList
 import ch.epfl.reminday.R
 import ch.epfl.reminday.databinding.ViewMiniCalendarBinding
+import dagger.hilt.android.AndroidEntryPoint
 import java.time.LocalDate
 import java.time.Month
 import java.time.MonthDay
 import java.time.format.DateTimeFormatter
 import java.util.*
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class MiniCalendarView @kotlin.jvm.JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
@@ -50,7 +53,12 @@ class MiniCalendarView @kotlin.jvm.JvmOverloads constructor(
     private fun getTintList(@ColorRes color: Int): ColorStateList? =
         ResourcesCompat.getColorStateList(resources, color, context?.theme)
 
-    private val monthFormatter = DateTimeFormatter.ofPattern("MMM", Locale.getDefault())
+    @Inject
+    lateinit var locale: Locale
+
+    private val monthFormatter: DateTimeFormatter by lazy {
+        DateTimeFormatter.ofPattern("MMM", locale)
+    }
 
     var monthDay: MonthDay? = null
         set(value) {

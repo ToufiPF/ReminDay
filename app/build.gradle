@@ -39,6 +39,10 @@ android {
         coreLibraryDesugaringEnabled = true
     }
 
+    testOptions {
+        animationsDisabled = true
+    }
+
     kotlinOptions {
         jvmTarget = '1.8'
     }
