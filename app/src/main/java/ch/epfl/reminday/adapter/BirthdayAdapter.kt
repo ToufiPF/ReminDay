@@ -3,15 +3,18 @@ package ch.epfl.reminday.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import ch.epfl.reminday.R
 import ch.epfl.reminday.data.birthday.Birthday
-import ch.epfl.reminday.format.DateFormatter
+import ch.epfl.reminday.databinding.FragmentBirthdayListItemBinding
+import ch.epfl.reminday.format.date.DateFormatter
+import java.util.*
 
-class BirthdayAdapter : PagingDataAdapter<Birthday, BirthdayAdapter.ViewHolder>(DIFF_CALLBACK) {
+class BirthdayAdapter(
+    private val locale: Locale
+) : PagingDataAdapter<Birthday, BirthdayAdapter.ViewHolder>(DIFF_CALLBACK) {
 
     companion object {
         private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<Birthday>() {
@@ -25,14 +28,15 @@ class BirthdayAdapter : PagingDataAdapter<Birthday, BirthdayAdapter.ViewHolder>(
         }
     }
 
-    class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+    class ViewHolder(view: View, locale: Locale) : RecyclerView.ViewHolder(view) {
 
-        private val name: TextView = view.findViewById(R.id.birthday_list_item_name_view)
-        private val date: TextView = view.findViewById(R.id.birthday_list_item_date_view)
+        private val binding = FragmentBirthdayListItemBinding.bind(view)
+        private val dateFormatter = DateFormatter.shortFormatter(locale)
 
         fun bind(birthday: Birthday) {
-            name.text = birthday.personName
-            date.text = DateFormatter.LONG_AUTO.format(birthday.monthDay, birthday.year)
+            binding.calendarView.monthDay = birthday.monthDay
+            binding.nameView.text = birthday.personName
+            binding.dateView.text = dateFormatter.format(birthday.monthDay, birthday.year)
         }
     }
 
@@ -41,7 +45,7 @@ class BirthdayAdapter : PagingDataAdapter<Birthday, BirthdayAdapter.ViewHolder>(
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.fragment_birthday_list_item, parent, false)
 
-        return ViewHolder(view)
+        return ViewHolder(view, locale)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {

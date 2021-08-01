@@ -39,9 +39,10 @@ class BirthdayListFragmentInstrumentedTest {
 
     @Test
     fun listDisplaysBirthdays(): Unit = runBlocking {
+        val days = Mocks.birthdays(3) { true }
+        fakeDao.insertAll(*days)
+
         launchFragmentInHiltContainer<BirthdayListFragment>().use {
-            val days = Mocks.birthdays(3) { true }
-            fakeDao.insertAll(*days)
 
             for (day in days) {
                 onView(allOf(withText(day.personName), withId(R.id.name_view)))

@@ -1,4 +1,4 @@
-package ch.epfl.reminday.format
+package ch.epfl.reminday.format.date
 
 import java.time.LocalDate
 import java.time.MonthDay
@@ -9,7 +9,7 @@ import java.time.format.DateTimeFormatterBuilder
 import java.time.format.FormatStyle
 import java.util.*
 
-class SimpleFormatter(style: FormatStyle, locale: Locale) : DateFormatter {
+internal class SimpleDateFormatter(style: FormatStyle, locale: Locale) : DateFormatter {
 
     @Suppress("SpellCheckingInspection")
     companion object {

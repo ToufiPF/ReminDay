@@ -13,17 +13,22 @@ import ch.epfl.reminday.viewmodel.BirthdayListViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import java.util.*
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class BirthdayListFragment : Fragment(R.layout.fragment_birthday_list) {
 
-    private val adapter = BirthdayAdapter()
+    @Inject
+    lateinit var locale: Locale
     private val viewModel: BirthdayListViewModel by viewModels()
 
     private lateinit var recyclerView: RecyclerView
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        val adapter = BirthdayAdapter(locale)
 
         recyclerView = view.findViewById(R.id.birthday_list_recycler)
         recyclerView.adapter = adapter
