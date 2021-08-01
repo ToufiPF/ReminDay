@@ -1,13 +1,18 @@
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:width="24dp"
-    android:height="24dp"
-    android:viewportWidth="512"
-    android:viewportHeight="512">
-    <!-- Credits:
-    Icon made by <a href="https://www.flaticon.com/authors/pixel-perfect" title="Pixel perfect">Pixel perfect</a>
-    on https://www.flaticon.com/
-     -->
+    android:width="64dp"
+    android:height="56.954136dp"
+    android:viewportWidth="30.89955"
+    android:viewportHeight="27.497768">
     <path
-        android:fillColor="#FF000000"
-        android:pathData="m448,64h-21v-42c0,-11 -9,-21 -21,-21h-21c-11,0 -21,9 -21,21v42h-213v-42c0,-11 -9,-21 -21,-21h-21c-11,0 -21,9 -21,21v42h-21c-35,0 -64,28 -64,64v320c0,35 28,64 64,64h384c35,0 64,-28 64,-64v-320c0,-35 -28,-64 -64,-64zM469,448c0,11 -9,21 -21,21h-384c-11,0 -21,-9 -21,-21v-233h426zM469,448" />
+        android:fillColor="#000000"
+        android:pathData="M2.3621,1.4645C1.0534,1.4645 -0,2.6403 -0,4.1005L-0,24.862C-0,26.3222 1.0534,27.4975 2.3621,27.4975L28.5373,27.4975C29.846,27.4975 30.8994,26.3222 30.8994,24.862L30.8994,4.1005C30.8994,2.6403 29.846,1.4645 28.5373,1.4645L2.3621,1.4645zM3.3094,11.6851L27.5627,11.6851C28.8878,11.6851 29.9548,12.8283 29.9548,14.2482L29.9548,24.1789C29.9548,25.5988 28.8878,26.742 27.5627,26.742L3.3094,26.742C1.9843,26.742 0.9173,25.5988 0.9173,24.1789L0.9173,14.2482C0.9173,12.8283 1.9843,11.6851 3.3094,11.6851z"
+        android:strokeWidth="0.27886817" />
+    <path
+        android:fillColor="#000000"
+        android:pathData="M3.827,-0L3.827,-0A0.9922,1.5828 0,0 1,4.8192 1.5828L4.8192,1.5828A0.9922,1.5828 0,0 1,3.827 3.1656L3.827,3.1656A0.9922,1.5828 0,0 1,2.8348 1.5828L2.8348,1.5828A0.9922,1.5828 0,0 1,3.827 -0z"
+        android:strokeWidth="0.264583" />
+    <path
+        android:fillColor="#000000"
+        android:pathData="M27.2143,0.0236L27.2143,0.0236A0.9922,1.5828 0,0 1,28.2065 1.6064L28.2065,1.6064A0.9922,1.5828 0,0 1,27.2143 3.1892L27.2143,3.1892A0.9922,1.5828 0,0 1,26.2221 1.6064L26.2221,1.6064A0.9922,1.5828 0,0 1,27.2143 0.0236z"
+        android:strokeWidth="0.264583" />
 </vector>

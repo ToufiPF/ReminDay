@@ -71,7 +71,7 @@ class MiniCalendarViewInstrumentedTest {
         }
 
         launchTestFragment(views) {
-            runBlocking { delay(10000L) }
+            runBlocking { delay(60000L) }
         }
     }
 }
