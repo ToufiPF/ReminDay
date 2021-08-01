@@ -26,7 +26,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         lifecycleScope.launch {
-            dao.insertAll(Birthday("Toufi", MonthDay.of(1, 16)))
+            dao.insertAll(Birthday("Toufi", MonthDay.of(3, 16)))
         }
 
         supportFragmentManager.beginTransaction()
