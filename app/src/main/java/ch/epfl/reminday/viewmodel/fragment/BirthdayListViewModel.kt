@@ -1,4 +1,4 @@
-package ch.epfl.reminday.viewmodel
+package ch.epfl.reminday.viewmodel.fragment
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

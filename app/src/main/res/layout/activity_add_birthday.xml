@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_horizontal|top"
+    android:orientation="vertical"
+    android:padding="@dimen/default_padding">
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/full_name"
+        android:inputType="textPersonName">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/name_edit_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:autofillHints="name"
+            tools:ignore="TextContrastCheck" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/birthday_edit_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:focusable="true"
+        android:hint="@string/birthday"
+        android:inputType="none"
+        app:endIconContentDescription="@string/add_birthday_date_picker_icon_description"
+        app:endIconDrawable="@drawable/ic_baseline_edit_calendar_24"
+        app:endIconMode="custom">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/birthday_edit_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:autofillHints=""
+            tools:ignore="TextContrastCheck" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/confirm"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/confirm"
+        tools:ignore="TextContrastCheck" />
+
+</LinearLayout>
+
+
+

@@ -1,6 +1,20 @@
 <resources>
     <string name="app_name">ReminDay</string>
     <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
+
+    <!-- General purpose -->
+    <string name="confirm">Confirm</string>
+    <string name="cancel">Cancel</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+
+    <!-- Used in forms -->
+    <string name="full_name">Name</string>
+    <string name="first_name">First name</string>
+    <string name="last_name">Last name</string>
+    <string name="birthday">Birthday</string>
+
+    <string name="title_add_birthday">Add birthday</string>
+    <string name="add_birthday_date_picker_icon_description">Enter the birthday</string>
 </resources>

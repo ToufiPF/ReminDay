@@ -1,5 +1,6 @@
 package ch.epfl.reminday.ui.activity
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
@@ -32,5 +33,12 @@ class MainActivity : AppCompatActivity() {
         supportFragmentManager.beginTransaction()
             .add(binding.container.id, BirthdayListFragment())
             .commit()
+
+        binding.addBirthdayButton.setOnClickListener { launchAddBirthdayActivity() }
+    }
+
+    private fun launchAddBirthdayActivity() {
+        val intent = Intent(this, AddBirthdayActivity::class.java)
+        startActivity(intent)
     }
 }

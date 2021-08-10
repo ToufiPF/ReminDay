@@ -5,7 +5,7 @@ import java.time.Year
 import java.time.format.FormatStyle
 import java.util.*
 
-fun interface DateFormatter {
+interface DateFormatter {
 
     companion object {
         fun shortFormatter(locale: Locale = Locale.getDefault()): DateFormatter =
@@ -16,4 +16,6 @@ fun interface DateFormatter {
     }
 
     fun format(monthDay: MonthDay, year: Year?): String
+
+    fun pattern(withYear: Boolean): String
 }

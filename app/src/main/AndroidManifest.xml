@@ -3,22 +3,27 @@
     package="ch.epfl.reminday">
 
     <application
-        android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
         android:name=".MainApplication"
+        android:allowBackup="false"
+        android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.ReminDay">
+
         <activity
             android:name=".ui.activity.MainActivity"
+            android:exported="true"
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-    </application>
 
+        <activity
+            android:name=".ui.activity.AddBirthdayActivity"
+            android:label="@string/title_add_birthday" />
+
+    </application>
 </manifest>

@@ -4,18 +4,18 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <FrameLayout
+    <ScrollView
         android:id="@+id/container"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:paddingBottom="40dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/floatingActionButton"
+        android:id="@+id/add_birthday_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:clickable="true"
@@ -26,6 +26,5 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:srcCompat="@android:drawable/ic_menu_add" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

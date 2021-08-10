@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import ch.epfl.reminday.R
 import ch.epfl.reminday.adapter.BirthdayAdapter
-import ch.epfl.reminday.viewmodel.BirthdayListViewModel
+import ch.epfl.reminday.viewmodel.fragment.BirthdayListViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
