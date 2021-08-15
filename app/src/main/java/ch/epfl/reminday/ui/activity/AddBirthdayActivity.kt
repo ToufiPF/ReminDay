@@ -21,12 +21,4 @@ class AddBirthdayActivity : AppCompatActivity() {
         binding = ActivityAddBirthdayBinding.inflate(layoutInflater)
         setContentView(binding.root)
     }
-
-    private fun onDatePickerIconClicked() {
-        // hide keyboard
-        val inputManager = getSystemService(this, InputMethodManager::class.java)
-        inputManager?.hideSoftInputFromWindow(binding.root.windowToken, 0)
-
-        // show the DatePicker
-    }
 }
