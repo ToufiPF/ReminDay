@@ -5,8 +5,16 @@ import androidx.lifecycle.ViewModel
 import ch.epfl.reminday.format.calendar.MyGregorianCalendar
 import ch.epfl.reminday.format.calendar.MyGregorianCalendar.Field
 import java.time.LocalDate
+import java.util.*
 
 class BirthdayEditViewModel : ViewModel() {
+
+    /**
+     * Tells whether the edit text for the days should appear before the one for the months.
+     */
+    fun isDayBeforeMonth(locale: Locale): Boolean {
+       return true
+    }
 
     val yearEditContent = MutableLiveData<String?>(null)
     val monthEditContent = MutableLiveData<String?>(null)
