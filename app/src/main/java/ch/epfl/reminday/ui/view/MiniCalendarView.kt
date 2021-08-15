@@ -19,7 +19,7 @@ import java.util.*
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class MiniCalendarView @kotlin.jvm.JvmOverloads constructor(
+class MiniCalendarView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0

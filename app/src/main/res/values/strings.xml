@@ -14,6 +14,9 @@
     <string name="first_name">First name</string>
     <string name="last_name">Last name</string>
     <string name="birthday">Birthday</string>
+    <string name="day">Day</string>
+    <string name="month">Month</string>
+    <string name="year">Year</string>
 
     <string name="title_add_birthday">Add birthday</string>
     <string name="add_birthday_date_picker_icon_description">Enter the birthday</string>
