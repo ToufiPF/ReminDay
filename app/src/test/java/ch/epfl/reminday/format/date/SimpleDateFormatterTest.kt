@@ -1,6 +1,5 @@
-package ch.epfl.reminday.format
+package ch.epfl.reminday.format.date
 
-import ch.epfl.reminday.format.date.SimpleDateFormatter
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import java.time.Month.*
@@ -9,7 +8,7 @@ import java.time.Year
 import java.time.format.FormatStyle
 import java.util.*
 
-class FormatterTest {
+class SimpleDateFormatterTest {
 
     @Test
     fun shortFrenchDate() {
