@@ -36,13 +36,15 @@ android {
         }
     }
 
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
 
         coreLibraryDesugaringEnabled = true
     }
-
     testOptions {
         animationsDisabled = true
         unitTests {
@@ -50,13 +52,28 @@ android {
             returnDefaultValues = true
         }
     }
-
-    kotlinOptions {
-        jvmTarget = '1.8'
-    }
     buildFeatures {
         viewBinding true
         dataBinding false
+    }
+    // set version of underlying AGP jacoco plugin
+    jacoco {
+        version jacoco_version
+    }
+}
+// set version of the project's jacoco plugin
+jacoco {
+    version jacoco_version
+    toolVersion jacoco_version
+}
+// workaround from https://issuetracker.google.com/issues/171125857
+tasks.withType(Test) {
+    jacoco {
+        // include only application classes
+        //includes = ["ch.epfl.reminday.**"]
+        includeNoLocationClasses = true
+        excludes = ["*"]
+        //excludes = ["jdk.internal.*"]
     }
 }
 
@@ -113,7 +130,7 @@ dependencies {
 }
 
 // create new task for code coverage with Jacoco
-task jacocoTestReport(type: JacocoReport, dependsOn: ['testReleaseUnitTest', 'createDebugCoverageReport']) {
+task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest', 'createDebugCoverageReport']) {
     reports {
         xml.required = true
         html.required = true
@@ -143,38 +160,30 @@ task jacocoTestReport(type: JacocoReport, dependsOn: ['testReleaseUnitTest', 'cr
     def mainSrc = "$project.projectDir/src/main/java"
     sourceDirectories.from = files([mainSrc])
 
-    // Separate unit test (in release build type) from instrumented tests (in debug type)
-    // because android uses its own instrumentations methods, incompatible with jacoco
-    def uiClasses = [
-            'ch/epfl/reminday/ui/**',
-            'ch/epfl/reminday/viewmodel/**',
-            'ch/epfl/reminday/adapter/**',
-    ]
-    def releaseKotlinClasses = fileTree(
-            dir: "$project.buildDir/tmp/kotlin-classes/release",
-            excludes: excluded + uiClasses
-    )
     def debugKotlinClasses = fileTree(
             dir: "$project.buildDir/tmp/kotlin-classes/debug",
-            includes: uiClasses,
             excludes: excluded,
     )
 
-    classDirectories.from = files([releaseKotlinClasses, debugKotlinClasses])
+    classDirectories.from = files([debugKotlinClasses])
 
     executionData.from = fileTree(dir: project.buildDir, includes: [
             // unit test coverage:
-            'jacoco/testReleaseUnitTest.exec',
+            'jacoco/testDebugUnitTest.exec',
+            'outputs/unit_test_code_coverage/debugUnitTest/testDebugUnitTest.exec',
             // android coverage:
-            'outputs/code_coverage/debugAndroidTest/connected/*coverage.ec',
+            'outputs/code_coverage/debugAndroidTest/connected/*coverage.ec'
     ])
+//    executionData.from = files([
+//            "$project.projectDir/jacoco.exec",
+//            "$project.buildDir/outputs/code_coverage/debugAndroidTest/connected/*coverage.ec"
+//    ])
+
+    doLast {
+        println "Coverage report at: file:///$project.buildDir/reports/jacoco/jacocoTestReport/html/index.html\n"
+    }
 }
 
 connectedCheck {
     finalizedBy jacocoTestReport
-}
-
-tasks.withType(Test) {
-    jacoco.includeNoLocationClasses = true
-    jacoco.excludes = ['jdk.internal.*']
 }

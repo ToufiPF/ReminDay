@@ -27,18 +27,6 @@ allprojects {
     }
 }
 
-subprojects {
-    configurations.all {
-        resolutionStrategy {
-            eachDependency { details ->
-                if ('org.jacoco' == details.requested.group) {
-                    details.useVersion jacoco_version
-                }
-            }
-        }
-    }
-}
-
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
