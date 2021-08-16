@@ -4,7 +4,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import ch.epfl.reminday.format.calendar.MyGregorianCalendar
 import ch.epfl.reminday.format.calendar.MyGregorianCalendar.Field
+import ch.epfl.reminday.format.date.DateFormatter
 import java.time.LocalDate
+import java.time.ZoneId
 import java.util.*
 
 class BirthdayEditViewModel : ViewModel() {
@@ -13,19 +15,24 @@ class BirthdayEditViewModel : ViewModel() {
      * Tells whether the edit text for the days should appear before the one for the months.
      */
     fun isDayBeforeMonth(locale: Locale): Boolean {
-       return true
+        val pattern = DateFormatter.shortFormatter(locale).pattern(false)
+        val d = pattern.indexOf('d')
+        val m = pattern.indexOf('M')
+        return d == -1 || m == -1 || d < m
     }
 
-    val yearEditContent = MutableLiveData<String?>(null)
-    val monthEditContent = MutableLiveData<String?>(null)
-    val dayEditContent = MutableLiveData<String?>(null)
+    val yearEditContent = MutableLiveData("")
+    val monthEditContent = MutableLiveData("")
+    val dayEditContent = MutableLiveData("")
 
     val yearEnabled = MutableLiveData(true)
 
     private var isYearBeingTyped = false
         set(value) {
-            field = value
-            updateContents()
+            if (field != value) {
+                field = value
+                updateContents()
+            }
         }
 
     private val calendar = MyGregorianCalendar()
@@ -50,14 +57,20 @@ class BirthdayEditViewModel : ViewModel() {
     fun getField(field: Field): Int? = calendar.get(field)
 
     private fun updateContents() {
-        val day = calendar.get(Field.DAY_OF_MONTH)?.toString()
+        val day = calendar.get(Field.DAY_OF_MONTH)?.toString() ?: ""
         if (dayEditContent.value != day) dayEditContent.value = day
 
-        val month = calendar.get(Field.MONTH)?.toString()
+        val month = calendar.get(Field.MONTH)?.toString() ?: ""
         if (monthEditContent.value != month) monthEditContent.value = month
 
-        val year = calendar.get(Field.YEAR)?.toString()
+        val year = calendar.get(Field.YEAR)?.toString() ?: ""
         if (!isYearBeingTyped && yearEditContent.value != year)
             yearEditContent.value = year
     }
+
+    fun minimumSupportedDateAsMillis(offset: ZoneId = ZoneId.systemDefault()): Long =
+        calendar.minimumSupportedDate().atStartOfDay(offset).toInstant().toEpochMilli()
+
+    fun maximumSupportedDateAsMillis(offset: ZoneId = ZoneId.systemDefault()): Long =
+        calendar.maximumSupportedDate().atStartOfDay(offset).toInstant().toEpochMilli()
 }

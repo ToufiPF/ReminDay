@@ -2,7 +2,6 @@ package ch.epfl.reminday.ui.fragment
 
 import android.app.DatePickerDialog
 import android.os.Bundle
-import android.text.Editable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,6 +12,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import ch.epfl.reminday.R
 import ch.epfl.reminday.format.calendar.MyGregorianCalendar.Field
+import ch.epfl.reminday.utils.Extensions.set
 import ch.epfl.reminday.viewmodel.fragment.BirthdayEditViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import java.time.LocalDate
@@ -21,12 +21,6 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class BirthdayEditFragment : Fragment() {
-
-    companion object {
-        private fun Editable.set(string: String?) {
-            replace(0, length, string ?: "")
-        }
-    }
 
     val viewModel: BirthdayEditViewModel by viewModels()
 
@@ -97,7 +91,10 @@ class BirthdayEditFragment : Fragment() {
             (viewModel.getField(Field.MONTH) ?: now.monthValue) - 1,
             viewModel.getField(Field.DAY_OF_MONTH) ?: now.dayOfMonth,
         )
+        picker.datePicker.apply {
+            minDate = viewModel.minimumSupportedDateAsMillis()
+            maxDate = viewModel.maximumSupportedDateAsMillis()
+        }
         picker.show()
     }
-
 }

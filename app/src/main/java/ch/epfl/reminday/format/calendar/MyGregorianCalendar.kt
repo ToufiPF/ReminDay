@@ -41,6 +41,10 @@ class MyGregorianCalendar : Cloneable {
             DECEMBER to 31,
         )
 
+        // below 1650 we use the Julian calendar, it's a pain so we don't support year < 1800
+        private const val MIN_YEAR = 1880
+
+
         /**
          * Returns true when the given [year] is a leap year.
          */
@@ -126,8 +130,7 @@ class MyGregorianCalendar : Cloneable {
      * Note that the year is limited to be larger than 1800 for simplification purposes.
      */
     fun getMinimum(field: Field): Int = when (field) {
-        // below 1650 we use the Julian calendar, it's a pain so we don't support year < 1800
-        Field.YEAR -> 1880
+        Field.YEAR -> MIN_YEAR
         // day of month/year, month => min is 1
         else -> 1
     }
@@ -184,4 +187,14 @@ class MyGregorianCalendar : Cloneable {
      */
     fun getActualValidRange(field: Field): IntRange =
         getMinimum(field)..getActualMaximum(field)
+
+    /**
+     * The minimum date the calendar supports.
+     */
+    fun minimumSupportedDate(): LocalDate = LocalDate.of(MIN_YEAR, 1, 1)
+
+    /**
+     * The maximum date the calendar supports.
+     */
+    fun maximumSupportedDate(): LocalDate = LocalDate.of(LocalDate.now().year, 12, 31)
 }
