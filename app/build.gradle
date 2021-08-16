@@ -144,16 +144,23 @@ task jacocoTestReport(type: JacocoReport, dependsOn: ['testReleaseUnitTest', 'cr
     sourceDirectories.from = files([mainSrc])
 
     // Separate unit test (in release build type) from instrumented tests (in debug type)
-    // because android uses it's own instrumentations methods, incompatible with jacoco
-    def releaseKotlinClasses = fileTree(dir: "$project.buildDir/tmp/kotlin-classes/release", excludes: excluded + ["ch/epfl/reminday/ui**"])
-    def debugKotlinClasses   = fileTree(dir: "$project.buildDir/tmp/kotlin-classes/debug/ch/epfl/reminday/ui", excludes: excluded)
-    def releaseJavaClasses = fileTree(dir: "$project.buildDir/intermediates/javac/release", excludes: excluded + ["ch/epfl/reminday/ui**"])
-    def debugJavaClasses   = fileTree(dir: "$project.buildDir/intermediates/javac/debug/ch/epfl/reminday/ui", excludes: excluded)
+    // because android uses its own instrumentations methods, incompatible with jacoco
+    def uiClasses = [
+            'ch/epfl/reminday/ui/**',
+            'ch/epfl/reminday/viewmodel/**',
+            'ch/epfl/reminday/adapter/**',
+    ]
+    def releaseKotlinClasses = fileTree(
+            dir: "$project.buildDir/tmp/kotlin-classes/release",
+            excludes: excluded + uiClasses
+    )
+    def debugKotlinClasses = fileTree(
+            dir: "$project.buildDir/tmp/kotlin-classes/debug",
+            includes: uiClasses,
+            excludes: excluded,
+    )
 
-    def kotlinClasses = releaseKotlinClasses + debugKotlinClasses
-    def javaClasses = releaseJavaClasses + debugJavaClasses
-
-    classDirectories.from = files([kotlinClasses, javaClasses])
+    classDirectories.from = files([releaseKotlinClasses, debugKotlinClasses])
 
     executionData.from = fileTree(dir: project.buildDir, includes: [
             // unit test coverage:
