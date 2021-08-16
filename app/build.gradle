@@ -4,6 +4,7 @@ plugins {
     id 'kotlin-parcelize'
     id 'kotlin-kapt'
     id 'dagger.hilt.android.plugin'
+    id 'jacoco'
 }
 
 android {
@@ -14,8 +15,8 @@ android {
         applicationId "ch.epfl.reminday"
         minSdkVersion 19
         targetSdkVersion 30
-        versionCode 1
-        versionName "1.0"
+        versionCode 2
+        versionName "1.0.1"
 
         multiDexEnabled = true
         testInstrumentationRunner "ch.epfl.reminday.HiltTestRunner"
@@ -24,11 +25,14 @@ android {
     buildTypes {
         release {
             minifyEnabled false
+            debuggable true
+            testCoverageEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
         debug {
             minifyEnabled false
             debuggable true
+            testCoverageEnabled true
         }
     }
 
@@ -41,6 +45,10 @@ android {
 
     testOptions {
         animationsDisabled = true
+        unitTests {
+            includeAndroidResources = true
+            returnDefaultValues = true
+        }
     }
 
     kotlinOptions {
@@ -48,6 +56,7 @@ android {
     }
     buildFeatures {
         viewBinding true
+        dataBinding false
     }
 }
 
@@ -57,7 +66,7 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.3.1'
     implementation 'com.google.android.material:material:1.4.0'
     implementation 'androidx.vectordrawable:vectordrawable:1.1.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.0'
 
     implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.3.1'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1'
@@ -101,4 +110,64 @@ dependencies {
     androidTestImplementation "androidx.test.espresso:espresso-contrib:$espresso_version"
     androidTestImplementation "androidx.test.espresso:espresso-intents:$espresso_version"
     implementation "androidx.test.espresso:espresso-idling-resource:$espresso_version"
+}
+
+// create new task for code coverage with Jacoco
+task jacocoTestReport(type: JacocoReport, dependsOn: ['testReleaseUnitTest', 'createDebugCoverageReport']) {
+    reports {
+        xml.required = true
+        html.required = true
+        csv.required = false
+    }
+
+    // Exclude generated classes
+    def excluded = [
+            // Android
+            '**/R.class',
+            '**/R$*.class',
+            '**/BuildConfig.*',
+            '**/Manifest*.*',
+            '**/*Test*.*',
+            'android/**/*.*',
+            '**/*Binding.class',
+            // Hilt
+            '**/*Hilt*.*',
+            '**/hilt_aggregated_deps/**',
+            '**/*_Factory.class',
+            '**/*_MembersInjector.class',
+            '**/dagger/**',
+            // Room
+            '**/*_Impl*.*',
+    ]
+
+    def mainSrc = "$project.projectDir/src/main/java"
+    sourceDirectories.from = files([mainSrc])
+
+    // Separate unit test (in release build type) from instrumented tests (in debug type)
+    // because android uses it's own instrumentations methods, incompatible with jacoco
+    def releaseKotlinClasses = fileTree(dir: "$project.buildDir/tmp/kotlin-classes/release", excludes: excluded + ["ch/epfl/reminday/ui**"])
+    def debugKotlinClasses   = fileTree(dir: "$project.buildDir/tmp/kotlin-classes/debug/ch/epfl/reminday/ui", excludes: excluded)
+    def releaseJavaClasses = fileTree(dir: "$project.buildDir/intermediates/javac/release", excludes: excluded + ["ch/epfl/reminday/ui**"])
+    def debugJavaClasses   = fileTree(dir: "$project.buildDir/intermediates/javac/debug/ch/epfl/reminday/ui", excludes: excluded)
+
+    def kotlinClasses = releaseKotlinClasses + debugKotlinClasses
+    def javaClasses = releaseJavaClasses + debugJavaClasses
+
+    classDirectories.from = files([kotlinClasses, javaClasses])
+
+    executionData.from = fileTree(dir: project.buildDir, includes: [
+            // unit test coverage:
+            'jacoco/testReleaseUnitTest.exec',
+            // android coverage:
+            'outputs/code_coverage/debugAndroidTest/connected/*coverage.ec',
+    ])
+}
+
+connectedCheck {
+    finalizedBy jacocoTestReport
+}
+
+tasks.withType(Test) {
+    jacoco.includeNoLocationClasses = true
+    jacoco.excludes = ['jdk.internal.*']
 }
