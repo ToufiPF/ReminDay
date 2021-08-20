@@ -21,9 +21,8 @@
             tools:ignore="TextContrastCheck" />
     </com.google.android.material.textfield.TextInputLayout>
 
-    <androidx.fragment.app.FragmentContainerView
+    <ch.epfl.reminday.ui.view.DatePickerView
         android:id="@+id/birthday_edit"
-        android:name="ch.epfl.reminday.ui.fragment.BirthdayEditFragment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 

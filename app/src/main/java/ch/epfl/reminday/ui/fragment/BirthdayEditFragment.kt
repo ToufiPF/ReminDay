@@ -72,7 +72,7 @@ class BirthdayEditFragment : Fragment() {
                 yearEditText.visibility = if (it) View.VISIBLE else View.GONE
             }
 
-            yearEnabled.value = true
+            yearEnabled.value = false
         }
 
         return view
@@ -80,21 +80,34 @@ class BirthdayEditFragment : Fragment() {
 
     private fun showDatePickerDialog() {
         val now = LocalDate.now()
+        val yearEnabled = viewModel.yearEnabled.value!!
+
+        val initialYear =
+            if (yearEnabled) viewModel.getField(Field.YEAR) ?: now.year
+            else 1904
+
         val picker = DatePickerDialog(
             requireContext(),
             { _, year, month, dayOfMonth ->
-                viewModel.setField(Field.YEAR, year.toString())
+                viewModel.setField(Field.YEAR, if (yearEnabled) year.toString() else null)
                 viewModel.setField(Field.MONTH, (month + 1).toString())
                 viewModel.setField(Field.DAY_OF_MONTH, dayOfMonth.toString())
             },
-            viewModel.getField(Field.YEAR) ?: now.year,
+            initialYear,
             (viewModel.getField(Field.MONTH) ?: now.monthValue) - 1,
             viewModel.getField(Field.DAY_OF_MONTH) ?: now.dayOfMonth,
         )
-        picker.datePicker.apply {
-            minDate = viewModel.minimumSupportedDateAsMillis()
-            maxDate = viewModel.maximumSupportedDateAsMillis()
-        }
         picker.show()
+
+        picker.datePicker.apply {
+            if (yearEnabled) {
+                minDate = viewModel.minimumSupportedDateAsMillis()
+                maxDate = viewModel.maximumSupportedDateAsMillis()
+            } else {
+                val yearId = resources.getIdentifier("year", "id", "android")
+                val yearView: View? = findViewById(yearId)
+                yearView?.visibility = View.GONE
+            }
+        }
     }
 }
