@@ -5,7 +5,7 @@ import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.*
 import ch.epfl.reminday.R
 import ch.epfl.reminday.data.birthday.BirthdayDao
-import ch.epfl.reminday.di.TestBirthdayDatabaseDI
+import ch.epfl.reminday.di.BirthdayDatabaseTestDI
 import ch.epfl.reminday.launchFragmentInHiltContainer
 import ch.epfl.reminday.utils.Mocks
 import dagger.hilt.android.testing.HiltAndroidRule
@@ -34,7 +34,7 @@ class BirthdayListFragmentInstrumentedTest {
 
     @After
     fun clearDao() {
-        TestBirthdayDatabaseDI.clear(fakeDao)
+        BirthdayDatabaseTestDI.clear(fakeDao)
     }
 
     @Test
