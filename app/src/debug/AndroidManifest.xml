@@ -13,25 +13,10 @@
         android:allowBackup="false"
         android:exported="true"
         android:icon="@mipmap/ic_launcher"
-        tools:node="replace">
+        tools:node="merge">
 
-        <activity
-            android:name=".EmptyRegularTestActivity"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-
-        <activity
-            android:name=".EmptyHiltTestActivity"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+        <activity android:name=".EmptyRegularTestActivity" />
+        <activity android:name=".EmptyHiltTestActivity" />
     </application>
 
 </manifest>
