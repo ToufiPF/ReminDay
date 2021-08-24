@@ -48,7 +48,7 @@ class DatePickerView @JvmOverloads constructor(
 
     val day: Int get() = calendar.get(Field.DAY_OF_MONTH)!!
     val month: Int get() = calendar.get(Field.MONTH)!!
-    val year: Int? = calendar.get(Field.YEAR)
+    val year: Int? get() = calendar.get(Field.YEAR)
 
     init {
         addView(binding.root)
@@ -56,40 +56,30 @@ class DatePickerView @JvmOverloads constructor(
         val now = LocalDate.now()
 
         binding.apply {
-            day.apply {
-                minValue = calendar.getMinimum(Field.DAY_OF_MONTH)
-                maxValue = calendar.getMaximum(Field.DAY_OF_MONTH)
-                wrapSelectorWheel = false
-                setOnValueChangedListener(valueChanged(Field.DAY_OF_MONTH))
+            initNumberPicker(year, Field.YEAR, now.year)
+            initNumberPicker(month, Field.MONTH, now.monthValue)
+            initNumberPicker(day, Field.DAY_OF_MONTH, now.dayOfMonth)
 
-                value = now.dayOfMonth
-            }
-            month.apply {
-                minValue = calendar.getMinimum(Field.MONTH)
-                maxValue = calendar.getMaximum(Field.MONTH)
-                wrapSelectorWheel = false
-                setOnValueChangedListener(valueChanged(Field.MONTH))
-
-                month.displayedValues = (1..12).map {
-                    monthFormatter.format(LocalDate.of(2000, it, 1))
-                }.toTypedArray()
-                value = now.monthValue
-            }
-            year.apply {
-                minValue = calendar.getMinimum(Field.YEAR)
-                maxValue = calendar.getMaximum(Field.YEAR)
-                wrapSelectorWheel = false
-                setOnValueChangedListener(valueChanged(Field.YEAR))
-
-                value = now.year
-            }
+            month.displayedValues = (1..12).map {
+                monthFormatter.format(LocalDate.of(2000, it, 1))
+            }.toTypedArray()
         }
 
         isYearEnabled = true
     }
 
-    private fun valueChanged(field: Field) = NumberPicker.OnValueChangeListener { _, _, new ->
-        calendar.set(field, new)
-        binding.day.maxValue = calendar.getActualMaximum(Field.DAY_OF_MONTH)
+    private fun initNumberPicker(picker: NumberPicker, field: Field, initialValue: Int) {
+        picker.apply {
+            minValue = calendar.getMinimum(field)
+            maxValue = calendar.getActualMaximum(field)
+            wrapSelectorWheel = false
+
+            setOnValueChangedListener { _, _, newVal ->
+                calendar.set(field, newVal)
+                binding.day.maxValue = calendar.getActualMaximum(Field.DAY_OF_MONTH)
+            }
+            value = initialValue
+            calendar.set(field, value)
+        }
     }
 }

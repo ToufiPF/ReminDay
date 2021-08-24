@@ -35,7 +35,7 @@ interface BirthdayDao {
 
 
     @Query("SELECT * FROM birthday WHERE personName LIKE :personName")
-    suspend fun findByName(personName: String): Birthday
+    suspend fun findByName(personName: String): Birthday?
 
     @Query("SELECT * FROM birthday WHERE monthDay = :monthDay")
     suspend fun findByDay(monthDay: MonthDay): List<Birthday>
