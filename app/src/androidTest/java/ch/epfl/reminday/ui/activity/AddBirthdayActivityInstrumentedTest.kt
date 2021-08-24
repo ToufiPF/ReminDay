@@ -56,7 +56,7 @@ class AddBirthdayActivityInstrumentedTest {
         onView(withId(R.id.month)).perform(setValueByJumping(expected.monthDay.monthValue))
         onView(withId(R.id.day)).perform(setValueByJumping(expected.monthDay.dayOfMonth))
 
-        onView(withId(R.id.confirm)).perform(click())
+        onView(withId(R.id.confirm_button)).perform(click())
 
         assertEquals(Activity.RESULT_CANCELED, scenarioRule.scenario.result)
         assertEquals(expected, dao.findByName(expected.personName))

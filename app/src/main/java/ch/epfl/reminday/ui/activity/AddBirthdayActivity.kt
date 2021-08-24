@@ -1,8 +1,11 @@
 package ch.epfl.reminday.ui.activity
 
 import android.os.Bundle
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.lifecycleScope
+import ch.epfl.reminday.R
 import ch.epfl.reminday.data.birthday.Birthday
 import ch.epfl.reminday.data.birthday.BirthdayDao
 import ch.epfl.reminday.databinding.ActivityAddBirthdayBinding
@@ -25,7 +28,14 @@ class AddBirthdayActivity : AppCompatActivity() {
         binding = ActivityAddBirthdayBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.confirm.setOnClickListener { onConfirm() }
+        binding.apply {
+            nameEditText.addTextChangedListener { editable ->
+                confirmButton.isEnabled = !editable?.toString().isNullOrBlank()
+            }
+
+            confirmButton.isEnabled = !nameEditText.text?.toString().isNullOrBlank()
+            confirmButton.setOnClickListener { onConfirm() }
+        }
     }
 
     private fun onConfirm() {
@@ -34,12 +44,37 @@ class AddBirthdayActivity : AppCompatActivity() {
         val month = binding.birthdayEdit.month
         val year = binding.birthdayEdit.year
 
-        if (name != null) {
+        if (!name.isNullOrBlank()) {
             lifecycleScope.launch {
                 val birthday = Birthday(name, MonthDay.of(month, day), year?.let { Year.of(it) })
-                dao.insertAll(birthday)
-                finish()
+                if (dao.findByName(name) != null) {
+                    // a birthday with the same name exits, request confirmation
+                    showConfirmOverwriteDialog {
+                        lifecycleScope.launch { insertBirthdayAndFinish(birthday) }
+                    }
+                } else {
+                    // fast path: insert & close activity
+                    insertBirthdayAndFinish(birthday)
+                }
             }
         }
+    }
+
+    private fun showConfirmOverwriteDialog(onConfirm: () -> Unit) {
+        AlertDialog.Builder(this)
+            .setTitle(R.string.are_you_sure)
+            .setMessage(R.string.birthday_will_be_overwritten)
+            .setPositiveButton(R.string.confirm) { dialog, _ ->
+                dialog.dismiss()
+                onConfirm.invoke()
+            }.setNegativeButton(R.string.cancel) { dialog, _ ->
+                dialog.cancel()
+            }.show()
+    }
+
+    private suspend fun insertBirthdayAndFinish(birthday: Birthday) {
+        dao.insertAll(birthday)
+        setResult(RESULT_OK)
+        finish()
     }
 }
