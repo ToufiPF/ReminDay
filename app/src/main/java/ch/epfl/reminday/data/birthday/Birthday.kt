@@ -5,7 +5,6 @@ import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import kotlinx.parcelize.Parcelize
-import java.io.Serializable
 import java.time.MonthDay
 import java.time.Year
 
@@ -19,7 +18,7 @@ data class Birthday(
     @PrimaryKey val personName: String,
     val monthDay: MonthDay,
     val year: Year? = null,
-) : Parcelable, Serializable {
+) : Parcelable {
 
     companion object Comparators {
         val monthDayYearNameOrder: Comparator<Birthday> = Comparator { b1, b2 ->

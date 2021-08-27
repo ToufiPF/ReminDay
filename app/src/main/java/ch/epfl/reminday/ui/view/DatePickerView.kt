@@ -46,9 +46,28 @@ class DatePickerView @JvmOverloads constructor(
             binding.day.maxValue = calendar.getActualMaximum(Field.DAY_OF_MONTH)
         }
 
-    val day: Int get() = calendar.get(Field.DAY_OF_MONTH)!!
-    val month: Int get() = calendar.get(Field.MONTH)!!
-    val year: Int? get() = calendar.get(Field.YEAR)
+    var day: Int
+        get() = calendar.get(Field.DAY_OF_MONTH)!!
+        set(value) {
+            binding.day.value = value
+            calendar.set(Field.DAY_OF_MONTH, value)
+        }
+    var month: Int
+        get() = calendar.get(Field.MONTH)!!
+        set(value) {
+            binding.month.value = value
+            calendar.set(Field.MONTH, value)
+        }
+    var year: Int?
+        get() = calendar.get(Field.YEAR)
+        set(value) {
+            if (value == null) isYearEnabled = false
+            else {
+                isYearEnabled = true
+                binding.year.value = value
+            }
+            calendar.setNullable(Field.YEAR, value)
+        }
 
     init {
         addView(binding.root)

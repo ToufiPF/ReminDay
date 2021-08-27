@@ -9,6 +9,8 @@ import ch.epfl.reminday.R
 import ch.epfl.reminday.data.birthday.Birthday
 import ch.epfl.reminday.data.birthday.BirthdayDao
 import ch.epfl.reminday.databinding.ActivityAddBirthdayBinding
+import ch.epfl.reminday.utils.ArgumentNames
+import ch.epfl.reminday.utils.Extensions.set
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import java.time.MonthDay
@@ -28,7 +30,16 @@ class AddBirthdayActivity : AppCompatActivity() {
         binding = ActivityAddBirthdayBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        val birthday: Birthday? = intent.getParcelableExtra(ArgumentNames.BIRTHDAY)
+
         binding.apply {
+            birthday?.let {
+                nameEditText.text?.set(birthday.personName)
+                birthdayEdit.year = birthday.year?.value
+                birthdayEdit.month = birthday.monthDay.monthValue
+                birthdayEdit.day = birthday.monthDay.dayOfMonth
+            }
+
             nameEditText.addTextChangedListener { editable ->
                 confirmButton.isEnabled = !editable?.toString().isNullOrBlank()
             }
