@@ -132,4 +132,43 @@ class AddBirthdayActivityInstrumentedTest {
             onYear.check(matches(allOf(isDisplayed(), withValue(expected.year!!.value))))
         }
     }
+
+    @Test
+    fun overwritingBirthdayShowsConfirmationDialogAndCancellingItDoesNothing(): Unit = runBlocking {
+        val initial = Mocks.birthday(yearKnown = false)
+        val nextMonth = 1 + (initial.monthDay.monthValue + 1) % 12
+
+        dao.insertAll(initial)
+
+        launch(initial) {
+            onMonth.perform(setValueByJumping(nextMonth))
+
+            onConfirm.perform(click())
+
+            onView(withText(R.string.birthday_will_be_overwritten)).check(matches(isDisplayed()))
+            onView(withText(R.string.cancel)).perform(click())
+        }
+
+        assertEquals(initial, dao.findByName(initial.personName))
+    }
+
+    @Test
+    fun overwritingBirthdayShowsConfirmationDialogAndConfirmingItCommits(): Unit = runBlocking {
+        val initial = Mocks.birthday(yearKnown = false)
+        val nextMonth = 1 + (initial.monthDay.monthValue + 1) % 12
+        val modified = initial.copy(monthDay = initial.monthDay.withMonth(nextMonth))
+
+        dao.insertAll(initial)
+
+        launch(initial) {
+            onMonth.perform(setValueByJumping(nextMonth))
+
+            onConfirm.perform(click())
+
+            onView(withText(R.string.birthday_will_be_overwritten)).check(matches(isDisplayed()))
+            onView(withText(R.string.confirm)).perform(click())
+        }
+
+        assertEquals(modified, dao.findByName(initial.personName))
+    }
 }
