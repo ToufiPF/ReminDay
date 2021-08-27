@@ -1,4 +1,4 @@
-package ch.epfl.reminday
+package ch.epfl.reminday.testutils
 
 import android.content.ComponentName
 import android.content.Intent
@@ -8,8 +8,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
-import ch.epfl.reminday.SafeFragmentScenario.Companion.launchInHiltContainer
-import ch.epfl.reminday.SafeFragmentScenario.Companion.launchInRegularContainer
+import ch.epfl.reminday.EmptyHiltTestActivity
+import ch.epfl.reminday.EmptyRegularTestActivity
+import ch.epfl.reminday.R
+import ch.epfl.reminday.testutils.SafeFragmentScenario.Companion.launchInHiltContainer
+import ch.epfl.reminday.testutils.SafeFragmentScenario.Companion.launchInRegularContainer
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 

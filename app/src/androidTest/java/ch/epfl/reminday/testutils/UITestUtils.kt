@@ -1,4 +1,4 @@
-package ch.epfl.reminday
+package ch.epfl.reminday.testutils
 
 import android.view.View
 import androidx.test.espresso.Espresso

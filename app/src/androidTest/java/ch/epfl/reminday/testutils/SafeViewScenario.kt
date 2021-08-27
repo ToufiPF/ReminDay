@@ -1,4 +1,4 @@
-package ch.epfl.reminday
+package ch.epfl.reminday.testutils
 
 import android.content.Context
 import android.os.Bundle

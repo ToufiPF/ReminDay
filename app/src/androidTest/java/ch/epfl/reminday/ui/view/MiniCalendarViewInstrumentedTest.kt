@@ -13,8 +13,8 @@ import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.*
 import ch.epfl.reminday.R
-import ch.epfl.reminday.SafeFragmentScenario
-import ch.epfl.reminday.SafeViewScenario
+import ch.epfl.reminday.testutils.SafeFragmentScenario
+import ch.epfl.reminday.testutils.SafeViewScenario
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
