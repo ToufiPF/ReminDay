@@ -161,7 +161,6 @@ task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest', 'crea
             dir: "$project.buildDir/tmp/kotlin-classes/debug",
             excludes: excluded,
     )
-
     classDirectories.from = files([debugKotlinClasses])
 
     executionData.from = fileTree(dir: project.buildDir, includes: [

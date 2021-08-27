@@ -4,6 +4,7 @@ import ch.epfl.reminday.format.calendar.MyGregorianCalendar.Field
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
+import java.time.LocalDate
 
 class MyGregorianCalendarTest {
 
@@ -88,5 +89,53 @@ class MyGregorianCalendarTest {
         assertEquals(LEAP_YEAR, calendar.get(Field.YEAR))
         assertEquals(FEBRUARY, calendar.get(Field.MONTH))
         assertEquals(29, calendar.get(Field.DAY_OF_MONTH))
+    }
+
+    @Test
+    fun hasMaximumAndMinimumSupportedDate() {
+        val min: LocalDate = calendar.minimumSupportedDate()
+        val max: LocalDate = calendar.maximumSupportedDate()
+        val now: LocalDate = LocalDate.now()
+
+        assertTrue(min < max)
+        assertTrue(min < now)
+        assertTrue(now < max)
+    }
+
+    @Test
+    fun clearMakesCalendarReturnNull() {
+        calendar.set(Field.MONTH, 11)
+        assertTrue(calendar.isSet(Field.MONTH))
+        calendar.clear(Field.MONTH)
+        assertNull(calendar.get(Field.MONTH))
+        assertFalse(calendar.isSet(Field.MONTH))
+
+        calendar.set(Field.DAY_OF_MONTH, 18)
+        assertTrue(calendar.isSet(Field.DAY_OF_MONTH))
+        calendar.clear(Field.DAY_OF_MONTH)
+        assertNull(calendar.get(Field.DAY_OF_MONTH))
+        assertFalse(calendar.isSet(Field.DAY_OF_MONTH))
+
+        calendar.set(Field.YEAR, 2000)
+        assertTrue(calendar.isSet(Field.YEAR))
+        calendar.clear(Field.YEAR)
+        assertNull(calendar.get(Field.YEAR))
+        assertFalse(calendar.isSet(Field.YEAR))
+    }
+
+    @Test
+    fun getMaximumWorks() {
+        val now = LocalDate.now()
+        assertEquals(now.year, calendar.getMaximum(Field.YEAR))
+        assertEquals(12, calendar.getMaximum(Field.MONTH))
+        assertEquals(31, calendar.getMaximum(Field.DAY_OF_MONTH))
+    }
+
+    @Test
+    fun getLeastMaximumWorks() {
+        val now = LocalDate.now()
+        assertEquals(now.year, calendar.getLeastMaximum(Field.YEAR))
+        assertEquals(12, calendar.getLeastMaximum(Field.MONTH))
+        assertEquals(28, calendar.getLeastMaximum(Field.DAY_OF_MONTH))
     }
 }
