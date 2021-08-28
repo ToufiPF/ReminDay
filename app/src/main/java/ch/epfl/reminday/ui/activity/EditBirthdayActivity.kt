@@ -8,7 +8,7 @@ import androidx.lifecycle.lifecycleScope
 import ch.epfl.reminday.R
 import ch.epfl.reminday.data.birthday.Birthday
 import ch.epfl.reminday.data.birthday.BirthdayDao
-import ch.epfl.reminday.databinding.ActivityAddBirthdayBinding
+import ch.epfl.reminday.databinding.ActivityEditBirthdayBinding
 import ch.epfl.reminday.utils.ArgumentNames
 import ch.epfl.reminday.utils.Extensions.set
 import dagger.hilt.android.AndroidEntryPoint
@@ -18,16 +18,16 @@ import java.time.Year
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class AddBirthdayActivity : AppCompatActivity() {
+class EditBirthdayActivity : AppCompatActivity() {
 
-    private lateinit var binding: ActivityAddBirthdayBinding
+    private lateinit var binding: ActivityEditBirthdayBinding
 
     @Inject
     lateinit var dao: BirthdayDao
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityAddBirthdayBinding.inflate(layoutInflater)
+        binding = ActivityEditBirthdayBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         val birthday: Birthday? = intent.getParcelableExtra(ArgumentNames.BIRTHDAY)

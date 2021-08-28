@@ -77,4 +77,19 @@ class DatePickerViewInstrumentedTest {
             onDay.check(matches(NumberPickerTestUtils.withValue(29)))
         }
     }
+
+    @Test
+    fun settingFieldsUpdatesThem() {
+        SafeViewScenario.launchInHiltContainer(factory(yearEnabled = true)) { scenario ->
+            scenario.onView {
+                it.year = 2000
+                it.month = 2
+                it.day = 29
+            }
+
+            onDay.check(matches(NumberPickerTestUtils.withValue(29)))
+            onMonth.check(matches(NumberPickerTestUtils.withValue(2)))
+            onYear.check(matches(NumberPickerTestUtils.withValue(2000)))
+        }
+    }
 }

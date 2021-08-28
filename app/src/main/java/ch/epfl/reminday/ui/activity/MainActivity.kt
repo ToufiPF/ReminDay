@@ -5,15 +5,11 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.lifecycleScope
 import ch.epfl.reminday.R
-import ch.epfl.reminday.data.birthday.Birthday
 import ch.epfl.reminday.data.birthday.BirthdayDao
 import ch.epfl.reminday.databinding.ActivityMainBinding
 import ch.epfl.reminday.ui.fragment.BirthdayListFragment
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
-import java.time.MonthDay
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -30,10 +26,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        lifecycleScope.launch {
-            dao.insertAll(Birthday("Toufi", MonthDay.of(3, 16)))
-        }
 
         supportFragmentManager.beginTransaction()
             .add(binding.container.id, BirthdayListFragment())
@@ -61,7 +53,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun launchAddBirthdayActivity() {
-        val intent = Intent(this, AddBirthdayActivity::class.java)
+        val intent = Intent(this, EditBirthdayActivity::class.java)
         startActivity(intent)
     }
 }
