@@ -41,7 +41,7 @@ class MainActivityInstrumentedTest {
     @Test
     fun addBirthdayButtonLaunchesAddBirthdayActivity() {
         openActionBarOverflowOrOptionsMenu(getApplicationContext())
-        onView(withText(R.string.title_add_birthday)).perform(click())
+        onView(withText(R.string.add_birthday_item_text)).perform(click())
 
         intended(hasComponent(EditBirthdayActivity::class.java.name))
     }

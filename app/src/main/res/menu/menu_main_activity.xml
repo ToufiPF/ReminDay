@@ -3,5 +3,5 @@
 
     <item
         android:id="@+id/add_birthday_item"
-        android:title="@string/title_add_birthday" />
+        android:title="@string/add_birthday_item_text" />
 </menu>

@@ -21,9 +21,7 @@
             </intent-filter>
         </activity>
 
-        <activity
-            android:name=".ui.activity.EditBirthdayActivity"
-            android:label="@string/title_add_birthday" />
+        <activity android:name=".ui.activity.EditBirthdayActivity" />
 
     </application>
 </manifest>
