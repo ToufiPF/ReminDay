@@ -11,13 +11,17 @@ import androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import ch.epfl.reminday.R
+import ch.epfl.reminday.data.birthday.BirthdayDao
 import ch.epfl.reminday.testutils.UITestUtils
+import ch.epfl.reminday.utils.Mocks
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
+import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import javax.inject.Inject
 
 @HiltAndroidTest
 class MainActivityInstrumentedTest {
@@ -28,9 +32,13 @@ class MainActivityInstrumentedTest {
     @get:Rule(order = 1)
     val scenarioRule = ActivityScenarioRule(MainActivity::class.java)
 
+    @Inject
+    lateinit var dao: BirthdayDao
+
     @Before
     fun init() {
         Intents.init()
+        hiltRule.inject()
     }
 
     @After
@@ -47,7 +55,9 @@ class MainActivityInstrumentedTest {
     }
 
     @Test
-    fun birthdayListIsDisplayed() {
+    fun birthdayListIsDisplayed(): Unit = runBlocking {
+        dao.insertAll(Mocks.birthday(yearKnown = false))
+
         onView(withId(R.id.birthday_list_recycler))
             .perform(UITestUtils.waitUntilLoadingCompleted())
             .check(matches(isDisplayed()))
