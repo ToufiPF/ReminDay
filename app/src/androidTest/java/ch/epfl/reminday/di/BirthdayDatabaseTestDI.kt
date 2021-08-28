@@ -24,7 +24,7 @@ import javax.inject.Singleton
     components = [SingletonComponent::class],
     replaces = [BirthdayDatabaseDI::class]
 )
-object TestBirthdayDatabaseDI {
+object BirthdayDatabaseTestDI {
 
     @Provides
     @Singleton
@@ -45,16 +45,16 @@ object TestBirthdayDatabaseDI {
             Birthday(
                 faker.superSmashBros.unique.fighter(),
                 MonthDay.of(Month.MARCH, 31),
-                Year.of(-100)
+                Year.of(1958)
             ),
             Birthday(
                 faker.superSmashBros.unique.fighter(),
-                MonthDay.of(Month.MARCH, 31),
-                Year.of(452)
+                MonthDay.of(Month.MAY, 19),
+                Year.of(2000)
             ),
             Birthday(
                 faker.superSmashBros.unique.fighter(),
-                MonthDay.of(Month.MARCH, 31),
+                MonthDay.of(Month.APRIL, 11),
                 year = null
             ),
         )

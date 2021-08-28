@@ -1,6 +1,7 @@
-package ch.epfl.reminday
+package ch.epfl.reminday.testutils
 
 import android.view.View
+import androidx.recyclerview.widget.RecyclerView
 import androidx.test.espresso.Espresso
 import androidx.test.espresso.PerformException
 import androidx.test.espresso.UiController
@@ -9,6 +10,7 @@ import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.isRoot
 import androidx.test.espresso.util.HumanReadables
 import androidx.test.espresso.util.TreeIterables
+import androidx.test.platform.app.InstrumentationRegistry
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers
 import org.hamcrest.StringDescription
@@ -23,7 +25,7 @@ object UITestUtils {
      */
     fun waitForView(
         viewMatcher: Matcher<View>,
-        timeout: Long = 10000L,
+        timeout: Long = 5000L,
     ) {
         Espresso.onView(isRoot()).perform(object : ViewAction {
             override fun getConstraints(): Matcher<View> {
@@ -59,5 +61,35 @@ object UITestUtils {
                     .build()
             }
         })
+    }
+
+    /**
+     * Action that blocks the test until the [RecyclerView] is finished loading.
+     * @param timeout [Long] the maximum time to wait
+     */
+    fun waitUntilLoadingCompleted(timeout: Long = 5000L): ViewAction = object : ViewAction {
+        override fun getConstraints(): Matcher<View> =
+            Matchers.instanceOf(RecyclerView::class.java)
+
+        override fun getDescription(): String =
+            "Waits until the recycler view has finished loading."
+
+        override fun perform(uiController: UiController?, view: View?) {
+            val recycler = view!! as RecyclerView
+
+            uiController?.loopMainThreadUntilIdle()
+
+            val stop = System.currentTimeMillis() + timeout
+            while (recycler.hasPendingAdapterUpdates()) {
+                uiController?.loopMainThreadForAtLeast(50)
+
+                if (System.currentTimeMillis() > stop)
+                    throw PerformException.Builder()
+                        .withActionDescription(description)
+                        .withViewDescription(HumanReadables.describe(recycler))
+                        .withCause(TimeoutException("Waited for $timeout ms and recycler has not finished loading"))
+                        .build()
+            }
+        }
     }
 }

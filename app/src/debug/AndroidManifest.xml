@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="ch.epfl.reminday">
 
     <!--
@@ -8,14 +9,14 @@
     to launch fragments in it while using Hilt.
      -->
 
-    <application>
-        <!-- Not exported, ie. not available in released app. -->
-        <activity
-            android:name=".EmptyRegularTestActivity"
-            android:exported="false" />
-        <activity
-            android:name=".EmptyHiltTestActivity"
-            android:exported="false" />
+    <application
+        android:allowBackup="false"
+        android:exported="true"
+        android:icon="@mipmap/ic_launcher"
+        tools:node="merge">
+
+        <activity android:name=".EmptyRegularTestActivity" />
+        <activity android:name=".EmptyHiltTestActivity" />
     </application>
 
 </manifest>

@@ -8,13 +8,13 @@ plugins {
 }
 
 android {
-    compileSdkVersion 31
+    compileSdkVersion 30
     buildToolsVersion "30.0.3"
 
     defaultConfig {
         applicationId "ch.epfl.reminday"
         minSdkVersion 19
-        targetSdkVersion 31
+        targetSdkVersion 30
         versionCode 2
         versionName "1.0.1"
 
@@ -112,9 +112,10 @@ dependencies {
     testImplementation "androidx.room:room-testing:$room_version"
     testImplementation "androidx.paging:paging-common-ktx:$paging_version"
 
+    // Mockk is way better than mockito for kotlin (but only available for unit tests)
+    testImplementation 'junit:junit:4.13.2'
+    testImplementation 'io.mockk:mockk:1.12.0'
     // Mockito
-    testImplementation 'org.mockito.kotlin:mockito-kotlin:3.2.0'
-    testImplementation 'org.mockito:mockito-inline:3.11.2'
     androidTestImplementation 'org.mockito:mockito-android:3.11.2'
 
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
@@ -160,7 +161,6 @@ task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest', 'crea
             dir: "$project.buildDir/tmp/kotlin-classes/debug",
             excludes: excluded,
     )
-
     classDirectories.from = files([debugKotlinClasses])
 
     executionData.from = fileTree(dir: project.buildDir, includes: [

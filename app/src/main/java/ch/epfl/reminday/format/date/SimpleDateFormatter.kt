@@ -13,37 +13,40 @@ internal class SimpleDateFormatter(style: FormatStyle, locale: Locale) : DateFor
 
     @Suppress("SpellCheckingInspection")
     companion object {
-        private const val LEAP_YEAR = 1904
+        private const val SOME_LEAP_YEAR = 1904
 
-        private fun makeYearFormatter(style: FormatStyle, locale: Locale): DateTimeFormatter {
-            var pattern: String = DateTimeFormatterBuilder.getLocalizedDateTimePattern(
+        private fun patternWithYear(style: FormatStyle, locale: Locale): String {
+            val pattern: String = DateTimeFormatterBuilder.getLocalizedDateTimePattern(
                 style, null, IsoChronology.INSTANCE, locale
             )
             // replace any one or more 'y' by 'yyyy'
             //eg. "mm/dd/yy" -> "mm/dd/yyyy"
-            pattern = pattern.replace("\\b[yY]{1,4}\\b".toRegex(), "yyyy")
-            pattern = pattern.replace("\\b[uU]{1,4}\\b".toRegex(), "uuuu")
-            return DateTimeFormatter.ofPattern(pattern, locale)
+            return pattern
+                .replace("\\b[yY]{1,4}\\b".toRegex(), "yyyy")
+                .replace("\\b[uU]{1,4}\\b".toRegex(), "uuuu")
         }
 
-        private fun makeMonthFormatter(style: FormatStyle, locale: Locale): DateTimeFormatter {
-            var pattern: String = DateTimeFormatterBuilder.getLocalizedDateTimePattern(
+        private fun patternWithoutYear(style: FormatStyle, locale: Locale): String {
+            val pattern: String = DateTimeFormatterBuilder.getLocalizedDateTimePattern(
                 style, null, IsoChronology.INSTANCE, locale
             )
             // remove any non letter char followed by (1 or more) 'y' followed by any non letter char
             // eg. "mm/dd/yy" -> "mm/dd"
-            pattern = pattern.replace("\\P{L}*[yYuU]+\\P{L}*".toRegex(), "")
-            return DateTimeFormatter.ofPattern(pattern, locale)
+            return pattern.replace("\\P{L}*[yYuU]+\\P{L}*".toRegex(), "")
         }
     }
 
-    private val yearF = makeYearFormatter(style, locale)
-    private val monthF = makeMonthFormatter(style, locale)
+    private val patternWithYear = patternWithYear(style, locale)
+    private val patternWithoutYear = patternWithoutYear(style, locale)
+    private val yearF = DateTimeFormatter.ofPattern(patternWithYear, locale)
+    private val monthF = DateTimeFormatter.ofPattern(patternWithoutYear, locale)
 
-    override fun format(monthDay: MonthDay, year: Year?): String {
-        return if (year != null)
+    override fun format(monthDay: MonthDay, year: Year?): String =
+        if (year != null)
             yearF.format(LocalDate.of(year.value, monthDay.month, monthDay.dayOfMonth))
         else
-            monthF.format(LocalDate.of(LEAP_YEAR, monthDay.month, monthDay.dayOfMonth))
-    }
+            monthF.format(LocalDate.of(SOME_LEAP_YEAR, monthDay.month, monthDay.dayOfMonth))
+
+    override fun pattern(withYear: Boolean): String =
+        if (withYear) patternWithYear else patternWithoutYear
 }
