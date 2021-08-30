@@ -21,7 +21,8 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".ui.activity.EditBirthdayActivity" />
+        <activity android:name=".ui.activity.BirthdayEditActivity" />
+        <activity android:name=".ui.activity.BirthdaySummaryActivity" />
 
     </application>
 </manifest>
