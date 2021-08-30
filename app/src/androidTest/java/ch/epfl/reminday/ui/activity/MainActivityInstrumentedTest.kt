@@ -51,7 +51,7 @@ class MainActivityInstrumentedTest {
         openActionBarOverflowOrOptionsMenu(getApplicationContext())
         onView(withText(R.string.add_birthday_item_text)).perform(click())
 
-        intended(hasComponent(EditBirthdayActivity::class.java.name))
+        intended(hasComponent(BirthdayEditActivity::class.java.name))
     }
 
     @Test

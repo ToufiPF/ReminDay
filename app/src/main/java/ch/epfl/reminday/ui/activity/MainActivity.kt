@@ -53,7 +53,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun launchAddBirthdayActivity() {
-        val intent = Intent(this, EditBirthdayActivity::class.java)
+        val intent = Intent(this, BirthdayEditActivity::class.java)
         startActivity(intent)
     }
 }

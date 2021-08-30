@@ -31,7 +31,7 @@ import org.junit.Test
 import javax.inject.Inject
 
 @HiltAndroidTest
-class EditBirthdayActivityInstrumentedTest {
+class BirthdayEditActivityInstrumentedTest {
 
     @get:Rule(order = 0)
     val hiltRule = HiltAndroidRule(this)
@@ -53,12 +53,12 @@ class EditBirthdayActivityInstrumentedTest {
 
     private fun launch(
         birthday: Birthday? = null,
-        testMethod: suspend (ActivityScenario<EditBirthdayActivity>) -> Unit,
+        testMethod: suspend (ActivityScenario<BirthdayEditActivity>) -> Unit,
     ) {
-        val intent = Intent(getApplicationContext(), EditBirthdayActivity::class.java)
+        val intent = Intent(getApplicationContext(), BirthdayEditActivity::class.java)
         birthday?.let { intent.putExtra(ArgumentNames.BIRTHDAY, it) }
 
-        ActivityScenario.launch<EditBirthdayActivity>(intent).use {
+        ActivityScenario.launch<BirthdayEditActivity>(intent).use {
             runBlocking {
                 testMethod.invoke(it)
             }
