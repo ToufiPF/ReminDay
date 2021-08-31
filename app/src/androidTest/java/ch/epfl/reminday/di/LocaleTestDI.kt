@@ -1,5 +1,6 @@
 package ch.epfl.reminday.di
 
+import ch.epfl.reminday.format.LocaleDI
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.android.components.ActivityComponent
