@@ -1,19 +1,19 @@
 package ch.epfl.reminday.ui.activity
 
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import ch.epfl.reminday.data.birthday.Birthday
 import ch.epfl.reminday.databinding.ActivityBirthdaySummaryBinding
 import ch.epfl.reminday.format.date.DateFormatter
+import ch.epfl.reminday.ui.activity.utils.BackArrowActivity
 import ch.epfl.reminday.utils.ArgumentNames
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class BirthdaySummaryActivity : AppCompatActivity() {
+class BirthdaySummaryActivity : BackArrowActivity() {
 
     private lateinit var binding: ActivityBirthdaySummaryBinding
 

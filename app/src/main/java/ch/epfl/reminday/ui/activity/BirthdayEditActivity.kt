@@ -2,13 +2,13 @@ package ch.epfl.reminday.ui.activity
 
 import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.lifecycleScope
 import ch.epfl.reminday.R
 import ch.epfl.reminday.data.birthday.Birthday
 import ch.epfl.reminday.data.birthday.BirthdayDao
 import ch.epfl.reminday.databinding.ActivityBirthdayEditBinding
+import ch.epfl.reminday.ui.activity.utils.BackArrowActivity
 import ch.epfl.reminday.utils.ArgumentNames
 import ch.epfl.reminday.utils.Extensions.set
 import dagger.hilt.android.AndroidEntryPoint
@@ -18,7 +18,7 @@ import java.time.Year
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class BirthdayEditActivity : AppCompatActivity() {
+class BirthdayEditActivity : BackArrowActivity() {
 
     private lateinit var binding: ActivityBirthdayEditBinding
 
