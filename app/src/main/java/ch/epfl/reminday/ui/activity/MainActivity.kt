@@ -20,8 +20,6 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
 
-    private lateinit var addBirthdayItem: MenuItem
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -34,11 +32,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_main_activity, menu)
-
-        menu?.let {
-            addBirthdayItem = menu.findItem(R.id.add_birthday_item)
-        }
-
         return super.onCreateOptionsMenu(menu)
     }
 
