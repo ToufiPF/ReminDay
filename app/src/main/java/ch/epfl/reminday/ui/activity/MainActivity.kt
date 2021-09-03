@@ -8,7 +8,6 @@ import androidx.appcompat.app.AppCompatActivity
 import ch.epfl.reminday.R
 import ch.epfl.reminday.data.birthday.BirthdayDao
 import ch.epfl.reminday.databinding.ActivityMainBinding
-import ch.epfl.reminday.ui.fragment.BirthdayListFragment
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -24,10 +23,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        supportFragmentManager.beginTransaction()
-            .add(binding.container.id, BirthdayListFragment())
-            .commit()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
