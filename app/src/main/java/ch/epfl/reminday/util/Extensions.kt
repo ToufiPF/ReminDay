@@ -1,4 +1,4 @@
-package ch.epfl.reminday.utils
+package ch.epfl.reminday.util
 
 import android.text.Editable
 

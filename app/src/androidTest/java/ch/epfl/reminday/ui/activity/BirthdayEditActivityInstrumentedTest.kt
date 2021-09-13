@@ -16,8 +16,8 @@ import ch.epfl.reminday.data.birthday.Birthday
 import ch.epfl.reminday.data.birthday.BirthdayDao
 import ch.epfl.reminday.testutils.NumberPickerTestUtils.setValueByJumping
 import ch.epfl.reminday.testutils.NumberPickerTestUtils.withValue
-import ch.epfl.reminday.utils.ArgumentNames
-import ch.epfl.reminday.utils.Mocks
+import ch.epfl.reminday.util.constant.ArgumentNames
+import ch.epfl.reminday.util.Mocks
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.runBlocking

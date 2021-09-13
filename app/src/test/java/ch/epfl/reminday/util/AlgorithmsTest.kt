@@ -1,6 +1,6 @@
-package ch.epfl.reminday.utils
+package ch.epfl.reminday.util
 
-import ch.epfl.reminday.utils.Algorithms.longestCommonSubsequence
+import ch.epfl.reminday.util.Algorithms.longestCommonSubsequence
 import org.junit.Assert.assertEquals
 import org.junit.Test
 

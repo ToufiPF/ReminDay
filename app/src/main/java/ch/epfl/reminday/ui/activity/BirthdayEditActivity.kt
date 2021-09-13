@@ -9,8 +9,8 @@ import ch.epfl.reminday.data.birthday.Birthday
 import ch.epfl.reminday.data.birthday.BirthdayDao
 import ch.epfl.reminday.databinding.ActivityBirthdayEditBinding
 import ch.epfl.reminday.ui.activity.utils.BackArrowActivity
-import ch.epfl.reminday.utils.ArgumentNames
-import ch.epfl.reminday.utils.Extensions.set
+import ch.epfl.reminday.util.constant.ArgumentNames
+import ch.epfl.reminday.util.Extensions.set
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import java.time.MonthDay

@@ -9,7 +9,7 @@ import ch.epfl.reminday.data.birthday.BirthdayDao
 import ch.epfl.reminday.di.BirthdayDatabaseTestDI
 import ch.epfl.reminday.testutils.SafeFragmentScenario
 import ch.epfl.reminday.testutils.UITestUtils
-import ch.epfl.reminday.utils.Mocks
+import ch.epfl.reminday.util.Mocks
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.runBlocking

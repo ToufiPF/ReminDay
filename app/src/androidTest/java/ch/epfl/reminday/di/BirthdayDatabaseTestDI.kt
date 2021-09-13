@@ -6,7 +6,7 @@ import ch.epfl.reminday.data.birthday.Birthday
 import ch.epfl.reminday.data.birthday.BirthdayDao
 import ch.epfl.reminday.data.birthday.BirthdayDatabase
 import ch.epfl.reminday.data.birthday.BirthdayDatabaseDI
-import ch.epfl.reminday.utils.Mocks
+import ch.epfl.reminday.util.Mocks
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.android.qualifiers.ApplicationContext

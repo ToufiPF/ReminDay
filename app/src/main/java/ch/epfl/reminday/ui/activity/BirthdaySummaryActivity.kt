@@ -11,7 +11,7 @@ import ch.epfl.reminday.data.birthday.Birthday
 import ch.epfl.reminday.databinding.ActivityBirthdaySummaryBinding
 import ch.epfl.reminday.format.date.DateFormatter
 import ch.epfl.reminday.ui.activity.utils.BackArrowActivity
-import ch.epfl.reminday.utils.ArgumentNames
+import ch.epfl.reminday.util.constant.ArgumentNames
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
 import javax.inject.Inject
