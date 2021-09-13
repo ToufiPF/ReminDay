@@ -4,6 +4,8 @@ import ch.epfl.reminday.data.birthday.Comparators.monthDayYearNameOrder
 import ch.epfl.reminday.data.birthday.Comparators.nameYearMonthDayOrder
 import ch.epfl.reminday.data.birthday.Comparators.yearMonthDayNameOrder
 import org.junit.Assert
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.time.MonthDay
 import java.time.Year
@@ -37,27 +39,33 @@ class ComparatorsTest {
 
     @Test
     fun monthDayYearNameOrderWorks() {
-        Assert.assertTrue(monthDayYearNameOrder.compare(b1, b2) > 0) // b1 > b2
-        Assert.assertTrue(monthDayYearNameOrder.compare(b2, b3) > 0) // b2 > b3
-        Assert.assertTrue(monthDayYearNameOrder.compare(b2, b4) > 0) // b2 > b4
-        Assert.assertTrue(monthDayYearNameOrder.compare(b3, b4) > 0) // b2 > b4
-        Assert.assertTrue(monthDayYearNameOrder.compare(b2, b5) < 0)
-        Assert.assertTrue(monthDayYearNameOrder.compare(b4, b5) < 0)
+        assertTrue(monthDayYearNameOrder.compare(b1, b2) > 0) // b1 > b2
+        assertTrue(monthDayYearNameOrder.compare(b2, b3) > 0) // b2 > b3
+        assertTrue(monthDayYearNameOrder.compare(b2, b4) > 0) // b2 > b4
+        assertTrue(monthDayYearNameOrder.compare(b3, b4) > 0) // b2 > b4
+        assertTrue(monthDayYearNameOrder.compare(b2, b5) < 0)
+        assertTrue(monthDayYearNameOrder.compare(b4, b5) < 0)
+        assertEquals(0, monthDayYearNameOrder.compare(b4, b4))
+        assertEquals(0, monthDayYearNameOrder.compare(b5, b5))
     }
 
     @Test
     fun yearMonthDayNameOrderWorks() {
-        Assert.assertTrue(yearMonthDayNameOrder.compare(b1, b2) > 0)
-        Assert.assertTrue(yearMonthDayNameOrder.compare(b2, b3) > 0)
-        Assert.assertTrue(yearMonthDayNameOrder.compare(b3, b4) < 0)
-        Assert.assertTrue(yearMonthDayNameOrder.compare(b4, b5) < 0)
+        assertTrue(yearMonthDayNameOrder.compare(b1, b2) > 0)
+        assertTrue(yearMonthDayNameOrder.compare(b2, b3) > 0)
+        assertTrue(yearMonthDayNameOrder.compare(b3, b4) < 0)
+        assertTrue(yearMonthDayNameOrder.compare(b4, b5) < 0)
+        assertEquals(0, yearMonthDayNameOrder.compare(b4, b4))
+        assertEquals(0, yearMonthDayNameOrder.compare(b5, b5))
     }
 
     @Test
     fun nameYearMonthDayOrderWorks() {
-        Assert.assertTrue(nameYearMonthDayOrder.compare(b1, b2) < 0)
-        Assert.assertTrue(nameYearMonthDayOrder.compare(b2, b3) < 0)
-        Assert.assertTrue(nameYearMonthDayOrder.compare(b3, b4) < 0)
-        Assert.assertTrue(nameYearMonthDayOrder.compare(b4, b5) < 0)
+        assertTrue(nameYearMonthDayOrder.compare(b1, b2) < 0)
+        assertTrue(nameYearMonthDayOrder.compare(b2, b3) < 0)
+        assertTrue(nameYearMonthDayOrder.compare(b3, b4) < 0)
+        assertTrue(nameYearMonthDayOrder.compare(b4, b5) < 0)
+        assertEquals(0, nameYearMonthDayOrder.compare(b4, b4))
+        assertEquals(0, nameYearMonthDayOrder.compare(b5, b5))
     }
 }
