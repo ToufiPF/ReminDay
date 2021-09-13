@@ -59,7 +59,7 @@ class MainActivityInstrumentedTest {
         dao.insertAll(Mocks.birthday(yearKnown = false))
 
         onView(withId(R.id.birthday_list_recycler))
-            .perform(UITestUtils.waitUntilLoadingCompleted())
+            .perform(UITestUtils.waitUntilPopulated())
             .check(matches(isDisplayed()))
     }
 }

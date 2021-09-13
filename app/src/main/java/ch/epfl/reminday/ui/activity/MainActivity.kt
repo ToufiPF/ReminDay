@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import ch.epfl.reminday.R
 import ch.epfl.reminday.data.birthday.BirthdayDao
 import ch.epfl.reminday.databinding.ActivityMainBinding
+import ch.epfl.reminday.util.constant.ArgumentNames.BIRTHDAY_EDIT_MODE_ORDINAL
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -42,6 +43,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun launchAddBirthdayActivity() {
         val intent = Intent(this, BirthdayEditActivity::class.java)
+        intent.putExtra(BIRTHDAY_EDIT_MODE_ORDINAL, BirthdayEditActivity.Mode.ADD.ordinal)
         startActivity(intent)
     }
 }

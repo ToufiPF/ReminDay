@@ -47,7 +47,7 @@ class BirthdayListFragmentInstrumentedTest {
         fakeDao.insertAll(*days)
 
         SafeFragmentScenario.launchInHiltContainer<BirthdayListFragment> {
-            onRecycler.perform(UITestUtils.waitUntilLoadingCompleted())
+            onRecycler.perform(UITestUtils.waitUntilPopulated())
 
             for (day in days) {
                 val expectedMatcher = allOf(withText(day.personName), withId(R.id.name_view))

@@ -11,7 +11,8 @@ import ch.epfl.reminday.data.birthday.Birthday
 import ch.epfl.reminday.databinding.ActivityBirthdaySummaryBinding
 import ch.epfl.reminday.format.date.DateFormatter
 import ch.epfl.reminday.ui.activity.utils.BackArrowActivity
-import ch.epfl.reminday.util.constant.ArgumentNames
+import ch.epfl.reminday.util.constant.ArgumentNames.BIRTHDAY
+import ch.epfl.reminday.util.constant.ArgumentNames.BIRTHDAY_EDIT_MODE_ORDINAL
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
 import javax.inject.Inject
@@ -33,7 +34,7 @@ class BirthdaySummaryActivity : BackArrowActivity() {
         binding = ActivityBirthdaySummaryBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        birthday = intent.getParcelableExtra(ArgumentNames.BIRTHDAY)!!
+        birthday = intent.getParcelableExtra(BIRTHDAY)!!
         binding.apply {
             name.text = birthday.personName
             date.text = dateFormatter.format(birthday.monthDay, birthday.year)
@@ -60,7 +61,8 @@ class BirthdaySummaryActivity : BackArrowActivity() {
 
     private fun launchEditBirthdayActivity() {
         val intent = Intent(this, BirthdayEditActivity::class.java)
-        intent.putExtra(ArgumentNames.BIRTHDAY, birthday)
+        intent.putExtra(BIRTHDAY, birthday)
+        intent.putExtra(BIRTHDAY_EDIT_MODE_ORDINAL, BirthdayEditActivity.Mode.EDIT.ordinal)
         startActivity(intent)
     }
 }

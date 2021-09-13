@@ -6,6 +6,8 @@ import androidx.test.espresso.Espresso
 import androidx.test.espresso.PerformException
 import androidx.test.espresso.UiController
 import androidx.test.espresso.ViewAction
+import androidx.test.espresso.intent.Intents
+import androidx.test.espresso.intent.matcher.IntentMatchers
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.isRoot
 import androidx.test.espresso.util.HumanReadables
@@ -15,7 +17,24 @@ import org.hamcrest.Matchers
 import org.hamcrest.StringDescription
 import java.util.concurrent.TimeoutException
 
+@Suppress("UNUSED")
 object UITestUtils {
+
+    private const val BOOSTRAP_ACTIVITY_NAME =
+        "androidx.test.core.app.InstrumentationActivityInvoker\$BootstrapActivity"
+
+    /**
+     * Asserts that there's no unverified intents, but ignores an eventual intent with component "BootstrapActivity"
+     * which is the activity used to boot most tests.
+     * @see Intents.assertNoUnverifiedIntents
+     */
+    fun assertNoUnverifiedIntentIgnoringBootstrap() {
+        if (Intents.getIntents().find { it.component?.className == BOOSTRAP_ACTIVITY_NAME } != null)
+            Intents.intended(IntentMatchers.hasComponent(BOOSTRAP_ACTIVITY_NAME))
+
+        Intents.assertNoUnverifiedIntents()
+    }
+
     /**
      * Waits for a view matching [viewMatcher] to appear in the hierarchy.
      *
@@ -63,32 +82,37 @@ object UITestUtils {
     }
 
     /**
-     * Action that blocks the test until the [RecyclerView] is finished loading.
-     * @param timeout [Long] the maximum time to wait
+     * Action that blocks the test until the [RecyclerView]
+     * is finished loading and has at least [minChildren] children.
+     * @param minChildren [Int] the minimum number of children to wait for. 1 by default.
+     * @param timeout [Long] the maximum time to wait, in milliseconds. 5s by default.
      */
-    fun waitUntilLoadingCompleted(timeout: Long = 5000L): ViewAction = object : ViewAction {
-        override fun getConstraints(): Matcher<View> =
-            Matchers.instanceOf(RecyclerView::class.java)
+    fun waitUntilPopulated(minChildren: Int = 1, timeout: Long = 5000L): ViewAction =
+        object : ViewAction {
+            override fun getConstraints(): Matcher<View> =
+                Matchers.instanceOf(RecyclerView::class.java)
 
-        override fun getDescription(): String =
-            "Waits until the recycler view has finished loading."
+            override fun getDescription(): String =
+                "Waits until the recycler view has finished loading and has at least $minChildren children."
 
-        override fun perform(uiController: UiController?, view: View?) {
-            val recycler = view!! as RecyclerView
+            override fun perform(uiController: UiController?, view: View?) {
+                val recycler = view!! as RecyclerView
 
-            uiController?.loopMainThreadUntilIdle()
+                uiController?.loopMainThreadUntilIdle()
 
-            val stop = System.currentTimeMillis() + timeout
-            while (recycler.hasPendingAdapterUpdates()) {
-                uiController?.loopMainThreadForAtLeast(50)
+                val stop = System.currentTimeMillis() + timeout
+                while (recycler.hasPendingAdapterUpdates() ||
+                    recycler.adapter!!.itemCount < minChildren
+                ) {
+                    uiController?.loopMainThreadForAtLeast(50)
 
-                if (System.currentTimeMillis() > stop)
-                    throw PerformException.Builder()
-                        .withActionDescription(description)
-                        .withViewDescription(HumanReadables.describe(recycler))
-                        .withCause(TimeoutException("Waited for $timeout ms and recycler has not finished loading"))
-                        .build()
+                    if (System.currentTimeMillis() > stop)
+                        throw PerformException.Builder()
+                            .withActionDescription(description)
+                            .withViewDescription(HumanReadables.describe(recycler))
+                            .withCause(TimeoutException("Waited for $timeout ms and recycler is still loading/doesn't have $minChildren children"))
+                            .build()
+                }
             }
         }
-    }
 }
