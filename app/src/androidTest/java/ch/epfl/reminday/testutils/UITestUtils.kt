@@ -1,11 +1,10 @@
 package ch.epfl.reminday.testutils
 
+import android.content.Context
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
-import androidx.test.espresso.Espresso
-import androidx.test.espresso.PerformException
-import androidx.test.espresso.UiController
-import androidx.test.espresso.ViewAction
+import androidx.test.core.app.ApplicationProvider
+import androidx.test.espresso.*
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.matcher.IntentMatchers
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
@@ -33,6 +32,25 @@ object UITestUtils {
             Intents.intended(IntentMatchers.hasComponent(BOOSTRAP_ACTIVITY_NAME))
 
         Intents.assertNoUnverifiedIntents()
+    }
+
+    /**
+     * Returns a [ViewInteraction] for a menu item matching [matcher].
+     * Overflows the menu/action bar if needed
+     * and then uses [Espresso.onView] with the given matcher.
+     *
+     * @param matcher [Matcher] menu item matcher
+     * @return [ViewInteraction] for the given item.
+     */
+    fun onMenuItem(matcher: Matcher<View>): ViewInteraction {
+        try {
+            val context: Context = ApplicationProvider.getApplicationContext()
+            Espresso.openActionBarOverflowOrOptionsMenu(context)
+        } catch (ignored: Exception) {
+            // there may be no menu overflow, ignore
+        }
+
+        return Espresso.onView(matcher)
     }
 
     /**
