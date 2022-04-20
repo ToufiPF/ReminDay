@@ -30,4 +30,5 @@
 
     <string name="are_you_sure">Are you sure?</string>
     <string name="birthday_will_be_overwritten">A birthday for a person with the same name already exists. Are you sure you want to overwrite that entry?</string>
+    <string name="import_from_contacts_item_text">Import from contacts</string>
 </resources>

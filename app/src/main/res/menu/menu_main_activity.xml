@@ -4,4 +4,8 @@
     <item
         android:id="@+id/add_birthday_item"
         android:title="@string/add_birthday_item_text" />
+
+    <item
+        android:id="@+id/import_from_contacts_item"
+        android:title="@string/import_from_contacts_item_text" />
 </menu>
