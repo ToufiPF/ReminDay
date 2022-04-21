@@ -16,27 +16,29 @@ import ch.epfl.reminday.data.birthday.Birthday
 import ch.epfl.reminday.data.birthday.BirthdayDao
 import ch.epfl.reminday.testutils.NumberPickerTestUtils.setValueByJumping
 import ch.epfl.reminday.testutils.NumberPickerTestUtils.withValue
-import ch.epfl.reminday.utils.ArgumentNames
-import ch.epfl.reminday.utils.Mocks
+import ch.epfl.reminday.util.Mocks
+import ch.epfl.reminday.util.constant.ArgumentNames
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.hamcrest.Matchers.allOf
 import org.hamcrest.Matchers.not
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import javax.inject.Inject
 
 @HiltAndroidTest
-class EditBirthdayActivityInstrumentedTest {
+class BirthdayEditActivityInstrumentedTest {
 
     @get:Rule(order = 0)
     val hiltRule = HiltAndroidRule(this)
 
-    // inject Dao inside test to perform verifications
+    // inject Dao inside test to perform setups/verifications
     @Inject
     lateinit var dao: BirthdayDao
 
@@ -53,12 +55,14 @@ class EditBirthdayActivityInstrumentedTest {
 
     private fun launch(
         birthday: Birthday? = null,
-        testMethod: suspend (ActivityScenario<EditBirthdayActivity>) -> Unit,
+        mode: BirthdayEditActivity.Mode? = null,
+        testMethod: suspend (ActivityScenario<BirthdayEditActivity>) -> Unit,
     ) {
-        val intent = Intent(getApplicationContext(), EditBirthdayActivity::class.java)
+        val intent = Intent(getApplicationContext(), BirthdayEditActivity::class.java)
         birthday?.let { intent.putExtra(ArgumentNames.BIRTHDAY, it) }
+        mode?.let { intent.putExtra(ArgumentNames.BIRTHDAY_EDIT_MODE_ORDINAL, it.ordinal) }
 
-        ActivityScenario.launch<EditBirthdayActivity>(intent).use {
+        ActivityScenario.launch<BirthdayEditActivity>(intent).use {
             runBlocking {
                 testMethod.invoke(it)
             }
@@ -142,7 +146,6 @@ class EditBirthdayActivityInstrumentedTest {
 
         launch(initial) {
             onMonth.perform(setValueByJumping(nextMonth))
-
             onConfirm.perform(click())
 
             onView(withText(R.string.birthday_will_be_overwritten)).check(matches(isDisplayed()))
@@ -160,9 +163,8 @@ class EditBirthdayActivityInstrumentedTest {
 
         dao.insertAll(initial)
 
-        launch(initial) {
+        launch(initial, BirthdayEditActivity.Mode.ADD) {
             onMonth.perform(setValueByJumping(nextMonth))
-
             onConfirm.perform(click())
 
             onView(withText(R.string.birthday_will_be_overwritten)).check(matches(isDisplayed()))
@@ -170,5 +172,65 @@ class EditBirthdayActivityInstrumentedTest {
         }
 
         assertEquals(modified, dao.findByName(initial.personName))
+    }
+
+    @Test
+    fun editModeDoesNotPromptUserForConfirmationOnOverwritingSameBirthday(): Unit = runBlocking {
+        val initial = Mocks.birthday(yearKnown = false)
+        val nextMonth = 1 + (initial.monthDay.monthValue + 1) % 12
+        val modified = initial.copy(monthDay = initial.monthDay.withMonth(nextMonth))
+
+        dao.insertAll(initial)
+
+        launch(initial, BirthdayEditActivity.Mode.EDIT) {
+            onMonth.perform(setValueByJumping(nextMonth))
+            onConfirm.perform(click())
+        }
+
+        assertEquals(modified, dao.findByName(initial.personName))
+    }
+
+    @Test
+    fun editModePromptsUserWhenTheyTryToOverwriteAnotherBirthday(): Unit = runBlocking {
+        val faker = Mocks.makeFaker().artist.unique
+        val initial = Mocks.birthday(yearKnown = false).copy(personName = faker.names())
+        val existing = Mocks.birthday(yearKnown = true).copy(personName = faker.names())
+
+        val modified = initial.copy(personName = existing.personName)
+
+        dao.insertAll(initial, existing)
+
+        launch(initial, BirthdayEditActivity.Mode.EDIT) {
+            onName.perform(replaceText(modified.personName), closeSoftKeyboard())
+            onConfirm.perform(click())
+
+            onView(withText(R.string.birthday_will_be_overwritten)).check(matches(isDisplayed()))
+            onView(withText(R.string.confirm)).perform(click())
+        }
+
+        assertNull(dao.findByName(initial.personName))
+        assertEquals(modified, dao.findByName(existing.personName))
+    }
+
+    @Test
+    fun editModeDoesNotDeleteExistingBirthdayWhenCancelled(): Unit = runBlocking {
+        val faker = Mocks.makeFaker().artist.unique
+        val initial = Mocks.birthday(yearKnown = false).copy(personName = faker.names())
+        val existing = Mocks.birthday(yearKnown = true).copy(personName = faker.names())
+
+        val modified = initial.copy(personName = existing.personName)
+
+        dao.insertAll(initial, existing)
+
+        launch(initial, BirthdayEditActivity.Mode.EDIT) {
+            onName.perform(replaceText(modified.personName), closeSoftKeyboard())
+            onConfirm.perform(click())
+
+            onView(withText(R.string.birthday_will_be_overwritten)).check(matches(isDisplayed()))
+            onView(withText(R.string.cancel)).perform(click())
+        }
+
+        assertEquals(initial, dao.findByName(initial.personName))
+        assertEquals(existing, dao.findByName(existing.personName))
     }
 }

@@ -1,4 +1,4 @@
-package ch.epfl.reminday.utils
+package ch.epfl.reminday.util
 
 import ch.epfl.reminday.data.birthday.Birthday
 import io.github.serpro69.kfaker.Faker

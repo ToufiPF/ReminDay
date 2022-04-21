@@ -1,5 +1,6 @@
 package ch.epfl.reminday.adapter
 
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,6 +11,8 @@ import ch.epfl.reminday.R
 import ch.epfl.reminday.data.birthday.Birthday
 import ch.epfl.reminday.databinding.FragmentBirthdayListItemBinding
 import ch.epfl.reminday.format.date.DateFormatter
+import ch.epfl.reminday.ui.activity.BirthdaySummaryActivity
+import ch.epfl.reminday.util.constant.ArgumentNames
 import java.util.*
 
 class BirthdayAdapter(
@@ -37,6 +40,13 @@ class BirthdayAdapter(
             binding.calendarView.monthDay = birthday.monthDay
             binding.nameView.text = birthday.personName
             binding.dateView.text = dateFormatter.format(birthday.monthDay, birthday.year)
+
+            binding.root.setOnClickListener {
+                val intent = Intent(it.context, BirthdaySummaryActivity::class.java)
+                intent.putExtra(ArgumentNames.BIRTHDAY, birthday)
+
+                it.context.startActivity(intent)
+            }
         }
     }
 

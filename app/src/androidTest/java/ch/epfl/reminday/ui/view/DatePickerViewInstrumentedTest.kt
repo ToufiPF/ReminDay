@@ -49,11 +49,28 @@ class DatePickerViewInstrumentedTest {
     }
 
     @Test
+    fun settingFieldsUpdatesThem() {
+        SafeViewScenario.launchInHiltContainer(factory(yearEnabled = true)) { scenario ->
+            scenario.onView {
+                it.year = 2000
+                it.month = 2
+                it.day = 29
+            }
+
+            onDay.check(matches(NumberPickerTestUtils.withValue(29)))
+            onMonth.check(matches(NumberPickerTestUtils.withValue(2)))
+            onYear.check(matches(NumberPickerTestUtils.withValue(2000)))
+        }
+    }
+
+    @Test
     fun dayIsConstrainedDependingOnMonthAndYear() {
-        SafeViewScenario.launchInHiltContainer(factory(yearEnabled = true)) {
-            onDay.perform(NumberPickerTestUtils.setValueByJumping(31))
-            onMonth.perform(NumberPickerTestUtils.setValueByJumping(12))
-            onYear.perform(NumberPickerTestUtils.setValueByJumping(1960))
+        SafeViewScenario.launchInHiltContainer(factory(yearEnabled = true)) { scenario ->
+            scenario.onView {
+                it.year = 1960
+                it.month = 12
+                it.day = 31
+            }
 
             onMonth.perform(NumberPickerTestUtils.setValueByJumping(2))
             onDay.check(matches(NumberPickerTestUtils.withValue(29)))
@@ -66,30 +83,18 @@ class DatePickerViewInstrumentedTest {
     @Test
     fun februaryHas29DaysWhenYearIsDisabled() {
         SafeViewScenario.launchInHiltContainer(factory(yearEnabled = true)) { scenario ->
-            onDay.perform(NumberPickerTestUtils.setValueByJumping(29))
-            onMonth.perform(NumberPickerTestUtils.setValueByJumping(2))
-            onYear.perform(NumberPickerTestUtils.setValueByJumping(1961))
+            scenario.onView {
+                it.year = 1961
+                it.month = 3
+                it.day = 29
+            }
 
+            onMonth.perform(NumberPickerTestUtils.setValueIncrementally(2))
             onDay.check(matches(NumberPickerTestUtils.withValue(28)))
             scenario.onView { it.isYearEnabled = false }
 
             onDay.perform(NumberPickerTestUtils.setValueIncrementally(29))
             onDay.check(matches(NumberPickerTestUtils.withValue(29)))
-        }
-    }
-
-    @Test
-    fun settingFieldsUpdatesThem() {
-        SafeViewScenario.launchInHiltContainer(factory(yearEnabled = true)) { scenario ->
-            scenario.onView {
-                it.year = 2000
-                it.month = 2
-                it.day = 29
-            }
-
-            onDay.check(matches(NumberPickerTestUtils.withValue(29)))
-            onMonth.check(matches(NumberPickerTestUtils.withValue(2)))
-            onYear.check(matches(NumberPickerTestUtils.withValue(2000)))
         }
     }
 }

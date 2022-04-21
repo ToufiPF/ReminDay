@@ -1,4 +1,4 @@
-package ch.epfl.reminday.di
+package ch.epfl.reminday.format
 
 import dagger.Module
 import dagger.Provides

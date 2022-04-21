@@ -16,7 +16,8 @@ object BirthdayDatabaseDI {
     @Provides
     @Singleton
     fun provideBirthdayDao(@ApplicationContext context: Context): BirthdayDao {
-        val db = Room.databaseBuilder(context, BirthdayDatabase::class.java, BirthdayDatabase.NAME).build()
+        val db = Room.databaseBuilder(context, BirthdayDatabase::class.java, BirthdayDatabase.NAME)
+            .build()
         return db.birthdayDao()
     }
 }

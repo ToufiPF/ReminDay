@@ -15,7 +15,7 @@ class BirthdayListViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val pager = Pager(PagingConfig(pageSize = 20)) {
-        birthdayDao.pagingSource()
+        birthdayDao.pagingSourceOrderedByMonthDayYear()
     }
 
     val flow = pager.flow.cachedIn(viewModelScope)

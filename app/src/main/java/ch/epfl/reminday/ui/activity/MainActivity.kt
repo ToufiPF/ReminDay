@@ -8,7 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import ch.epfl.reminday.R
 import ch.epfl.reminday.data.birthday.BirthdayDao
 import ch.epfl.reminday.databinding.ActivityMainBinding
-import ch.epfl.reminday.ui.fragment.BirthdayListFragment
+import ch.epfl.reminday.util.constant.ArgumentNames.BIRTHDAY_EDIT_MODE_ORDINAL
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -20,25 +20,14 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
 
-    private lateinit var addBirthdayItem: MenuItem
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        supportFragmentManager.beginTransaction()
-            .add(binding.container.id, BirthdayListFragment())
-            .commit()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_main_activity, menu)
-
-        menu?.let {
-            addBirthdayItem = menu.findItem(R.id.add_birthday_item)
-        }
-
         return super.onCreateOptionsMenu(menu)
     }
 
@@ -53,7 +42,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun launchAddBirthdayActivity() {
-        val intent = Intent(this, EditBirthdayActivity::class.java)
+        val intent = Intent(this, BirthdayEditActivity::class.java)
+        intent.putExtra(BIRTHDAY_EDIT_MODE_ORDINAL, BirthdayEditActivity.Mode.ADD.ordinal)
         startActivity(intent)
     }
 }

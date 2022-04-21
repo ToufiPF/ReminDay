@@ -8,13 +8,13 @@ object Converters {
 
     @TypeConverter
     fun monthDayToShort(monthDay: MonthDay): Short {
-        return ((monthDay.dayOfMonth shl 8) or monthDay.monthValue).toShort()
+        return ((monthDay.monthValue shl 8) or monthDay.dayOfMonth).toShort()
     }
 
     @TypeConverter
     fun shortToMonthDay(short: Short): MonthDay {
-        val month = short.toInt() and 0xFF
-        val day = short.toInt() ushr 8
+        val month = short.toInt() ushr 8
+        val day = short.toInt() and 0xFF
         return MonthDay.of(month, day)
     }
 
