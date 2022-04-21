@@ -1,12 +1,12 @@
-package ch.epfl.reminday.data.birthday;
+package ch.epfl.reminday.data.birthday
 
 import android.content.Context
 import androidx.room.RoomDatabase
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkConstructor
-import junit.framework.Assert.assertEquals
 import kotlinx.coroutines.runBlocking
+import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 
