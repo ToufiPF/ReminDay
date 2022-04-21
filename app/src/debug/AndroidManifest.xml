@@ -10,8 +10,6 @@
      -->
 
     <application
-        android:allowBackup="false"
-        android:exported="true"
         android:icon="@mipmap/ic_launcher"
         tools:node="merge">
 
@@ -33,5 +31,4 @@
             tools:node="merge" />
 
     </application>
-
 </manifest>
