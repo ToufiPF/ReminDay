@@ -85,37 +85,35 @@ class BirthdayEditActivity : BackArrowActivity() {
         val year = binding.birthdayEdit.year
 
         if (!name.isNullOrBlank()) {
-            lifecycleScope.launch {
-                val b = Birthday(name, MonthDay.of(month, day), year?.let { Year.of(it) })
+            val b = Birthday(name, MonthDay.of(month, day), year?.let { Year.of(it) })
 
-                // if we're in Edit mode, delete the previous birthday
-                when (mode) {
-                    Mode.ADD -> {
-                        val existing = dao.findByName(name)
-                        if (existing != null)
-                            showConfirmOverwriteDialog {
-                                // a birthday with the same name exists, request confirmation to overwrite
-                                lifecycleScope.launch {
-                                    insertBirthdayAndFinish(b)
-                                }
+            // if we're in Edit mode, delete the previous birthday
+            when (mode) {
+                Mode.ADD -> lifecycleScope.launch {
+                    val existing = dao.findByName(name)
+                    if (existing != null)
+                        showConfirmOverwriteDialog {
+                            // a birthday with the same name exists, request confirmation to overwrite
+                            lifecycleScope.launch {
+                                insertBirthdayAndFinish(b)
                             }
-                        else {
-                            // fast path: insert & close activity
-                            insertBirthdayAndFinish(b)
                         }
+                    else {
+                        // fast path: insert & close activity
+                        insertBirthdayAndFinish(b)
                     }
-                    Mode.EDIT -> {
-                        if (birthday?.personName != name && dao.findByName(name) != null)
-                            showConfirmOverwriteDialog {
-                                lifecycleScope.launch {
-                                    birthday?.let { dao.delete(it) }
-                                    insertBirthdayAndFinish(b)
-                                }
+                }
+                Mode.EDIT -> lifecycleScope.launch {
+                    if (birthday?.personName != name && dao.findByName(name) != null)
+                        showConfirmOverwriteDialog {
+                            lifecycleScope.launch {
+                                birthday?.let { dao.delete(it) }
+                                insertBirthdayAndFinish(b)
                             }
-                        else {
-                            birthday?.let { dao.delete(it) }
-                            insertBirthdayAndFinish(b)
                         }
+                    else {
+                        birthday?.let { dao.delete(it) }
+                        insertBirthdayAndFinish(b)
                     }
                 }
             }
