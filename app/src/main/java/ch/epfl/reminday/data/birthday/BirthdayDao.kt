@@ -12,26 +12,46 @@ import java.time.Year
 @Dao
 interface BirthdayDao {
 
+    companion object {
+        private const val allUnordered =
+            "SELECT * FROM birthday"
+
+        private const val allByMonthDayYear =
+            "SELECT * FROM birthday ORDER BY monthDay, year"
+
+        private const val allByMonthDayYearFromToday =
+            "SELECT *, 1 as rowOrder FROM birthday WHERE monthDay >= :today " +
+                    "UNION ALL SELECT *, 2 as rowOrder FROM birthday WHERE monthDay < :today " +
+                    "ORDER BY rowOrder, monthDay, year"
+    }
+
     /**
      * Returns a paging source with all birthdays, ordered by primary key (ie. [Birthday.personName])
      * @return [PagingSource] with all birthdays
      */
-    @Query("SELECT * FROM birthday")
+    @Query(allUnordered)
     fun pagingSource(): PagingSource<Int, Birthday>
+
+    @Query(allUnordered)
+    suspend fun getAll(): List<Birthday>
+
 
     /**
      * Returns a paging source with all birthdays, ordered by (month, year, name)
      * @return [PagingSource] with all birthdays
      */
-    @Query("SELECT * FROM birthday ORDER BY monthDay, year")
+    @Query(allByMonthDayYear)
     fun pagingSourceOrderedByMonthDayYear(): PagingSource<Int, Birthday>
 
-
-    @Query("SELECT * FROM birthday")
-    suspend fun getAll(): List<Birthday>
-
-    @Query("SELECT * FROM birthday ORDER BY monthDay, year")
+    @Query(allByMonthDayYear)
     suspend fun getAllOrderedByMonthDayYear(): List<Birthday>
+
+
+    @Query(allByMonthDayYearFromToday)
+    fun pagingSourceOrderedByMonthDayYearFrom(today: MonthDay): PagingSource<Int, Birthday>
+
+    @Query(allByMonthDayYearFromToday)
+    suspend fun getAllOrderedByMonthDayYearFrom(today: MonthDay): List<Birthday>
 
 
     @Query("SELECT * FROM birthday WHERE personName LIKE :personName")
