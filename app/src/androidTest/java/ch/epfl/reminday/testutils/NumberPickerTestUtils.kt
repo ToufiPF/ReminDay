@@ -88,18 +88,23 @@ object NumberPickerTestUtils {
 
             val picker = checkPreconditions(view, value, description)
 
-            if (picker.value != value) {
-                picker.value = value
-
-                // trigger onValueChange callback by manually changing and restoring the value
-                if (picker.minValue != value) {
-                    mDecrement.perform(uiController, view)
+            // trigger onValueChange callback by manually changing and restoring the value
+            when {
+                !(picker.minValue <= value && value <= picker.maxValue) ->
+                    throw IllegalArgumentException("Invalid value (not ${picker.minValue} <= $value <= ${picker.maxValue})")
+                picker.minValue < value -> {
+                    picker.value = value - 1
                     mIncrement.perform(uiController, view)
-                } else if (picker.maxValue != value) {
-                    mIncrement.perform(uiController, view)
+                }
+                value < picker.maxValue -> {
+                    picker.value = value + 1
                     mDecrement.perform(uiController, view)
                 }
+                else -> { // min == value == max
+                    picker.value = value
+                }
             }
+            uiController?.loopMainThreadUntilIdle()
         }
     }
 

@@ -1,7 +1,6 @@
 package ch.epfl.reminday.ui.activity
 
 import android.os.Bundle
-import androidx.appcompat.app.AlertDialog
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.lifecycleScope
 import ch.epfl.reminday.R
@@ -10,6 +9,7 @@ import ch.epfl.reminday.data.birthday.BirthdayDao
 import ch.epfl.reminday.databinding.ActivityBirthdayEditBinding
 import ch.epfl.reminday.ui.activity.utils.BackArrowActivity
 import ch.epfl.reminday.util.Extensions.set
+import ch.epfl.reminday.util.Extensions.showConfirmationDialog
 import ch.epfl.reminday.util.constant.ArgumentNames
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -120,17 +120,11 @@ class BirthdayEditActivity : BackArrowActivity() {
         }
     }
 
-    private fun showConfirmOverwriteDialog(onConfirm: () -> Unit) {
-        AlertDialog.Builder(this)
-            .setTitle(R.string.are_you_sure)
-            .setMessage(R.string.birthday_will_be_overwritten)
-            .setPositiveButton(R.string.confirm) { dialog, _ ->
-                dialog.dismiss()
-                onConfirm.invoke()
-            }.setNegativeButton(R.string.cancel) { dialog, _ ->
-                dialog.cancel()
-            }.show()
-    }
+    private fun showConfirmOverwriteDialog(onConfirm: () -> Unit) = showConfirmationDialog(
+        title = R.string.are_you_sure,
+        text = R.string.birthday_will_be_overwritten,
+        onConfirm = onConfirm
+    )
 
     private suspend fun insertBirthdayAndFinish(birthday: Birthday) {
         dao.insertAll(birthday)

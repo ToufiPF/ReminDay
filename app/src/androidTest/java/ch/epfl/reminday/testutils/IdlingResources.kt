@@ -5,11 +5,14 @@ import androidx.test.espresso.IdlingResource
 
 object IdlingResources {
 
+    private val myIdlingResources: ArrayList<IdlingResource> = arrayListOf()
+
     /**
      * Registers the given [IdlingResource]
      * @param resources [IdlingResources] to register into the instantiated [IdlingRegistry]
      */
     fun register(vararg resources: IdlingResource) {
+        myIdlingResources.addAll(resources)
         IdlingRegistry.getInstance().register(*resources)
     }
 
@@ -20,8 +23,9 @@ object IdlingResources {
      */
     fun unregisterAll() {
         val registry = IdlingRegistry.getInstance()
-        registry.resources.forEach { res ->
+        myIdlingResources.forEach { res ->
             registry.unregister(res)
         }
+        myIdlingResources.clear()
     }
 }

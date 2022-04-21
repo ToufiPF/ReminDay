@@ -9,30 +9,23 @@ import android.provider.ContactsContract.CommonDataKinds.Event.*
 import android.provider.ContactsContract.Contacts.DISPLAY_NAME_PRIMARY
 import android.provider.ContactsContract.Data.MIMETYPE
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContentResolverCompat
 import androidx.core.content.ContextCompat.checkSelfPermission
 import androidx.lifecycle.ViewModel
 import ch.epfl.reminday.data.birthday.Birthday
+import ch.epfl.reminday.data.contacts.ContactQuery
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import java.time.DateTimeException
 import java.time.LocalDate
 import java.time.MonthDay
 import java.time.Year
-import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
+    private val contactQuery: ContactQuery
 ) : ViewModel() {
     companion object {
         const val READ_CONTACTS_PERMISSION_CODE = 0x100
-
-        val birthdayFormats = arrayOf(
-            DateTimeFormatter.ofPattern("yyyy-MM-dd"),
-            DateTimeFormatter.ofPattern("--MM-dd"),
-        )
     }
 
     fun mayRequireContacts(activity: AppCompatActivity): Boolean {
@@ -55,30 +48,13 @@ class MainViewModel @Inject constructor(
             START_DATE,
         )
 
-        val where = "$MIMETYPE = ? AND " +
-                "$TYPE = $TYPE_BIRTHDAY"
-        val selectionArgs: Array<out String> = arrayOf(
-            CONTENT_ITEM_TYPE
-        )
-
-        val cursor = withContext(Dispatchers.IO) {
-            ContentResolverCompat.query(
-                context.contentResolver,
-                uri,
-                projection,
-                where,
-                selectionArgs,
-                null,
-                null
-            )
-        }
+        val selection = "$MIMETYPE = ? AND $TYPE = ?"
+        val selectionArgs: Array<out String> = arrayOf(CONTENT_ITEM_TYPE, TYPE_BIRTHDAY.toString())
 
         val contacts = arrayListOf<Birthday>()
-        cursor?.let {
-            val nameColumn =
-                cursor.getColumnIndex(DISPLAY_NAME_PRIMARY)
-            val bDayColumn =
-                cursor.getColumnIndex(START_DATE)
+        contactQuery.query(uri, projection, selection, selectionArgs, null, null)?.let { cursor ->
+            val nameColumn = cursor.getColumnIndex(DISPLAY_NAME_PRIMARY)
+            val bDayColumn = cursor.getColumnIndex(START_DATE)
 
             while (cursor.moveToNext()) {
                 val name = cursor.getString(nameColumn)

@@ -6,12 +6,16 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import androidx.test.espresso.idling.CountingIdlingResource
 import ch.epfl.reminday.R
 import ch.epfl.reminday.data.birthday.BirthdayDao
 import ch.epfl.reminday.databinding.ActivityMainBinding
+import ch.epfl.reminday.util.Extensions.showConfirmationDialog
 import ch.epfl.reminday.util.constant.ArgumentNames.BIRTHDAY_EDIT_MODE_ORDINAL
 import ch.epfl.reminday.viewmodel.activity.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -26,6 +30,8 @@ class MainActivity : AppCompatActivity() {
 
     private val viewModel: MainViewModel by viewModels()
     private lateinit var binding: ActivityMainBinding
+
+    val importIdlingResource = CountingIdlingResource("import_contacts")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,11 +66,33 @@ class MainActivity : AppCompatActivity() {
 
     private fun importBirthdaysFromContacts() {
         if (viewModel.mayRequireContacts(this)) {
-            lifecycleScope.launch {
-                val contacts = viewModel.importContacts(this@MainActivity)
-                contacts.forEach { Log.d(this@MainActivity.javaClass.name, it.toString()) }
+            showConfirmationDialog(
+                title = R.string.are_you_sure,
+                text = R.string.import_from_contacts_are_you_sure,
+                onConfirm = this::doImport
+            )
+        }
+    }
+
+    private fun doImport() {
+        importIdlingResource.increment()
+
+        lifecycleScope.launch {
+            val contacts = viewModel.importContacts(this@MainActivity)
+
+            if (contacts.isEmpty()) {
+                Log.d(this@MainActivity.javaClass.name, "Found no contacts to import")
+                Toast.makeText(
+                    this@MainActivity,
+                    R.string.import_from_contacts_no_contacts,
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+            else {
                 dao.insertAll(*contacts.toTypedArray())
             }
+
+            importIdlingResource.decrement()
         }
     }
 
