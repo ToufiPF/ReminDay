@@ -2,45 +2,58 @@ package ch.epfl.reminday
 
 import android.util.Log
 import androidx.multidex.MultiDexApplication
-import androidx.work.*
-import androidx.work.ExistingPeriodicWorkPolicy.REPLACE
+import androidx.work.Configuration
+import androidx.work.DelegatingWorkerFactory
 import ch.epfl.reminday.background.BirthdayWorkerFactory
-import ch.epfl.reminday.background.CheckBirthdayWorker
+import ch.epfl.reminday.background.CheckBirthdaysWorker
+import ch.epfl.reminday.background.CheckBirthdaysWorker.Companion.enqueueOneTimeWorkRequest
+import ch.epfl.reminday.background.CheckBirthdaysWorker.Companion.enqueuePeriodicWorkRequest
 import ch.epfl.reminday.data.birthday.BirthdayDao
 import dagger.hilt.android.HiltAndroidApp
-import java.util.concurrent.Executors
-import java.util.concurrent.TimeUnit
+import java.util.*
 import javax.inject.Inject
 
 @HiltAndroidApp
 class MainApplication : MultiDexApplication(), Configuration.Provider {
 
+    companion object {
+        /**
+         * Builds a custom WorkManager [Configuration.Builder] with a factory
+         * that can create [CheckBirthdaysWorker].
+         * @param birthdayDao [BirthdayDao] required by [BirthdayWorkerFactory]
+         * @param locale [Locale] required by [BirthdayWorkerFactory]
+         * @return [Configuration.Builder] with a factory and a few options already set (eg. log level)
+         */
+        fun makeWorkManagerConfigurationBuilder(
+            birthdayDao: BirthdayDao,
+            locale: Locale,
+        ): Configuration.Builder {
+            val factory = DelegatingWorkerFactory()
+            factory.addFactory(BirthdayWorkerFactory(birthdayDao, locale))
+
+            return Configuration.Builder()
+                .setWorkerFactory(factory)
+                .setMinimumLoggingLevel(Log.INFO)
+        }
+    }
+
+    @Inject
+    lateinit var locale: Locale
+
     @Inject
     lateinit var birthdayDao: BirthdayDao
 
-    override fun getWorkManagerConfiguration(): Configuration {
-        val factory = DelegatingWorkerFactory()
-        factory.addFactory(BirthdayWorkerFactory(birthdayDao))
-
-        return Configuration.Builder()
-            .setWorkerFactory(factory)
-            .setExecutor(Executors.newSingleThreadScheduledExecutor())
-            .setMinimumLoggingLevel(Log.INFO)
-            .build()
-    }
+    override fun getWorkManagerConfiguration(): Configuration =
+        makeWorkManagerConfigurationBuilder(birthdayDao, locale).build()
 
     override fun onCreate() {
         super.onCreate()
 
-        val workRequest = PeriodicWorkRequest.Builder(
-            CheckBirthdayWorker::class.java,
-            1,
-            TimeUnit.DAYS,
-            3,
-            TimeUnit.HOURS
-        ).build()
+        // If not already done (should have been at device startup)
+        // enqueue a periodic worker that checks if each day is someone's birthday
+        enqueuePeriodicWorkRequest(applicationContext)
 
-        WorkManager.getInstance(applicationContext)
-            .enqueueUniquePeriodicWork(CheckBirthdayWorker::class.java.name, REPLACE, workRequest)
+        // Also do the check once when the app starts
+        enqueueOneTimeWorkRequest(applicationContext)
     }
 }

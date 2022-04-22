@@ -9,6 +9,8 @@ import androidx.test.espresso.matcher.ViewMatchers.withId
 import ch.epfl.reminday.R
 import ch.epfl.reminday.testutils.SafeViewScenario
 import ch.epfl.reminday.testutils.NumberPickerTestUtils
+import ch.epfl.reminday.testutils.NumberPickerTestUtils.setValueByJumping
+import ch.epfl.reminday.testutils.NumberPickerTestUtils.setValueIncrementally
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import org.hamcrest.Matchers.not
@@ -72,10 +74,10 @@ class DatePickerViewInstrumentedTest {
                 it.day = 31
             }
 
-            onMonth.perform(NumberPickerTestUtils.setValueByJumping(2))
+            onMonth.perform(setValueByJumping(2))
             onDay.check(matches(NumberPickerTestUtils.withValue(29)))
 
-            onYear.perform(NumberPickerTestUtils.setValueIncrementally(1961))
+            onYear.perform(setValueIncrementally(1961))
             onDay.check(matches(NumberPickerTestUtils.withValue(28)))
         }
     }
@@ -89,11 +91,11 @@ class DatePickerViewInstrumentedTest {
                 it.day = 29
             }
 
-            onMonth.perform(NumberPickerTestUtils.setValueIncrementally(2))
+            onMonth.perform(setValueIncrementally(2))
             onDay.check(matches(NumberPickerTestUtils.withValue(28)))
             scenario.onView { it.isYearEnabled = false }
 
-            onDay.perform(NumberPickerTestUtils.setValueIncrementally(29))
+            onDay.perform(setValueIncrementally(29))
             onDay.check(matches(NumberPickerTestUtils.withValue(29)))
         }
     }

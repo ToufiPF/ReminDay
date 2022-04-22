@@ -3,14 +3,13 @@ package ch.epfl.reminday.di
 import ch.epfl.reminday.format.LocaleDI
 import dagger.Module
 import dagger.Provides
-import dagger.hilt.android.components.ActivityComponent
-import dagger.hilt.android.scopes.ActivityScoped
+import dagger.hilt.components.SingletonComponent
 import dagger.hilt.testing.TestInstallIn
 import java.util.*
 
 @Module
 @TestInstallIn(
-    components = [ActivityComponent::class],
+    components = [SingletonComponent::class],
     replaces = [LocaleDI::class]
 )
 object LocaleTestDI {
@@ -23,7 +22,6 @@ object LocaleTestDI {
     var locale: Locale? = null
 
     @Provides
-    @ActivityScoped
     fun provideLocale(): Locale {
         val returned = locale ?: DEFAULT_LOCALE
         locale = null
