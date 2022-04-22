@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import ch.epfl.reminday.R
 import ch.epfl.reminday.adapter.BirthdayAdapter
+import ch.epfl.reminday.ui.view.MarginItemDecoration
 import ch.epfl.reminday.viewmodel.fragment.BirthdayListViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
@@ -34,6 +35,13 @@ class BirthdayListFragment : Fragment(R.layout.fragment_birthday_list) {
         recyclerView.adapter = adapter
         recyclerView.layoutManager =
             LinearLayoutManager(view.context, LinearLayoutManager.VERTICAL, false)
+        recyclerView.addItemDecoration(
+            MarginItemDecoration(
+                orientation = LinearLayoutManager.VERTICAL,
+                verticalSpace = resources.getDimensionPixelSize(R.dimen.small_padding),
+                horizontalSpace = 0,
+            )
+        )
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.flow.collectLatest { pagingData ->

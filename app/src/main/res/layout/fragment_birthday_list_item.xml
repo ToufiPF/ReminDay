@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     android:gravity="center_vertical|start"
     android:orientation="horizontal"
-    android:padding="@dimen/small_padding">
+    android:paddingHorizontal="@dimen/small_padding">
 
     <ch.epfl.reminday.ui.view.MiniCalendarView
         android:id="@+id/calendar_view"

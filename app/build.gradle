@@ -8,15 +8,15 @@ plugins {
 }
 
 android {
-    compileSdkVersion 31
-    buildToolsVersion "30.0.3"
+    compileSdk 32
+    buildToolsVersion '31.0.0'
 
     defaultConfig {
         applicationId "ch.epfl.reminday"
         minSdkVersion 19
-        targetSdkVersion 31
-        versionCode 2
-        versionName "1.0.1"
+        targetSdkVersion 32
+        versionCode 3
+        versionName "1.1.0"
 
         multiDexEnabled = true
         testInstrumentationRunner "ch.epfl.reminday.HiltTestRunner"
