@@ -2,9 +2,7 @@ package ch.epfl.reminday.background
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.content.BroadcastReceiver
 import android.content.Context
-import android.content.Intent
 import android.os.Build
 import androidx.annotation.StringRes
 import androidx.core.app.NotificationCompat
@@ -90,27 +88,6 @@ class CheckBirthdaysWorker(
                 OneTimeWorkRequestBuilder<CheckBirthdaysWorker>().build()
             WorkManager.getInstance(appContext).enqueue(workRequest)
             return workRequest
-        }
-    }
-
-    class Launcher : BroadcastReceiver() {
-        companion object {
-            private const val BOOT_COMPLETED_ACTION = "android.intent.action.BOOT_COMPLETED"
-        }
-
-        /**
-         * Called when the phone has completely booted.
-         * Calls [enqueuePeriodicWorkRequest].
-         * @param context application context
-         * @param intent the intent that triggered [BroadcastReceiver.onReceive]
-         * @see BroadcastReceiver
-         */
-        override fun onReceive(context: Context?, intent: Intent?) {
-            if (intent?.action != BOOT_COMPLETED_ACTION) return
-
-            context?.let {
-                enqueuePeriodicWorkRequest(context)
-            }
         }
     }
 

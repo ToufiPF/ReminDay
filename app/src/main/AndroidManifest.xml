@@ -34,7 +34,7 @@
             android:authorities="${applicationId}.androidx-startup"
             tools:node="remove" />
         <!-- Call BirthdayWorkerLauncher::onReceive when phone starts up -->
-        <receiver android:name=".background.CheckBirthdaysWorker$Launcher"
+        <receiver android:name=".background.BirthdayBootBroadcastReceiver"
             android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />

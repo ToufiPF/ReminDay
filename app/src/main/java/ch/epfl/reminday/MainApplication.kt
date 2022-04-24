@@ -28,8 +28,7 @@ class MainApplication : MultiDexApplication(), Configuration.Provider {
             birthdayDao: BirthdayDao,
             locale: Locale,
         ): Configuration.Builder {
-            val factory = DelegatingWorkerFactory()
-            factory.addFactory(BirthdayWorkerFactory(birthdayDao, locale))
+            val factory = BirthdayWorkerFactory(birthdayDao, locale)
 
             return Configuration.Builder()
                 .setWorkerFactory(factory)
