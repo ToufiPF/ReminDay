@@ -92,7 +92,7 @@ class CheckBirthdaysWorkerTest {
         val todayYear = LocalDate.now().year
         var text = getString(
             R.string.notif_text,
-            formatter.format(birthday.monthDay, birthday.year),
+            formatter.format(birthday.monthDay, null),
             birthday.personName
         )
         if (birthday.isYearKnown)

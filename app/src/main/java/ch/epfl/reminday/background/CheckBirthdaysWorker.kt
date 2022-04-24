@@ -114,7 +114,7 @@ class CheckBirthdaysWorker(
             val title = getString(R.string.notif_title, bDay.personName)
             var text = getString(
                 R.string.notif_text,
-                formatter.format(bDay.monthDay, bDay.year),
+                formatter.format(bDay.monthDay, null),
                 bDay.personName
             )
             if (bDay.isYearKnown)
