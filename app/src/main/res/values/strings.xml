@@ -33,4 +33,9 @@
     <string name="import_from_contacts_are_you_sure">Are you sure you want to import from contacts ? Any existing birthday with a name conflict will be overwritten.</string>
     <string name="birthday_will_be_overwritten">A birthday for a person with the same name already exists. Are you sure you want to overwrite that entry?</string>
     <string name="import_from_contacts_no_contacts">Found no contacts to import</string>
+
+    <string name="notif_channel_title">ReminDay - Birthday</string>
+    <string name="notif_title">Happy Birthday %1$s !</string>
+    <string name="notif_text">"Today is the %1$s, it's %2$s's birthday."</string>
+    <string name="notif_additional_text_year_known">"They are %1$d!"</string>
 </resources>

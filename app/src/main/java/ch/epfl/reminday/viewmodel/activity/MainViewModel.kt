@@ -39,7 +39,7 @@ class MainViewModel @Inject constructor(
         return false
     }
 
-    suspend fun importContacts(context: Context): List<Birthday> {
+    suspend fun importContacts(): List<Birthday> {
         val uri = ContactsContract.Data.CONTENT_URI
 
         val projection: Array<out String> = arrayOf(

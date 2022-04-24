@@ -8,7 +8,6 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.activity.viewModels
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.test.espresso.idling.CountingIdlingResource
@@ -78,7 +77,7 @@ class MainActivity : AppCompatActivity() {
         importIdlingResource.increment()
 
         lifecycleScope.launch {
-            val contacts = viewModel.importContacts(this@MainActivity)
+            val contacts = viewModel.importContacts()
 
             if (contacts.isEmpty()) {
                 Log.d(this@MainActivity.javaClass.name, "Found no contacts to import")
@@ -87,8 +86,7 @@ class MainActivity : AppCompatActivity() {
                     R.string.import_from_contacts_no_contacts,
                     Toast.LENGTH_LONG
                 ).show()
-            }
-            else {
+            } else {
                 dao.insertAll(*contacts.toTypedArray())
             }
 

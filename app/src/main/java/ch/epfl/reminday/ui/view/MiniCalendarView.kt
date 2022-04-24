@@ -11,7 +11,6 @@ import androidx.core.widget.ImageViewCompat.setImageTintList
 import ch.epfl.reminday.R
 import ch.epfl.reminday.databinding.ViewMiniCalendarBinding
 import dagger.hilt.android.AndroidEntryPoint
-import java.time.LocalDate
 import java.time.Month
 import java.time.MonthDay
 import java.time.format.DateTimeFormatter
@@ -77,9 +76,7 @@ class MiniCalendarView @JvmOverloads constructor(
             val bgColorRes = MONTH_TO_BG_COLOR[monthDay.month]!!
             setImageTintList(binding.background, getTintList(bgColorRes))
 
-            binding.month.text =
-                monthFormatter.format(LocalDate.now().withMonth(monthDay.monthValue))
-
+            binding.month.text = monthFormatter.format(monthDay)
             binding.day.text = monthDay.dayOfMonth.toString()
         }
     }

@@ -46,10 +46,13 @@ interface BirthdayDao {
     @Query(allByMonthDayYear)
     suspend fun getAllOrderedByMonthDayYear(): List<Birthday>
 
-
+    // false positive: rowOrder is used in ORDER BY
+    @SuppressWarnings(RoomWarnings.CURSOR_MISMATCH)
     @Query(allByMonthDayYearFromToday)
     fun pagingSourceOrderedByMonthDayYearFrom(today: MonthDay): PagingSource<Int, Birthday>
 
+    // false positive: rowOrder is used in ORDER BY
+    @SuppressWarnings(RoomWarnings.CURSOR_MISMATCH)
     @Query(allByMonthDayYearFromToday)
     suspend fun getAllOrderedByMonthDayYearFrom(today: MonthDay): List<Birthday>
 

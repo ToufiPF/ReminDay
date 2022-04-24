@@ -20,7 +20,6 @@ import ch.epfl.reminday.util.Mocks
 import ch.epfl.reminday.util.constant.ArgumentNames
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.hamcrest.Matchers.allOf
 import org.hamcrest.Matchers.not
@@ -93,7 +92,6 @@ class BirthdayEditActivityInstrumentedTest {
         assertEquals(Activity.RESULT_OK, scenario.result.resultCode)
         assertEquals(expected, dao.findByName(expected.personName))
     }
-
 
     @Test
     fun backArrowCancelsModifications() = launch { scenario ->

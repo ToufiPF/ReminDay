@@ -7,6 +7,8 @@ import androidx.multidex.MultiDex
 import androidx.test.runner.AndroidJUnitRunner
 import dagger.hilt.android.testing.HiltTestApplication
 
+// false positive, indeed used to run the tests
+@Suppress("unused")
 class HiltTestRunner : AndroidJUnitRunner() {
 
     override fun newApplication(cl: ClassLoader?, name: String?, context: Context?): Application {
