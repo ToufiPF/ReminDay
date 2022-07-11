@@ -4,4 +4,8 @@
     <item
         android:id="@+id/edit_birthday_item"
         android:title="@string/edit_birthday_item_text" />
+
+    <item
+        android:id="@+id/delete_birthday_item"
+        android:title="@string/delete_birthday_item_text" />
 </menu>

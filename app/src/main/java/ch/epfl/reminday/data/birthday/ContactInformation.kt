@@ -16,14 +16,12 @@ import kotlinx.parcelize.Parcelize
             childColumns = ["personName"],
             onDelete = ForeignKey.CASCADE
         )
-    ],
-    indices = [Index("personName")]
+    ]
 )
 data class ContactInformation(
-    @PrimaryKey(autoGenerate = true) val id: Long,
-    val personName: String,
+    @PrimaryKey val personName: String,
     val type: Type,
-    val data: String,
+    val additionalNotes: String,
 ) : Parcelable {
 
     enum class Type {
