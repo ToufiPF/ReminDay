@@ -14,7 +14,7 @@ object Mocks {
     val rng = Random(System.currentTimeMillis())
 
     fun makeFaker(): Faker = faker {
-        config {
+        fakerConfig {
             locale = "en"
             random = rng.asJavaRandom()
             uniqueGeneratorRetryLimit = 500

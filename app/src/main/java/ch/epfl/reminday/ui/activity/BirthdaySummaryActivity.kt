@@ -44,19 +44,17 @@ class BirthdaySummaryActivity : BackArrowActivity() {
         }
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_summary_activity, menu)
         return super.onCreateOptionsMenu(menu)
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.edit_birthday_item -> {
-                launchEditBirthdayActivity()
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
+    override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
+        R.id.edit_birthday_item -> {
+            launchEditBirthdayActivity()
+            true
         }
+        else -> super.onOptionsItemSelected(item)
     }
 
     private fun launchEditBirthdayActivity() {

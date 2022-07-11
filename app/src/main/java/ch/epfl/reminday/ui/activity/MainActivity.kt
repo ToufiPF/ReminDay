@@ -38,23 +38,21 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_main_activity, menu)
         return super.onCreateOptionsMenu(menu)
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.add_birthday_item -> {
-                launchAddBirthdayActivity()
-                true
-            }
-            R.id.import_from_contacts_item -> {
-                importBirthdaysFromContacts()
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
+    override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
+        R.id.add_birthday_item -> {
+            launchAddBirthdayActivity()
+            true
         }
+        R.id.import_from_contacts_item -> {
+            importBirthdaysFromContacts()
+            true
+        }
+        else -> super.onOptionsItemSelected(item)
     }
 
     private fun launchAddBirthdayActivity() {

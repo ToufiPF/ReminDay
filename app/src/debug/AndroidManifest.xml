@@ -16,19 +16,5 @@
         <activity android:name=".EmptyRegularTestActivity" />
         <activity android:name=".EmptyHiltTestActivity" />
 
-<!-- Espresso is buggy as usual, need to set exported attribute to compile for android 12 -->
-        <activity
-            android:name="androidx.test.core.app.InstrumentationActivityInvoker$BootstrapActivity"
-            android:exported="false"
-            tools:node="merge" />
-        <activity
-            android:name="androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity"
-            android:exported="false"
-            tools:node="merge" />
-        <activity
-            android:name="androidx.test.core.app.InstrumentationActivityInvoker$EmptyFloatingActivity"
-            android:exported="false"
-            tools:node="merge" />
-
     </application>
 </manifest>
