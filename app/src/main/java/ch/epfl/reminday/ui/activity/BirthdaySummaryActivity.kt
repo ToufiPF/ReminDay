@@ -8,7 +8,10 @@ import android.view.MenuItem
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.test.espresso.idling.CountingIdlingResource
 import ch.epfl.reminday.R
+import ch.epfl.reminday.adapter.BirthdaySummaryInfoAdapter
+import ch.epfl.reminday.data.birthday.AdditionalInformationDao
 import ch.epfl.reminday.data.birthday.Birthday
 import ch.epfl.reminday.data.birthday.BirthdayDao
 import ch.epfl.reminday.databinding.ActivityBirthdaySummaryBinding
@@ -33,11 +36,16 @@ class BirthdaySummaryActivity : BackArrowActivity() {
     lateinit var birthdayDao: BirthdayDao
 
     @Inject
+    lateinit var infoDao: AdditionalInformationDao
+
+    @Inject
     lateinit var locale: Locale
 
     private val dateFormatter: DateFormatter by lazy { DateFormatter.longFormatter(locale) }
 
     private lateinit var birthday: Birthday
+
+    val recyclerIdlingResource = CountingIdlingResource("additional_information_idling_res")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,12 +53,20 @@ class BirthdaySummaryActivity : BackArrowActivity() {
         setContentView(binding.root)
 
         birthday = intent.getParcelableExtra(BIRTHDAY)!!
+
         binding.apply {
             name.text = birthday.personName
             date.text = dateFormatter.format(birthday.monthDay, birthday.year)
 
             informationRecycler.layoutManager =
                 LinearLayoutManager(this@BirthdaySummaryActivity, RecyclerView.VERTICAL, false)
+        }
+
+        recyclerIdlingResource.increment()
+        lifecycleScope.launch {
+            val info = infoDao.getInfoForName(birthday.personName)
+            binding.informationRecycler.adapter = BirthdaySummaryInfoAdapter(info)
+            recyclerIdlingResource.decrement()
         }
     }
 

@@ -8,7 +8,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import ch.epfl.reminday.R
-import ch.epfl.reminday.adapter.BirthdayAdapter
+import ch.epfl.reminday.adapter.BirthdayListAdapter
 import ch.epfl.reminday.ui.view.MarginItemDecoration
 import ch.epfl.reminday.viewmodel.fragment.BirthdayListViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -29,7 +29,7 @@ class BirthdayListFragment : Fragment(R.layout.fragment_birthday_list) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val adapter = BirthdayAdapter(locale)
+        val adapter = BirthdayListAdapter(locale)
 
         recyclerView = view.findViewById(R.id.birthday_list_recycler)
         recyclerView.adapter = adapter

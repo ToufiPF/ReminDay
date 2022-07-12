@@ -19,21 +19,8 @@ import kotlinx.parcelize.Parcelize
     ],
     indices = [Index("personName")]
 )
-data class ContactInformation(
+data class AdditionalInformation(
     @PrimaryKey(autoGenerate = true) val id: Long,
     val personName: String,
-    val type: Type,
     val data: String,
-) : Parcelable {
-
-    enum class Type {
-        PHONE,
-        MESSENGER,
-        WHATSAPP,
-        OTHER;
-
-        companion object {
-            val ALL = listOf(*values())
-        }
-    }
-}
+) : Parcelable

@@ -1,5 +1,6 @@
 package ch.epfl.reminday.util
 
+import ch.epfl.reminday.data.birthday.AdditionalInformation
 import ch.epfl.reminday.data.birthday.Birthday
 import io.github.serpro69.kfaker.Faker
 import io.github.serpro69.kfaker.faker
@@ -34,4 +35,13 @@ object Mocks {
     }
 
     fun birthday(yearKnown: Boolean) = birthdays(1) { yearKnown }.first()
+
+    fun additionalInfo(personName: String): AdditionalInformation {
+        val faker = makeFaker()
+        return AdditionalInformation(
+            System.currentTimeMillis(),
+            personName,
+            faker.chuckNorris.fact()
+        )
+    }
 }

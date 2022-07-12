@@ -15,9 +15,9 @@ import ch.epfl.reminday.ui.activity.BirthdaySummaryActivity
 import ch.epfl.reminday.util.constant.ArgumentNames
 import java.util.*
 
-class BirthdayAdapter(
+class BirthdayListAdapter(
     private val locale: Locale
-) : PagingDataAdapter<Birthday, BirthdayAdapter.ViewHolder>(DIFF_CALLBACK) {
+) : PagingDataAdapter<Birthday, BirthdayListAdapter.ViewHolder>(DIFF_CALLBACK) {
 
     companion object {
         private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<Birthday>() {
