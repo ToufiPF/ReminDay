@@ -49,10 +49,9 @@ object Extensions {
         @StringRes text: Int,
         preferences: SharedPreferences,
         skipConfirmationFlag: String,
-        defaultSkipFlagValue: Boolean,
         onConfirm: () -> Unit
     ) {
-        val skipConfirmation = preferences.getBoolean(skipConfirmationFlag, defaultSkipFlagValue)
+        val skipConfirmation = preferences.getBoolean(skipConfirmationFlag, false)
         if (skipConfirmation) {
             onConfirm.invoke()
         } else {

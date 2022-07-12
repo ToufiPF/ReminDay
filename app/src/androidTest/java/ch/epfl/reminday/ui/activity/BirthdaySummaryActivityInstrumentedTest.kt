@@ -1,33 +1,44 @@
 package ch.epfl.reminday.ui.activity
 
+import android.app.Activity
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
+import androidx.test.espresso.Espresso.onIdle
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.ViewInteraction
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.matches
+import androidx.test.espresso.contrib.ActivityResultMatchers.hasResultCode
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.Intents.intended
 import androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent
 import androidx.test.espresso.intent.matcher.IntentMatchers.hasExtra
-import androidx.test.espresso.matcher.ViewMatchers.withId
-import androidx.test.espresso.matcher.ViewMatchers.withText
+import androidx.test.espresso.matcher.ViewMatchers.*
 import ch.epfl.reminday.R
 import ch.epfl.reminday.data.birthday.Birthday
+import ch.epfl.reminday.data.birthday.BirthdayDao
+import ch.epfl.reminday.di.BirthdayDatabaseTestDI
 import ch.epfl.reminday.format.date.DateFormatter
 import ch.epfl.reminday.testutils.UITestUtils.onMenuItem
 import ch.epfl.reminday.util.Mocks
 import ch.epfl.reminday.util.constant.ArgumentNames.BIRTHDAY
 import ch.epfl.reminday.util.constant.ArgumentNames.BIRTHDAY_EDIT_MODE_ORDINAL
+import ch.epfl.reminday.util.constant.PreferenceNames.GENERAL_PREFERENCES
+import ch.epfl.reminday.util.constant.PreferenceNames.GeneralPreferenceNames.SKIP_DELETE_CONFIRMATION
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
+import kotlinx.coroutines.runBlocking
 import org.hamcrest.Matchers.allOf
 import org.junit.After
+import org.junit.Assert.assertFalse
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import java.util.*
+import javax.inject.Inject
 
 @HiltAndroidTest
 class BirthdaySummaryActivityInstrumentedTest {
@@ -37,14 +48,29 @@ class BirthdaySummaryActivityInstrumentedTest {
 
     private val formatter = DateFormatter.longFormatter(Locale.ENGLISH)
 
+    @Inject
+    lateinit var dao: BirthdayDao
+
+    private lateinit var preferences: SharedPreferences
+
     @Before
     fun init() {
         Intents.init()
+        hiltRule.inject()
+
+        val context = getApplicationContext<Context>()
+        preferences = context.getSharedPreferences(GENERAL_PREFERENCES, Context.MODE_PRIVATE)
+        preferences.edit()
+            .remove(SKIP_DELETE_CONFIRMATION)
+            .commit()
     }
 
     @After
     fun release() {
         Intents.release()
+        preferences.edit()
+            .remove(SKIP_DELETE_CONFIRMATION)
+            .commit()
     }
 
     private fun launchBirthdaySummary(
@@ -86,5 +112,25 @@ class BirthdaySummaryActivityInstrumentedTest {
                 )
             )
         }
+    }
+
+    @Test
+    fun deleteActionDoesDeleteBirthdayFromDaoAndCloseActivity(): Unit = runBlocking {
+        preferences.edit()
+            .putBoolean(SKIP_DELETE_CONFIRMATION, true)
+            .commit()
+
+        BirthdayDatabaseTestDI.fillIn(dao)
+        val bDay = dao.getAll().first()
+
+        launchBirthdaySummary(bDay) {
+            onMenuItem(withText(R.string.delete_birthday_item_text)).perform(click())
+
+            onIdle()
+
+            assertThat(it.result, hasResultCode(Activity.RESULT_CANCELED))
+        }
+
+        assertFalse(dao.getAll().contains(bDay))
     }
 }

@@ -69,8 +69,7 @@ class BirthdaySummaryActivity : BackArrowActivity() {
                 R.string.are_you_sure,
                 R.string.delete_birthday_are_you_sure,
                 getSharedPreferences(GENERAL_PREFERENCES, Context.MODE_PRIVATE),
-                SKIP_DELETE_CONFIRMATION,
-                defaultSkipFlagValue = false
+                SKIP_DELETE_CONFIRMATION
             ) {
                 deleteAndCloseActivity()
             }

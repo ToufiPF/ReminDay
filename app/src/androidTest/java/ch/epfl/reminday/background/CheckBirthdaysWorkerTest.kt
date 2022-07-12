@@ -5,6 +5,7 @@ import android.content.SharedPreferences
 import android.util.Log
 import androidx.annotation.StringRes
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
+import androidx.test.rule.GrantPermissionRule
 import androidx.test.uiautomator.By
 import androidx.work.ListenableWorker
 import androidx.work.WorkManager
@@ -28,11 +29,8 @@ import io.github.serpro69.kfaker.Faker
 import kotlinx.coroutines.runBlocking
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.`is`
-import org.junit.AfterClass
+import org.junit.*
 import org.junit.Assert.assertNull
-import org.junit.Before
-import org.junit.BeforeClass
-import org.junit.Test
 import java.time.LocalDate
 import java.time.MonthDay
 import java.time.Year
@@ -105,6 +103,10 @@ class CheckBirthdaysWorkerTest {
 
     private lateinit var formatter: DateFormatter
     private lateinit var faker: Faker
+
+
+    @get:Rule
+    val permissionRule = GrantPermissionRule.grant("android.permission.POST_NOTIFICATIONS")!!
 
     @Before
     fun init() {
