@@ -10,6 +10,7 @@ import androidx.test.espresso.ViewInteraction
 import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.intent.Intents
+import androidx.test.espresso.matcher.RootMatchers.isDialog
 import androidx.test.espresso.matcher.ViewMatchers.*
 import ch.epfl.reminday.R
 import ch.epfl.reminday.data.birthday.Birthday
@@ -73,6 +74,12 @@ class BirthdayEditActivityInstrumentedTest {
     private val onMonth: ViewInteraction get() = onView(withId(R.id.month))
     private val onYear: ViewInteraction get() = onView(withId(R.id.year))
     private val onConfirm: ViewInteraction get() = onView(withId(R.id.confirm_button))
+
+    private val onDialogConfirm: ViewInteraction
+        get() = onView(withText(R.string.confirm)).inRoot(isDialog())
+
+    private val onDialogCancel: ViewInteraction
+        get() = onView(withText(R.string.cancel)).inRoot(isDialog())
 
     @Test
     fun registersBirthdayInsideDB() = launch { scenario ->
@@ -146,8 +153,9 @@ class BirthdayEditActivityInstrumentedTest {
             onMonth.perform(setValueByJumping(nextMonth))
             onConfirm.perform(click())
 
-            onView(withText(R.string.birthday_will_be_overwritten)).check(matches(isDisplayed()))
-            onView(withText(R.string.cancel)).perform(click())
+            onView(withText(R.string.birthday_will_be_overwritten))
+                .inRoot(isDialog()).check(matches(isDisplayed()))
+            onDialogCancel.perform(click())
         }
 
         assertEquals(initial, dao.findByName(initial.personName))
@@ -165,8 +173,9 @@ class BirthdayEditActivityInstrumentedTest {
             onMonth.perform(setValueByJumping(nextMonth))
             onConfirm.perform(click())
 
-            onView(withText(R.string.birthday_will_be_overwritten)).check(matches(isDisplayed()))
-            onView(withText(R.string.confirm)).perform(click())
+            onView(withText(R.string.birthday_will_be_overwritten))
+                .inRoot(isDialog()).check(matches(isDisplayed()))
+            onDialogConfirm.perform(click())
         }
 
         assertEquals(modified, dao.findByName(initial.personName))
@@ -202,8 +211,9 @@ class BirthdayEditActivityInstrumentedTest {
             onName.perform(replaceText(modified.personName), closeSoftKeyboard())
             onConfirm.perform(click())
 
-            onView(withText(R.string.birthday_will_be_overwritten)).check(matches(isDisplayed()))
-            onView(withText(R.string.confirm)).perform(click())
+            onView(withText(R.string.birthday_will_be_overwritten))
+                .inRoot(isDialog()).check(matches(isDisplayed()))
+            onDialogConfirm.perform(click())
         }
 
         assertNull(dao.findByName(initial.personName))
@@ -224,8 +234,9 @@ class BirthdayEditActivityInstrumentedTest {
             onName.perform(replaceText(modified.personName), closeSoftKeyboard())
             onConfirm.perform(click())
 
-            onView(withText(R.string.birthday_will_be_overwritten)).check(matches(isDisplayed()))
-            onView(withText(R.string.cancel)).perform(click())
+            onView(withText(R.string.birthday_will_be_overwritten))
+                .inRoot(isDialog()).check(matches(isDisplayed()))
+            onDialogCancel.perform(click())
         }
 
         assertEquals(initial, dao.findByName(initial.personName))

@@ -1,19 +1,26 @@
 package ch.epfl.reminday.ui.activity
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import ch.epfl.reminday.R
 import ch.epfl.reminday.data.birthday.Birthday
+import ch.epfl.reminday.data.birthday.BirthdayDao
 import ch.epfl.reminday.databinding.ActivityBirthdaySummaryBinding
 import ch.epfl.reminday.format.date.DateFormatter
 import ch.epfl.reminday.ui.activity.utils.BackArrowActivity
+import ch.epfl.reminday.util.Extensions.showConfirmationDialogWithDoNotAskAgain
 import ch.epfl.reminday.util.constant.ArgumentNames.BIRTHDAY
 import ch.epfl.reminday.util.constant.ArgumentNames.BIRTHDAY_EDIT_MODE_ORDINAL
+import ch.epfl.reminday.util.constant.PreferenceNames.GENERAL_PREFERENCES
+import ch.epfl.reminday.util.constant.PreferenceNames.GeneralPreferenceNames.SKIP_DELETE_CONFIRMATION
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import java.util.*
 import javax.inject.Inject
 
@@ -21,6 +28,9 @@ import javax.inject.Inject
 class BirthdaySummaryActivity : BackArrowActivity() {
 
     private lateinit var binding: ActivityBirthdaySummaryBinding
+
+    @Inject
+    lateinit var birthdayDao: BirthdayDao
 
     @Inject
     lateinit var locale: Locale
@@ -54,6 +64,17 @@ class BirthdaySummaryActivity : BackArrowActivity() {
             launchEditBirthdayActivity()
             true
         }
+        R.id.delete_birthday_item -> {
+            showConfirmationDialogWithDoNotAskAgain(
+                R.string.are_you_sure,
+                R.string.delete_birthday_are_you_sure,
+                getSharedPreferences(GENERAL_PREFERENCES, Context.MODE_PRIVATE),
+                SKIP_DELETE_CONFIRMATION
+            ) {
+                deleteAndCloseActivity()
+            }
+            true
+        }
         else -> super.onOptionsItemSelected(item)
     }
 
@@ -62,5 +83,12 @@ class BirthdaySummaryActivity : BackArrowActivity() {
         intent.putExtra(BIRTHDAY, birthday)
         intent.putExtra(BIRTHDAY_EDIT_MODE_ORDINAL, BirthdayEditActivity.Mode.EDIT.ordinal)
         startActivity(intent)
+    }
+
+    private fun deleteAndCloseActivity() {
+        lifecycleScope.launch {
+            birthdayDao.delete(birthday)
+            onBackPressed()
+        }
     }
 }

@@ -1,10 +1,12 @@
 package ch.epfl.reminday.util
 
+import android.content.SharedPreferences
 import android.text.Editable
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import ch.epfl.reminday.R
+import ch.epfl.reminday.databinding.DialogDoNotAskAgainBinding
 
 /**
  * Extension functions for various classes.
@@ -40,5 +42,34 @@ object Extensions {
             }.setNegativeButton(R.string.cancel) { dialog, _ ->
                 dialog.cancel()
             }.show()
+    }
+
+    fun AppCompatActivity.showConfirmationDialogWithDoNotAskAgain(
+        @StringRes title: Int,
+        @StringRes text: Int,
+        preferences: SharedPreferences,
+        skipConfirmationFlag: String,
+        onConfirm: () -> Unit
+    ) {
+        val skipConfirmation = preferences.getBoolean(skipConfirmationFlag, false)
+        if (skipConfirmation) {
+            onConfirm.invoke()
+        } else {
+            val binding = DialogDoNotAskAgainBinding.inflate(layoutInflater)
+            binding.messageTextView.text = getString(text)
+
+            AlertDialog.Builder(this)
+                .setTitle(title)
+                .setView(binding.root)
+                .setPositiveButton(R.string.confirm) { dialog, _ ->
+                    dialog.dismiss()
+                    preferences.edit()
+                        .putBoolean(skipConfirmationFlag, binding.checkboxDoNotAskAgain.isChecked)
+                        .commit()
+                    onConfirm.invoke()
+                }.setNegativeButton(R.string.cancel) { dialog, _ ->
+                    dialog.cancel()
+                }.show()
+        }
     }
 }
