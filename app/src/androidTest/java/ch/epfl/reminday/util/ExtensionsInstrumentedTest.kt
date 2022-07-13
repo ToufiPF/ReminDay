@@ -5,21 +5,20 @@ import android.content.SharedPreferences
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import androidx.test.espresso.Espresso.onIdle
 import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.ViewAssertion
+import androidx.test.espresso.ViewInteraction
 import androidx.test.espresso.action.ViewActions.click
-import androidx.test.espresso.assertion.ViewAssertions
 import androidx.test.espresso.assertion.ViewAssertions.doesNotExist
 import androidx.test.espresso.assertion.ViewAssertions.matches
-import androidx.test.espresso.matcher.ViewMatchers.*
+import androidx.test.espresso.matcher.RootMatchers.isDialog
+import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
+import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import ch.epfl.reminday.EmptyRegularTestActivity
 import ch.epfl.reminday.R
 import ch.epfl.reminday.util.Extensions.showConfirmationDialog
 import ch.epfl.reminday.util.Extensions.showConfirmationDialogWithDoNotAskAgain
-import ch.epfl.reminday.util.constant.PreferenceNames
 import ch.epfl.reminday.util.constant.PreferenceNames.GENERAL_PREFERENCES
 import ch.epfl.reminday.util.constant.PreferenceNames.GeneralPreferenceNames.SKIP_DELETE_CONFIRMATION
-import org.hamcrest.Matchers
 import org.junit.After
 import org.junit.Assert.*
 import org.junit.Before
@@ -36,6 +35,15 @@ class ExtensionsInstrumentedTest {
     val scenarioRule = ActivityScenarioRule(EmptyRegularTestActivity::class.java)
 
     private lateinit var preferences: SharedPreferences
+
+    private val onConfirm: ViewInteraction
+        get() = onView(withText(R.string.confirm)).inRoot(isDialog())
+
+    private val onCancel: ViewInteraction
+        get() = onView(withText(R.string.cancel)).inRoot(isDialog())
+
+    private val onDoNotAskAgain: ViewInteraction
+        get() = onView(withText(R.string.do_not_ask_again)).inRoot(isDialog())
 
     @Before
     fun init() {
@@ -65,11 +73,12 @@ class ExtensionsInstrumentedTest {
             )
         }
 
-        onView(withText(R.string.are_you_sure)).check(matches(isDisplayed()))
-        onView(withText(R.string.import_from_contacts_are_you_sure)).check(matches(isDisplayed()))
-        onView(withText(R.string.cancel)).check(matches(isDisplayed()))
-        onView(withText(R.string.confirm)).check(matches(isDisplayed()))
-        onView(withText(R.string.cancel)).perform(click()) // must dismiss dialog for test to succeed
+        onView(withText(R.string.are_you_sure)).inRoot(isDialog()).check(matches(isDisplayed()))
+        onView(withText(R.string.import_from_contacts_are_you_sure))
+            .inRoot(isDialog()).check(matches(isDisplayed()))
+        onCancel.check(matches(isDisplayed()))
+        onConfirm.check(matches(isDisplayed()))
+        onCancel.perform(click()) // must dismiss dialog for test to succeed
     }
 
     @Test
@@ -82,7 +91,7 @@ class ExtensionsInstrumentedTest {
             )
         }
 
-        onView(withText(R.string.cancel)).perform(click())
+        onCancel.perform(click())
         onIdle()
 
         assertEquals(counter.get(), 0)
@@ -98,7 +107,7 @@ class ExtensionsInstrumentedTest {
             )
         }
 
-        onView(withText(R.string.confirm)).perform(click())
+        onConfirm.perform(click())
         onIdle()
 
         assertEquals(counter.get(), 1)
@@ -116,12 +125,12 @@ class ExtensionsInstrumentedTest {
             )
         }
 
-        onView(withText(R.string.are_you_sure)).check(matches(isDisplayed()))
-        onView(withText(R.string.import_from_contacts_are_you_sure)).check(matches(isDisplayed()))
-        onView(withText(R.string.do_not_ask_again)).check(matches(isDisplayed()))
-        onView(withText(R.string.cancel)).check(matches(isDisplayed()))
-        onView(withText(R.string.confirm)).check(matches(isDisplayed()))
-        onView(withText(R.string.cancel)).perform(click()) // must dismiss dialog for test to succeed
+        onView(withText(R.string.are_you_sure)).inRoot(isDialog()).check(matches(isDisplayed()))
+        onView(withText(R.string.import_from_contacts_are_you_sure)).inRoot(isDialog()).check(matches(isDisplayed()))
+        onDoNotAskAgain.check(matches(isDisplayed()))
+        onCancel.check(matches(isDisplayed()))
+        onConfirm.check(matches(isDisplayed()))
+        onCancel.perform(click()) // must dismiss dialog for test to succeed
     }
 
     @Test
@@ -136,8 +145,8 @@ class ExtensionsInstrumentedTest {
             )
         }
 
-        onView(withText(R.string.do_not_ask_again)).perform(click())
-        onView(withText(R.string.confirm)).perform(click())
+        onDoNotAskAgain.perform(click())
+        onConfirm.perform(click())
 
         onIdle()
 
@@ -157,8 +166,8 @@ class ExtensionsInstrumentedTest {
             )
         }
 
-        onView(withText(R.string.do_not_ask_again)).perform(click())
-        onView(withText(R.string.cancel)).perform(click())
+        onDoNotAskAgain.perform(click())
+        onCancel.perform(click())
 
         onIdle()
 
