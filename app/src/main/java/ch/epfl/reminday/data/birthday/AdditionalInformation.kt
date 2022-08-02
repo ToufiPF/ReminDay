@@ -22,5 +22,5 @@ import kotlinx.parcelize.Parcelize
 data class AdditionalInformation(
     @PrimaryKey(autoGenerate = true) val id: Long,
     val personName: String,
-    val data: String,
+    var data: String,
 ) : Parcelable
