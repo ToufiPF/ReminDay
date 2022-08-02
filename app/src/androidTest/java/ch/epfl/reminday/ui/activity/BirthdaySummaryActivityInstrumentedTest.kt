@@ -159,11 +159,11 @@ class BirthdaySummaryActivityInstrumentedTest {
 
             onIdle()
 
-            onView(withId(R.id.information_recycler))
+            onView(withId(R.id.additional_info_recycler))
                 .perform(waitUntilPopulated(3))
 
             infos.forEach {
-                onView(withId(R.id.information_recycler))
+                onView(withId(R.id.additional_info_recycler))
                     .check(matches(hasDescendant(withText(it.data))))
             }
         }
