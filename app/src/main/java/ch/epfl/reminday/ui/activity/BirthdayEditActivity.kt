@@ -7,6 +7,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.test.espresso.idling.CountingIdlingResource
 import ch.epfl.reminday.R
 import ch.epfl.reminday.adapter.BirthdayEditAddInfoAdapter
 import ch.epfl.reminday.adapter.BirthdayEditInfoAdapter
@@ -65,6 +66,8 @@ class BirthdayEditActivity : BackArrowActivity() {
     @Inject
     lateinit var infoDao: AdditionalInformationDao
 
+    val idlingRes = CountingIdlingResource("Dao resource")
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityBirthdayEditBinding.inflate(layoutInflater)
@@ -86,26 +89,29 @@ class BirthdayEditActivity : BackArrowActivity() {
                 birthdayEdit.year = birthday.year?.value
                 birthdayEdit.month = birthday.monthDay.monthValue
                 birthdayEdit.day = birthday.monthDay.dayOfMonth
+            }
 
-                lifecycleScope.launch {
-                    // Additional information adapter
-                    val data = infoDao.getInfoForName(birthday.personName)
-                    infoAdapter = BirthdayEditInfoAdapter(data)
+            idlingRes.increment()
+            lifecycleScope.launch {
+                // Additional information adapter
+                val data = birthday?.let { infoDao.getInfoForName(it.personName) } ?: listOf()
+                infoAdapter = BirthdayEditInfoAdapter(data)
 
-                    // This adapter has 1 item only: the "+" button to add another info
-                    addInfoAdapter = BirthdayEditAddInfoAdapter()
-                    addInfoAdapter.actionOnButtonClicked = {
-                        infoAdapter.appendInfoItem(
-                            AdditionalInformation(0, birthday.personName, "")
-                        )
-                    }
-
-                    // Use ConcatAdapter to append them
-                    additionalInfoRecycler.adapter = ConcatAdapter(
-                        infoAdapter,
-                        addInfoAdapter,
+                // This adapter has 1 item only: the "+" button to add another info
+                addInfoAdapter = BirthdayEditAddInfoAdapter()
+                addInfoAdapter.actionOnButtonClicked = {
+                    infoAdapter.appendInfoItem(
+                        AdditionalInformation(0, "Temporary", "")
                     )
                 }
+
+                // Use ConcatAdapter to append them
+                additionalInfoRecycler.adapter = ConcatAdapter(
+                    infoAdapter,
+                    addInfoAdapter,
+                )
+
+                idlingRes.decrement()
             }
 
             nameEditText.addTextChangedListener { editable ->
@@ -155,8 +161,7 @@ class BirthdayEditActivity : BackArrowActivity() {
                             }
                         else
                             renamePersonInBirthdayAndInformation(birthday, b, info)
-                    }
-                    else {
+                    } else {
                         insertBirthdayAndFinish(b, info)
                     }
                 }
@@ -178,23 +183,23 @@ class BirthdayEditActivity : BackArrowActivity() {
         old?.let { bDayDao.delete(it) }
         //infoDao.delete(*data.toTypedArray()) // deleted by SQL: cascading effect
 
-        // update the references to the old name in the AdditionalInformation table
-        val newData = data.map {
-            if (it.personName != new.personName)
-                AdditionalInformation(it.id, new.personName, it.data)
-            else
-                it
-        }
-
-        insertBirthdayAndFinish(new, newData)
+        insertBirthdayAndFinish(new, data)
     }
 
     private suspend fun insertBirthdayAndFinish(
         birthday: Birthday,
         info: List<AdditionalInformation>
     ) {
+        // update the references to the old name in the AdditionalInformation table
+        val newData = info.map {
+            if (it.personName != birthday.personName)
+                AdditionalInformation(it.id, birthday.personName, it.data)
+            else
+                it
+        }.toTypedArray()
+
         bDayDao.insertAll(birthday)
-        infoDao.insertAll(*info.toTypedArray())
+        infoDao.insertAll(*newData)
 
         val data = Intent()
         data.putExtra(BIRTHDAY, birthday)

@@ -4,18 +4,11 @@ import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.test.espresso.Espresso.onIdle
 import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.UiController
-import androidx.test.espresso.ViewAction
-import androidx.test.espresso.action.MotionEvents
-import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import ch.epfl.reminday.R
 import ch.epfl.reminday.testutils.SafeFragmentScenario
-import ch.epfl.reminday.ui.view.ClickableDrawableMaterialEditTextInstrumentedTest.Place.*
-import com.google.android.material.textfield.TextInputEditText
-import org.hamcrest.Matcher
-import org.hamcrest.Matchers
-import org.hamcrest.Matchers.instanceOf
+import ch.epfl.reminday.testutils.UITestUtils.clickOnCompoundDrawable
+import ch.epfl.reminday.ui.view.ClickableDrawableMaterialEditText.Place.*
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
@@ -24,65 +17,6 @@ import java.util.concurrent.atomic.AtomicInteger
 class ClickableDrawableMaterialEditTextInstrumentedTest {
 
     class TestFragment : Fragment(R.layout.activity_birthday_edit_info_item)
-
-    enum class Place {
-        LEFT,
-        TOP,
-        RIGHT,
-        BOTTOM
-    }
-
-    private fun clickOnCompoundDrawable(where: Place) = object : ViewAction {
-        override fun perform(uiController: UiController?, view: View?) {
-            uiController!!.loopMainThreadUntilIdle()
-            val v = view as TextInputEditText
-
-            val halfWidth = v.width / 2
-            val halfHeight = v.height / 2
-
-            val location = IntArray(2)
-            v.getLocationOnScreen(location)
-            var x = location[0].toFloat()
-            var y = location[1].toFloat()
-            when (where) {
-                LEFT -> {
-                    x += (v.paddingLeft + v.totalPaddingLeft) / 2
-                    y += halfHeight
-                }
-                TOP -> {
-                    x += halfWidth
-                    y += (v.paddingTop + v.totalPaddingTop) / 2
-                }
-                RIGHT -> {
-                    x += v.width - (v.paddingRight + v.totalPaddingRight) / 2
-                    y += halfHeight
-                }
-                BOTTOM -> {
-                    x += halfWidth
-                    y += v.height - (v.paddingBottom + v.totalPaddingBottom) / 2
-                }
-            }
-
-            val coordinates = FloatArray(2)
-            coordinates[0] = x
-            coordinates[1] = y
-            val precision = FloatArray(2) { 1.0f }
-
-            uiController.loopMainThreadUntilIdle()
-            val down = MotionEvents.sendDown(uiController, coordinates, precision).down
-            uiController.loopMainThreadForAtLeast(200)
-            MotionEvents.sendUp(uiController, down)
-        }
-
-        override fun getConstraints(): Matcher<View> = Matchers.allOf(
-            instanceOf(TextInputEditText::class.java),
-            isDisplayed(),
-        )
-
-        override fun getDescription(): String =
-            "Click on the ${where.name.lowercase()} compound drawable"
-    }
-
 
     private val clicked = AtomicInteger(0)
 

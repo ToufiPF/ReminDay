@@ -7,6 +7,7 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import androidx.test.espresso.*
+import androidx.test.espresso.action.MotionEvents
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.matcher.IntentMatchers
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
@@ -18,6 +19,9 @@ import androidx.test.uiautomator.BySelector
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiObject2
 import androidx.test.uiautomator.Until
+import ch.epfl.reminday.ui.view.ClickableDrawableMaterialEditText
+import ch.epfl.reminday.ui.view.ClickableDrawableMaterialEditText.Place
+import com.google.android.material.textfield.TextInputEditText
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers
 import org.hamcrest.StringDescription
@@ -142,6 +146,63 @@ object UITestUtils {
             }
         }
 
+
+    fun clickOnCompoundDrawable(where: Place) = object : ViewAction {
+        override fun perform(uiController: UiController?, view: View?) {
+            uiController!!.loopMainThreadUntilIdle()
+            val v = view as TextInputEditText
+
+            val halfWidth = v.width / 2
+            val halfHeight = v.height / 2
+
+            val location = IntArray(2)
+            v.getLocationOnScreen(location)
+            var x = location[0].toFloat()
+            var y = location[1].toFloat()
+            when (where) {
+                Place.LEFT -> {
+                    x += (v.paddingLeft + v.totalPaddingLeft) / 2
+                    y += halfHeight
+                }
+                Place.TOP -> {
+                    x += halfWidth
+                    y += (v.paddingTop + v.totalPaddingTop) / 2
+                }
+                Place.RIGHT -> {
+                    x += v.width - (v.paddingRight + v.totalPaddingRight) / 2
+                    y += halfHeight
+                }
+                Place.BOTTOM -> {
+                    x += halfWidth
+                    y += v.height - (v.paddingBottom + v.totalPaddingBottom) / 2
+                }
+            }
+
+            val coordinates = FloatArray(2)
+            coordinates[0] = x
+            coordinates[1] = y
+            val precision = FloatArray(2) { 1.0f }
+
+            uiController.loopMainThreadUntilIdle()
+            val down = MotionEvents.sendDown(uiController, coordinates, precision).down
+            uiController.loopMainThreadForAtLeast(200)
+            MotionEvents.sendUp(uiController, down)
+        }
+
+        override fun getConstraints(): Matcher<View> = Matchers.allOf(
+            Matchers.instanceOf(TextInputEditText::class.java),
+            isDisplayed(),
+        )
+
+        override fun getDescription(): String =
+            "Click on the ${where.name.lowercase()} compound drawable"
+    }
+
+
+    /**
+     * Shortcut to get the [UiDevice].
+     * @see UiDevice.getInstance
+     */
     fun getUiDevice(): UiDevice =
         UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
 
