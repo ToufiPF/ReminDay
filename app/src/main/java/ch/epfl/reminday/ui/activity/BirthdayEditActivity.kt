@@ -1,9 +1,18 @@
 package ch.epfl.reminday.ui.activity
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.ConcatAdapter
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.test.espresso.idling.CountingIdlingResource
 import ch.epfl.reminday.R
+import ch.epfl.reminday.adapter.BirthdayEditAddInfoAdapter
+import ch.epfl.reminday.adapter.BirthdayEditInfoAdapter
+import ch.epfl.reminday.data.birthday.AdditionalInformation
+import ch.epfl.reminday.data.birthday.AdditionalInformationDao
 import ch.epfl.reminday.data.birthday.Birthday
 import ch.epfl.reminday.data.birthday.BirthdayDao
 import ch.epfl.reminday.databinding.ActivityBirthdayEditBinding
@@ -11,6 +20,7 @@ import ch.epfl.reminday.ui.activity.utils.BackArrowActivity
 import ch.epfl.reminday.util.Extensions.set
 import ch.epfl.reminday.util.Extensions.showConfirmationDialog
 import ch.epfl.reminday.util.constant.ArgumentNames
+import ch.epfl.reminday.util.constant.ArgumentNames.BIRTHDAY
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import java.time.MonthDay
@@ -47,26 +57,61 @@ class BirthdayEditActivity : BackArrowActivity() {
     private var birthday: Birthday? = null
     private lateinit var mode: Mode
 
+    private lateinit var addInfoAdapter: BirthdayEditAddInfoAdapter
+    private lateinit var infoAdapter: BirthdayEditInfoAdapter
+
     @Inject
-    lateinit var dao: BirthdayDao
+    lateinit var bDayDao: BirthdayDao
+
+    @Inject
+    lateinit var infoDao: AdditionalInformationDao
+
+    val idlingRes = CountingIdlingResource("Dao resource")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityBirthdayEditBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        birthday = intent.getParcelableExtra(ArgumentNames.BIRTHDAY)
+        birthday = intent.getParcelableExtra(BIRTHDAY)
         mode = Mode.ALL[intent.getIntExtra(
             ArgumentNames.BIRTHDAY_EDIT_MODE_ORDINAL,
             Mode.DEFAULT_ORDINAL
         )]
 
         binding.apply {
+
+            additionalInfoRecycler.layoutManager =
+                LinearLayoutManager(this@BirthdayEditActivity, RecyclerView.VERTICAL, false)
+
             birthday?.let { birthday ->
                 nameEditText.text?.set(birthday.personName)
                 birthdayEdit.year = birthday.year?.value
                 birthdayEdit.month = birthday.monthDay.monthValue
                 birthdayEdit.day = birthday.monthDay.dayOfMonth
+            }
+
+            idlingRes.increment()
+            lifecycleScope.launch {
+                // Additional information adapter
+                val data = birthday?.let { infoDao.getInfoForName(it.personName) } ?: listOf()
+                infoAdapter = BirthdayEditInfoAdapter(data)
+
+                // This adapter has 1 item only: the "+" button to add another info
+                addInfoAdapter = BirthdayEditAddInfoAdapter()
+                addInfoAdapter.actionOnButtonClicked = {
+                    infoAdapter.appendInfoItem(
+                        AdditionalInformation(0, "Temporary", "")
+                    )
+                }
+
+                // Use ConcatAdapter to append them
+                additionalInfoRecycler.adapter = ConcatAdapter(
+                    infoAdapter,
+                    addInfoAdapter,
+                )
+
+                idlingRes.decrement()
             }
 
             nameEditText.addTextChangedListener { editable ->
@@ -86,34 +131,38 @@ class BirthdayEditActivity : BackArrowActivity() {
 
         if (!name.isNullOrBlank()) {
             val b = Birthday(name, MonthDay.of(month, day), year?.let { Year.of(it) })
+            val info = infoAdapter.data
 
             // if we're in Edit mode, delete the previous birthday
             when (mode) {
                 Mode.ADD -> lifecycleScope.launch {
-                    val existing = dao.findByName(name)
+                    val existing = bDayDao.findByName(name)
                     if (existing != null)
                         showConfirmOverwriteDialog {
                             // a birthday with the same name exists, request confirmation to overwrite
                             lifecycleScope.launch {
-                                insertBirthdayAndFinish(b)
+                                insertBirthdayAndFinish(b, info)
                             }
                         }
                     else {
                         // fast path: insert & close activity
-                        insertBirthdayAndFinish(b)
+                        insertBirthdayAndFinish(b, info)
                     }
                 }
                 Mode.EDIT -> lifecycleScope.launch {
-                    if (birthday?.personName != name && dao.findByName(name) != null)
-                        showConfirmOverwriteDialog {
-                            lifecycleScope.launch {
-                                birthday?.let { dao.delete(it) }
-                                insertBirthdayAndFinish(b)
+                    if (birthday?.personName != name) {
+                        // trying to change the name of the person
+                        // if another user already has the same name, show confirmation
+                        if (bDayDao.findByName(name) != null)
+                            showConfirmOverwriteDialog {
+                                lifecycleScope.launch {
+                                    renamePersonInBirthdayAndInformation(birthday, b, info)
+                                }
                             }
-                        }
-                    else {
-                        birthday?.let { dao.delete(it) }
-                        insertBirthdayAndFinish(b)
+                        else
+                            renamePersonInBirthdayAndInformation(birthday, b, info)
+                    } else {
+                        insertBirthdayAndFinish(b, info)
                     }
                 }
             }
@@ -126,9 +175,36 @@ class BirthdayEditActivity : BackArrowActivity() {
         onConfirm = onConfirm
     )
 
-    private suspend fun insertBirthdayAndFinish(birthday: Birthday) {
-        dao.insertAll(birthday)
-        setResult(RESULT_OK)
+    private suspend fun renamePersonInBirthdayAndInformation(
+        old: Birthday?,
+        new: Birthday,
+        data: List<AdditionalInformation>,
+    ) {
+        old?.let { bDayDao.delete(it) }
+        //infoDao.delete(*data.toTypedArray()) // deleted by SQL: cascading effect
+
+        insertBirthdayAndFinish(new, data)
+    }
+
+    private suspend fun insertBirthdayAndFinish(
+        birthday: Birthday,
+        info: List<AdditionalInformation>
+    ) {
+        // update the references to the old name in the AdditionalInformation table
+        val newData = info.map {
+            if (it.personName != birthday.personName)
+                AdditionalInformation(it.id, birthday.personName, it.data)
+            else
+                it
+        }.toTypedArray()
+
+        bDayDao.insertAll(birthday)
+        infoDao.insertAll(*newData)
+
+        val data = Intent()
+        data.putExtra(BIRTHDAY, birthday)
+
+        setResult(RESULT_OK, data)
         finish()
     }
 }

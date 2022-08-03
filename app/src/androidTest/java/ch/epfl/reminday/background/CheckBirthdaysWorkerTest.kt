@@ -17,6 +17,7 @@ import ch.epfl.reminday.MainApplication.Companion.makeWorkManagerConfigurationBu
 import ch.epfl.reminday.R
 import ch.epfl.reminday.data.birthday.Birthday
 import ch.epfl.reminday.data.birthday.BirthdayDao
+import ch.epfl.reminday.data.birthday.BirthdayDatabase
 import ch.epfl.reminday.di.BirthdayDatabaseTestDI
 import ch.epfl.reminday.format.date.DateFormatter
 import ch.epfl.reminday.testutils.UITestUtils
@@ -41,6 +42,7 @@ class CheckBirthdaysWorkerTest {
 
     companion object {
         private lateinit var context: Context
+        private lateinit var db: BirthdayDatabase
         private lateinit var dao: BirthdayDao
         private val locale = Locale.ENGLISH
 
@@ -54,7 +56,8 @@ class CheckBirthdaysWorkerTest {
         @JvmStatic
         fun initWorkerConfig() {
             context = getApplicationContext()
-            dao = BirthdayDatabaseTestDI.provideFakeBirthdayDao(context)
+            db = BirthdayDatabaseTestDI.provideDb(context)
+            dao = BirthdayDatabaseTestDI.provideBirthdayDao(db)
 
             val config = makeWorkManagerConfigurationBuilder(dao, locale)
                 .setMinimumLoggingLevel(Log.DEBUG)
@@ -103,7 +106,6 @@ class CheckBirthdaysWorkerTest {
 
     private lateinit var formatter: DateFormatter
     private lateinit var faker: Faker
-
 
     @get:Rule
     val permissionRule = GrantPermissionRule.grant("android.permission.POST_NOTIFICATIONS")!!

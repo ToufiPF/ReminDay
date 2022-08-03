@@ -15,10 +15,18 @@ object BirthdayDatabaseDI {
 
     @Provides
     @Singleton
-    fun provideBirthdayDao(@ApplicationContext context: Context): BirthdayDao {
-        val db = Room.databaseBuilder(context, BirthdayDatabase::class.java, BirthdayDatabase.NAME)
+    fun provideDb(@ApplicationContext context: Context): BirthdayDatabase =
+        Room.databaseBuilder(context, BirthdayDatabase::class.java, BirthdayDatabase.NAME)
             .fallbackToDestructiveMigrationFrom(1, 2, 3, 4)
             .build()
-        return db.birthdayDao()
-    }
+
+    @Provides
+    @Singleton
+    fun provideBirthdayDao(db: BirthdayDatabase): BirthdayDao =
+        db.birthdayDao()
+
+    @Provides
+    @Singleton
+    fun provideAdditionalInformationDao(db: BirthdayDatabase): AdditionalInformationDao =
+        db.additionalInformationDao()
 }

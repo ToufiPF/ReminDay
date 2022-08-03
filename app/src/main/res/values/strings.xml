@@ -42,4 +42,5 @@
     <string name="notif_title">Happy Birthday %1$s !</string>
     <string name="notif_text">"Today is the %1$s, it's %2$s's birthday."</string>
     <string name="notif_additional_text_year_known">"They are %1$d!"</string>
+    <string name="button_info_add_content_description">Add additional information</string>
 </resources>

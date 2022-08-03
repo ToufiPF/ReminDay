@@ -2,10 +2,7 @@ package ch.epfl.reminday.di
 
 import android.content.Context
 import androidx.room.Room
-import ch.epfl.reminday.data.birthday.Birthday
-import ch.epfl.reminday.data.birthday.BirthdayDao
-import ch.epfl.reminday.data.birthday.BirthdayDatabase
-import ch.epfl.reminday.data.birthday.BirthdayDatabaseDI
+import ch.epfl.reminday.data.birthday.*
 import ch.epfl.reminday.util.Mocks
 import dagger.Module
 import dagger.Provides
@@ -28,10 +25,18 @@ object BirthdayDatabaseTestDI {
 
     @Provides
     @Singleton
-    fun provideFakeBirthdayDao(@ApplicationContext context: Context): BirthdayDao {
-        val db = Room.inMemoryDatabaseBuilder(context, BirthdayDatabase::class.java).build()
-        return db.birthdayDao()
-    }
+    fun provideDb(@ApplicationContext context: Context): BirthdayDatabase =
+        Room.inMemoryDatabaseBuilder(context, BirthdayDatabase::class.java).build()
+
+    @Provides
+    @Singleton
+    fun provideBirthdayDao(db: BirthdayDatabase): BirthdayDao =
+        db.birthdayDao()
+
+    @Provides
+    @Singleton
+    fun provideAdditionalInformationDao(db: BirthdayDatabase): AdditionalInformationDao =
+        db.additionalInformationDao()
 
     fun fillIn(dao: BirthdayDao): Unit = runBlocking(Dispatchers.IO) {
         val faker = Mocks.makeFaker()
@@ -63,6 +68,10 @@ object BirthdayDatabaseTestDI {
     }
 
     fun clear(dao: BirthdayDao): Unit = runBlocking(Dispatchers.IO) {
+        dao.getAll().forEach { dao.delete(it) }
+    }
+
+    fun clear(dao: AdditionalInformationDao): Unit = runBlocking(Dispatchers.IO) {
         dao.getAll().forEach { dao.delete(it) }
     }
 }

@@ -5,9 +5,9 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 
 @Database(
-    entities = [Birthday::class, ContactInformation::class],
+    entities = [Birthday::class, AdditionalInformation::class],
     exportSchema = true,
-    version = 3,
+    version = 4,
 )
 @TypeConverters(Converters::class)
 abstract class BirthdayDatabase : RoomDatabase() {
@@ -17,4 +17,6 @@ abstract class BirthdayDatabase : RoomDatabase() {
     }
 
     abstract fun birthdayDao(): BirthdayDao
+
+    abstract fun additionalInformationDao(): AdditionalInformationDao
 }

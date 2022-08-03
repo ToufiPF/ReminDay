@@ -13,10 +13,15 @@ import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.matcher.RootMatchers.isDialog
 import androidx.test.espresso.matcher.ViewMatchers.*
 import ch.epfl.reminday.R
+import ch.epfl.reminday.data.birthday.AdditionalInformation
+import ch.epfl.reminday.data.birthday.AdditionalInformationDao
 import ch.epfl.reminday.data.birthday.Birthday
 import ch.epfl.reminday.data.birthday.BirthdayDao
+import ch.epfl.reminday.testutils.IdlingResources
+import ch.epfl.reminday.ui.view.ClickableDrawableMaterialEditText.Place
 import ch.epfl.reminday.testutils.NumberPickerTestUtils.setValueByJumping
 import ch.epfl.reminday.testutils.NumberPickerTestUtils.withValue
+import ch.epfl.reminday.testutils.UITestUtils
 import ch.epfl.reminday.util.Mocks
 import ch.epfl.reminday.util.constant.ArgumentNames
 import dagger.hilt.android.testing.HiltAndroidRule
@@ -40,7 +45,10 @@ class BirthdayEditActivityInstrumentedTest {
 
     // inject Dao inside test to perform setups/verifications
     @Inject
-    lateinit var dao: BirthdayDao
+    lateinit var bDayDao: BirthdayDao
+
+    @Inject
+    lateinit var infoDao: AdditionalInformationDao
 
     @Before
     fun init() {
@@ -51,6 +59,7 @@ class BirthdayEditActivityInstrumentedTest {
     @After
     fun clear() {
         Intents.release()
+        IdlingResources.unregisterAll()
     }
 
     private fun launch(
@@ -62,9 +71,15 @@ class BirthdayEditActivityInstrumentedTest {
         birthday?.let { intent.putExtra(ArgumentNames.BIRTHDAY, it) }
         mode?.let { intent.putExtra(ArgumentNames.BIRTHDAY_EDIT_MODE_ORDINAL, it.ordinal) }
 
-        ActivityScenario.launch<BirthdayEditActivity>(intent).use {
+        ActivityScenario.launch<BirthdayEditActivity>(intent).use { scenario ->
             runBlocking {
-                testMethod.invoke(it)
+                scenario.onActivity { activity ->
+                    IdlingResources.register(activity.idlingRes)
+                }
+
+                testMethod.invoke(scenario)
+
+                IdlingResources.unregisterAll()
             }
         }
     }
@@ -74,6 +89,7 @@ class BirthdayEditActivityInstrumentedTest {
     private val onMonth: ViewInteraction get() = onView(withId(R.id.month))
     private val onYear: ViewInteraction get() = onView(withId(R.id.year))
     private val onConfirm: ViewInteraction get() = onView(withId(R.id.confirm_button))
+    private val onAddInfo: ViewInteraction get() = onView(withId(R.id.add_info_button))
 
     private val onDialogConfirm: ViewInteraction
         get() = onView(withText(R.string.confirm)).inRoot(isDialog())
@@ -84,6 +100,7 @@ class BirthdayEditActivityInstrumentedTest {
     @Test
     fun registersBirthdayInsideDB() = launch { scenario ->
         val expected = Mocks.birthday(yearKnown = true)
+        val infoText = Mocks.makeFaker().coffee.blendName()
 
         onName.perform(
             replaceText(expected.personName),
@@ -94,10 +111,18 @@ class BirthdayEditActivityInstrumentedTest {
         onMonth.perform(setValueByJumping(expected.monthDay.monthValue))
         onDay.perform(setValueByJumping(expected.monthDay.dayOfMonth))
 
+        onAddInfo.perform(click())
+        onView(withId(R.id.additional_info_edit_text))
+            .perform(replaceText(infoText), closeSoftKeyboard())
+
         onConfirm.perform(click())
 
         assertEquals(Activity.RESULT_OK, scenario.result.resultCode)
-        assertEquals(expected, dao.findByName(expected.personName))
+        assertEquals(expected, bDayDao.findByName(expected.personName))
+        assertEquals(
+            listOf(AdditionalInformation(1, expected.personName, infoText)),
+            infoDao.getInfoForName(expected.personName),
+        )
     }
 
     @Test
@@ -116,7 +141,7 @@ class BirthdayEditActivityInstrumentedTest {
         Espresso.pressBackUnconditionally()
 
         assertEquals(Activity.RESULT_CANCELED, scenario.result.resultCode)
-        assertEquals(null, dao.findByName(expected.personName))
+        assertEquals(null, bDayDao.findByName(expected.personName))
     }
 
     @Test
@@ -147,7 +172,7 @@ class BirthdayEditActivityInstrumentedTest {
         val initial = Mocks.birthday(yearKnown = false)
         val nextMonth = 1 + (initial.monthDay.monthValue + 1) % 12
 
-        dao.insertAll(initial)
+        bDayDao.insertAll(initial)
 
         launch(initial) {
             onMonth.perform(setValueByJumping(nextMonth))
@@ -158,7 +183,7 @@ class BirthdayEditActivityInstrumentedTest {
             onDialogCancel.perform(click())
         }
 
-        assertEquals(initial, dao.findByName(initial.personName))
+        assertEquals(initial, bDayDao.findByName(initial.personName))
     }
 
     @Test
@@ -167,7 +192,7 @@ class BirthdayEditActivityInstrumentedTest {
         val nextMonth = 1 + (initial.monthDay.monthValue + 1) % 12
         val modified = initial.copy(monthDay = initial.monthDay.withMonth(nextMonth))
 
-        dao.insertAll(initial)
+        bDayDao.insertAll(initial)
 
         launch(initial, BirthdayEditActivity.Mode.ADD) {
             onMonth.perform(setValueByJumping(nextMonth))
@@ -178,7 +203,7 @@ class BirthdayEditActivityInstrumentedTest {
             onDialogConfirm.perform(click())
         }
 
-        assertEquals(modified, dao.findByName(initial.personName))
+        assertEquals(modified, bDayDao.findByName(initial.personName))
     }
 
     @Test
@@ -187,14 +212,14 @@ class BirthdayEditActivityInstrumentedTest {
         val nextMonth = 1 + (initial.monthDay.monthValue + 1) % 12
         val modified = initial.copy(monthDay = initial.monthDay.withMonth(nextMonth))
 
-        dao.insertAll(initial)
+        bDayDao.insertAll(initial)
 
         launch(initial, BirthdayEditActivity.Mode.EDIT) {
             onMonth.perform(setValueByJumping(nextMonth))
             onConfirm.perform(click())
         }
 
-        assertEquals(modified, dao.findByName(initial.personName))
+        assertEquals(modified, bDayDao.findByName(initial.personName))
     }
 
     @Test
@@ -204,11 +229,16 @@ class BirthdayEditActivityInstrumentedTest {
         val existing = Mocks.birthday(yearKnown = true).copy(personName = faker.names())
 
         val modified = initial.copy(personName = existing.personName)
-
-        dao.insertAll(initial, existing)
+        bDayDao.insertAll(initial, existing)
+        infoDao.insertAll(AdditionalInformation(0, initial.personName, "Yo"))
 
         launch(initial, BirthdayEditActivity.Mode.EDIT) {
+            onView(withId(R.id.additional_info_edit_text))
+                .perform(replaceText("Hello 1"), closeSoftKeyboard())
             onName.perform(replaceText(modified.personName), closeSoftKeyboard())
+            onAddInfo.perform(click())
+            onView(allOf(withId(R.id.additional_info_edit_text), not(withText("Hello 1"))))
+                .perform(replaceText("Hello 2"), closeSoftKeyboard())
             onConfirm.perform(click())
 
             onView(withText(R.string.birthday_will_be_overwritten))
@@ -216,8 +246,16 @@ class BirthdayEditActivityInstrumentedTest {
             onDialogConfirm.perform(click())
         }
 
-        assertNull(dao.findByName(initial.personName))
-        assertEquals(modified, dao.findByName(existing.personName))
+        assertNull(bDayDao.findByName(initial.personName))
+        assertEquals(modified, bDayDao.findByName(existing.personName))
+        assertEquals(listOf<AdditionalInformation>(), infoDao.getInfoForName(initial.personName))
+        assertEquals(
+            listOf(
+                AdditionalInformation(1, existing.personName, "Hello 1"),
+                AdditionalInformation(2, existing.personName, "Hello 2"),
+            ),
+            infoDao.getInfoForName(existing.personName)
+        )
     }
 
     @Test
@@ -227,11 +265,12 @@ class BirthdayEditActivityInstrumentedTest {
         val existing = Mocks.birthday(yearKnown = true).copy(personName = faker.names())
 
         val modified = initial.copy(personName = existing.personName)
-
-        dao.insertAll(initial, existing)
+        bDayDao.insertAll(initial, existing)
+        infoDao.insertAll(AdditionalInformation(0, initial.personName, "Yo"))
 
         launch(initial, BirthdayEditActivity.Mode.EDIT) {
             onName.perform(replaceText(modified.personName), closeSoftKeyboard())
+            onAddInfo.perform(click())
             onConfirm.perform(click())
 
             onView(withText(R.string.birthday_will_be_overwritten))
@@ -239,7 +278,51 @@ class BirthdayEditActivityInstrumentedTest {
             onDialogCancel.perform(click())
         }
 
-        assertEquals(initial, dao.findByName(initial.personName))
-        assertEquals(existing, dao.findByName(existing.personName))
+        assertEquals(initial, bDayDao.findByName(initial.personName))
+        assertEquals(existing, bDayDao.findByName(existing.personName))
+        assertEquals(
+            listOf(AdditionalInformation(1, initial.personName, "Yo")),
+            infoDao.getInfoForName(initial.personName)
+        )
+        assertEquals(listOf<AdditionalInformation>(), infoDao.getInfoForName(existing.personName))
+    }
+
+    @Test
+    fun editModeRemovesCorrectInfo(): Unit = runBlocking {
+        val faker = Mocks.makeFaker().artist.unique
+        val initial = Mocks.birthday(yearKnown = false).copy(personName = faker.names())
+        val existing = Mocks.birthday(yearKnown = true).copy(personName = faker.names())
+
+        val modified = initial.copy(personName = existing.personName)
+
+        bDayDao.insertAll(initial, existing)
+        infoDao.insertAll(
+            AdditionalInformation(0, initial.personName, "1"),
+            AdditionalInformation(0, initial.personName, "2"),
+            AdditionalInformation(0, initial.personName, "3"),
+            AdditionalInformation(0, initial.personName, "4"),
+        )
+
+        launch(initial, BirthdayEditActivity.Mode.EDIT) {
+            onName.perform(replaceText(modified.personName), closeSoftKeyboard())
+            onView(allOf(withId(R.id.additional_info_edit_text), withText("2")))
+                .perform(UITestUtils.clickOnCompoundDrawable(Place.RIGHT)) // delete
+            onConfirm.perform(click())
+
+            onView(withText(R.string.birthday_will_be_overwritten))
+                .inRoot(isDialog()).check(matches(isDisplayed()))
+            onDialogConfirm.perform(click())
+        }
+
+        assertNull(bDayDao.findByName(initial.personName))
+        assertEquals(modified, bDayDao.findByName(existing.personName))
+        assertEquals(listOf<AdditionalInformation>(), infoDao.getInfoForName(initial.personName))
+        assertEquals(
+            listOf(
+                AdditionalInformation(1, existing.personName, "1"),
+                AdditionalInformation(3, existing.personName, "3"),
+                AdditionalInformation(4, existing.personName, "4"),
+            ), infoDao.getInfoForName(existing.personName)
+        )
     }
 }

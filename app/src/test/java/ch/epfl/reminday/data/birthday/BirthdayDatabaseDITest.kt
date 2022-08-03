@@ -14,7 +14,8 @@ class BirthdayDatabaseDITest {
 
     private lateinit var context: Context
     private lateinit var db: BirthdayDatabase
-    private lateinit var dao: BirthdayDao
+    private lateinit var bDayDao: BirthdayDao
+    private lateinit var infoDao: AdditionalInformationDao
 
     @Before
     fun init() {
@@ -22,13 +23,15 @@ class BirthdayDatabaseDITest {
         every { context.applicationContext } returns context
 
         db = mockk()
-        dao = mockk()
+        bDayDao = mockk()
+        infoDao = mockk()
     }
 
     private fun mockkBirthdayDatabase(test: suspend () -> Unit) {
         mockkConstructor(RoomDatabase.Builder::class) {
             every { anyConstructed<RoomDatabase.Builder<*>>().build() } returns db
-            every { db.birthdayDao() } returns dao
+            every { db.birthdayDao() } returns bDayDao
+            every { db.additionalInformationDao() } returns infoDao
 
             runBlocking {
                 test.invoke()
@@ -37,7 +40,17 @@ class BirthdayDatabaseDITest {
     }
 
     @Test
+    fun providesNonNullDB() = mockkBirthdayDatabase {
+        assertEquals(db, BirthdayDatabaseDI.provideDb(context))
+    }
+
+    @Test
     fun providesNonNullBirthdayDatabase() = mockkBirthdayDatabase {
-        assertEquals(dao, BirthdayDatabaseDI.provideBirthdayDao(context))
+        assertEquals(bDayDao, BirthdayDatabaseDI.provideBirthdayDao(db))
+    }
+
+    @Test
+    fun providesNonNullInfoDatabase() = mockkBirthdayDatabase {
+        assertEquals(infoDao, BirthdayDatabaseDI.provideAdditionalInformationDao(db))
     }
 }
