@@ -288,7 +288,7 @@ class BirthdayEditActivityInstrumentedTest {
     }
 
     @Test
-    fun editModeRemovesAdditionalInfo(): Unit = runBlocking {
+    fun editModeRemovesCorrectInfo(): Unit = runBlocking {
         val faker = Mocks.makeFaker().artist.unique
         val initial = Mocks.birthday(yearKnown = false).copy(personName = faker.names())
         val existing = Mocks.birthday(yearKnown = true).copy(personName = faker.names())
@@ -296,11 +296,16 @@ class BirthdayEditActivityInstrumentedTest {
         val modified = initial.copy(personName = existing.personName)
 
         bDayDao.insertAll(initial, existing)
-        infoDao.insertAll(AdditionalInformation(0, initial.personName, "Yo"))
+        infoDao.insertAll(
+            AdditionalInformation(0, initial.personName, "1"),
+            AdditionalInformation(0, initial.personName, "2"),
+            AdditionalInformation(0, initial.personName, "3"),
+            AdditionalInformation(0, initial.personName, "4"),
+        )
 
         launch(initial, BirthdayEditActivity.Mode.EDIT) {
             onName.perform(replaceText(modified.personName), closeSoftKeyboard())
-            onView(withId(R.id.additional_info_edit_text))
+            onView(allOf(withId(R.id.additional_info_edit_text), withText("2")))
                 .perform(UITestUtils.clickOnCompoundDrawable(Place.RIGHT)) // delete
             onConfirm.perform(click())
 
@@ -312,6 +317,12 @@ class BirthdayEditActivityInstrumentedTest {
         assertNull(bDayDao.findByName(initial.personName))
         assertEquals(modified, bDayDao.findByName(existing.personName))
         assertEquals(listOf<AdditionalInformation>(), infoDao.getInfoForName(initial.personName))
-        assertEquals(listOf<AdditionalInformation>(), infoDao.getInfoForName(existing.personName))
+        assertEquals(
+            listOf(
+                AdditionalInformation(1, existing.personName, "1"),
+                AdditionalInformation(3, existing.personName, "3"),
+                AdditionalInformation(4, existing.personName, "4"),
+            ), infoDao.getInfoForName(existing.personName)
+        )
     }
 }
