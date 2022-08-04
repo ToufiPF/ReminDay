@@ -4,6 +4,7 @@ import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.res.ResourcesCompat
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -13,6 +14,7 @@ import ch.epfl.reminday.databinding.FragmentBirthdayListItemBinding
 import ch.epfl.reminday.format.date.DateFormatter
 import ch.epfl.reminday.ui.activity.BirthdaySummaryActivity
 import ch.epfl.reminday.util.constant.ArgumentNames
+import java.time.LocalDate
 import java.util.*
 
 class BirthdayListAdapter(
@@ -36,16 +38,33 @@ class BirthdayListAdapter(
         private val binding = FragmentBirthdayListItemBinding.bind(view)
         private val dateFormatter = DateFormatter.shortFormatter(locale)
 
+        private val highlightColor: Int by lazy {
+            view.context.let {
+                ResourcesCompat.getColor(it.resources, R.color.corn_silk, it.theme)
+            }
+        }
+
         fun bind(birthday: Birthday) {
-            binding.calendarView.monthDay = birthday.monthDay
-            binding.nameView.text = birthday.personName
-            binding.dateView.text = dateFormatter.format(birthday.monthDay, birthday.year)
+            binding.apply {
+                calendarView.monthDay = birthday.monthDay
+                nameView.text = birthday.personName
+                dateView.text = dateFormatter.format(birthday.monthDay, birthday.year)
 
-            binding.root.setOnClickListener {
-                val intent = Intent(it.context, BirthdaySummaryActivity::class.java)
-                intent.putExtra(ArgumentNames.BIRTHDAY, birthday)
+                cardView.setOnClickListener {
+                    val intent = Intent(it.context, BirthdaySummaryActivity::class.java)
+                    intent.putExtra(ArgumentNames.BIRTHDAY, birthday)
 
-                it.context.startActivity(intent)
+                    it.context.startActivity(intent)
+                }
+
+                val now = LocalDate.now()
+                if (birthday.monthDay.dayOfMonth == now.dayOfMonth &&
+                    birthday.monthDay.monthValue == now.monthValue
+                ) {
+                    cardView.setCardBackgroundColor(highlightColor)
+                    cardView.cardElevation = 4.0f
+                } else
+                    cardView.setCardBackgroundColor(null)
             }
         }
     }

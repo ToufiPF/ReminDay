@@ -10,7 +10,10 @@ import androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent
 import androidx.test.espresso.intent.matcher.IntentMatchers.hasExtra
 import androidx.test.espresso.matcher.ViewMatchers.*
 import ch.epfl.reminday.R
+import ch.epfl.reminday.data.birthday.Birthday
 import ch.epfl.reminday.data.birthday.BirthdayDao
+import ch.epfl.reminday.testutils.EspressoMatchers
+import ch.epfl.reminday.testutils.EspressoMatchers.withBackgroundColorRes
 import ch.epfl.reminday.testutils.SafeFragmentScenario
 import ch.epfl.reminday.testutils.UITestUtils
 import ch.epfl.reminday.ui.activity.BirthdaySummaryActivity
@@ -20,10 +23,14 @@ import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.runBlocking
 import org.hamcrest.Matchers.allOf
+import org.hamcrest.Matchers.not
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import java.time.LocalDate
+import java.time.MonthDay
+import java.time.Year
 import javax.inject.Inject
 
 @HiltAndroidTest
@@ -85,6 +92,39 @@ class BirthdayListFragmentInstrumentedTest {
                     hasExtra(ArgumentNames.BIRTHDAY, birthday),
                 )
             )
+        }
+    }
+
+    @Test
+    fun birthdayOnCurrentDayIsHighlighted(): Unit = runBlocking {
+        val faker = Mocks.makeFaker()
+        val bDay1 = Birthday(
+            faker.freshPriceOfBelAir.unique.characters(),
+            MonthDay.now(),
+            null
+        )
+        val bDay2 = Birthday(
+            faker.freshPriceOfBelAir.unique.characters(),
+            MonthDay.now(),
+            Year.of(1999)
+        )
+        val bDay3 = Birthday(
+            faker.freshPriceOfBelAir.unique.characters(),
+            MonthDay.now().withDayOfMonth(1 + (LocalDate.now().dayOfMonth + 1) % 28),
+            null
+        )
+        dao.insertAll(bDay1, bDay2, bDay3)
+
+        launchBirthdayListFragment {
+            onRecycler.perform(UITestUtils.waitUntilPopulated())
+
+            for (bDay in listOf(bDay1, bDay2)) {
+                onView(withText(bDay.personName))
+                    .check(matches(isDescendantOfA(withBackgroundColorRes(R.color.corn_silk))))
+            }
+
+            onView(withText(bDay3.personName))
+                .check(matches(not(isDescendantOfA(withBackgroundColorRes(R.color.corn_silk)))))
         }
     }
 }

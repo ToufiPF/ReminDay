@@ -3,6 +3,7 @@ package ch.epfl.reminday.testutils
 import android.content.Context
 import android.content.Intent
 import android.view.View
+import android.widget.EditText
 import androidx.core.app.NotificationManagerCompat
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
@@ -19,7 +20,6 @@ import androidx.test.uiautomator.BySelector
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiObject2
 import androidx.test.uiautomator.Until
-import ch.epfl.reminday.ui.view.ClickableDrawableMaterialEditText
 import ch.epfl.reminday.ui.view.ClickableDrawableMaterialEditText.Place
 import com.google.android.material.textfield.TextInputEditText
 import org.hamcrest.Matcher
@@ -147,10 +147,13 @@ object UITestUtils {
         }
 
 
+    /**
+     * Returns a [ViewAction] that clicks on the desired compound drawable in an [EditText]
+     */
     fun clickOnCompoundDrawable(where: Place) = object : ViewAction {
         override fun perform(uiController: UiController?, view: View?) {
             uiController!!.loopMainThreadUntilIdle()
-            val v = view as TextInputEditText
+            val v = view as EditText
 
             val halfWidth = v.width / 2
             val halfHeight = v.height / 2
