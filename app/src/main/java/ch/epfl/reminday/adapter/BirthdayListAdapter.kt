@@ -4,6 +4,7 @@ import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.res.ResourcesCompat
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -13,6 +14,7 @@ import ch.epfl.reminday.databinding.FragmentBirthdayListItemBinding
 import ch.epfl.reminday.format.date.DateFormatter
 import ch.epfl.reminday.ui.activity.BirthdaySummaryActivity
 import ch.epfl.reminday.util.constant.ArgumentNames
+import java.time.LocalDate
 import java.util.*
 
 class BirthdayListAdapter(
@@ -37,15 +39,24 @@ class BirthdayListAdapter(
         private val dateFormatter = DateFormatter.shortFormatter(locale)
 
         fun bind(birthday: Birthday) {
-            binding.calendarView.monthDay = birthday.monthDay
-            binding.nameView.text = birthday.personName
-            binding.dateView.text = dateFormatter.format(birthday.monthDay, birthday.year)
+            binding.apply {
+                calendarView.monthDay = birthday.monthDay
+                nameView.text = birthday.personName
+                dateView.text = dateFormatter.format(birthday.monthDay, birthday.year)
 
-            binding.root.setOnClickListener {
-                val intent = Intent(it.context, BirthdaySummaryActivity::class.java)
-                intent.putExtra(ArgumentNames.BIRTHDAY, birthday)
+                root.setOnClickListener {
+                    val intent = Intent(it.context, BirthdaySummaryActivity::class.java)
+                    intent.putExtra(ArgumentNames.BIRTHDAY, birthday)
 
-                it.context.startActivity(intent)
+                    it.context.startActivity(intent)
+                }
+
+                val now = LocalDate.now()
+                if (birthday.monthDay.dayOfMonth == now.dayOfMonth &&
+                    birthday.monthDay.monthValue == now.monthValue)
+                    root.setBackgroundResource(R.color.corn_silk)
+                else
+                    root.setBackgroundResource(ResourcesCompat.ID_NULL)
             }
         }
     }
