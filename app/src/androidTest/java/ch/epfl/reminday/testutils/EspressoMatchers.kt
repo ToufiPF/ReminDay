@@ -1,10 +1,12 @@
 package ch.epfl.reminday.testutils
 
 import android.content.Context
+import android.content.res.ColorStateList
 import android.graphics.drawable.ColorDrawable
 import android.view.View
 import androidx.annotation.ColorInt
 import androidx.annotation.ColorRes
+import androidx.cardview.widget.CardView
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.content.res.ResourcesCompat.getColor
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
@@ -24,11 +26,14 @@ object EspressoMatchers {
         }
 
         override fun matches(item: Any?): Boolean {
-            if (item is View) {
+            return item is View && if (item is CardView) {
+                @Suppress("RedundantNullableReturnType")
+                val bg: ColorStateList? = item.cardBackgroundColor
+                bg?.defaultColor == color
+            } else {
                 val bg = item.background as? ColorDrawable
-                return bg?.color == color
+                bg?.color == color
             }
-            return false
         }
     }
 

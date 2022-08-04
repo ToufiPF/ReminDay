@@ -38,13 +38,19 @@ class BirthdayListAdapter(
         private val binding = FragmentBirthdayListItemBinding.bind(view)
         private val dateFormatter = DateFormatter.shortFormatter(locale)
 
+        private val highlightColor: Int by lazy {
+            view.context.let {
+                ResourcesCompat.getColor(it.resources, R.color.corn_silk, it.theme)
+            }
+        }
+
         fun bind(birthday: Birthday) {
             binding.apply {
                 calendarView.monthDay = birthday.monthDay
                 nameView.text = birthday.personName
                 dateView.text = dateFormatter.format(birthday.monthDay, birthday.year)
 
-                root.setOnClickListener {
+                cardView.setOnClickListener {
                     val intent = Intent(it.context, BirthdaySummaryActivity::class.java)
                     intent.putExtra(ArgumentNames.BIRTHDAY, birthday)
 
@@ -53,10 +59,12 @@ class BirthdayListAdapter(
 
                 val now = LocalDate.now()
                 if (birthday.monthDay.dayOfMonth == now.dayOfMonth &&
-                    birthday.monthDay.monthValue == now.monthValue)
-                    root.setBackgroundResource(R.color.corn_silk)
-                else
-                    root.setBackgroundResource(ResourcesCompat.ID_NULL)
+                    birthday.monthDay.monthValue == now.monthValue
+                ) {
+                    cardView.setCardBackgroundColor(highlightColor)
+                    cardView.cardElevation = 4.0f
+                } else
+                    cardView.setCardBackgroundColor(null)
             }
         }
     }
