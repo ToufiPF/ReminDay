@@ -8,6 +8,7 @@
     <string name="cancel">Cancel</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
+    <string name="continue_">Continue</string>
 
     <!-- Used in forms -->
     <string name="full_name">Name</string>

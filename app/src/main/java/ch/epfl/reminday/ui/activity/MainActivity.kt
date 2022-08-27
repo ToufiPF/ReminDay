@@ -14,6 +14,7 @@ import androidx.test.espresso.idling.CountingIdlingResource
 import ch.epfl.reminday.R
 import ch.epfl.reminday.data.birthday.BirthdayDao
 import ch.epfl.reminday.databinding.ActivityMainBinding
+import ch.epfl.reminday.ui.fragment.BirthdayListFragment
 import ch.epfl.reminday.util.Extensions.showConfirmationDialog
 import ch.epfl.reminday.util.constant.ArgumentNames.BIRTHDAY_EDIT_MODE_ORDINAL
 import ch.epfl.reminday.viewmodel.activity.MainViewModel
@@ -36,6 +37,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        val fragment: BirthdayListFragment = binding.birthdayListFragment.getFragment()
+        fragment.validateAuthentication()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

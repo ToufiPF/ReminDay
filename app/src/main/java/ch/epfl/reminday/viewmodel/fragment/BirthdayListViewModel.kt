@@ -1,5 +1,6 @@
 package ch.epfl.reminday.viewmodel.fragment
 
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
@@ -22,4 +23,6 @@ class BirthdayListViewModel @Inject constructor(
     }
 
     val flow = pager.flow.cachedIn(viewModelScope)
+
+    val authenticated = MutableLiveData<Boolean>(false)
 }
