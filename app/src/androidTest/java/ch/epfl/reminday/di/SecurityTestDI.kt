@@ -8,6 +8,7 @@ import dagger.hilt.android.components.ActivityComponent
 import dagger.hilt.android.scopes.ActivityScoped
 import dagger.hilt.testing.TestInstallIn
 import org.mockito.Mockito
+import org.mockito.Mockito.`when` as whenever
 
 @Module
 @TestInstallIn(
@@ -16,12 +17,16 @@ import org.mockito.Mockito
 )
 object SecurityTestDI {
 
-    val prompt: PromptUserUnlock = Mockito.mock(PromptUserUnlock::class.java)
+    val prompt: PromptUserUnlock = Mockito.mock(PromptUserUnlock::class.java).also {
+        whenever(it.canAuthenticate()).thenReturn(false)
+    }
 
     @Provides
     @ActivityScoped
-    fun providePromptUserUnlock(): PromptUserUnlock {
+    fun providePromptUserUnlock(): PromptUserUnlock = prompt
+
+    fun reset() {
         Mockito.reset(prompt)
-        return prompt
+        whenever(prompt.canAuthenticate()).thenReturn(false)
     }
 }
