@@ -53,12 +53,17 @@ class BirthdayListFragmentInstrumentedTest {
         Intents.release()
     }
 
+    // necessary otherwise frag.validateAuthentication() won't compile
+    @Suppress("RemoveExplicitTypeArguments")
     private fun launchBirthdayListFragment(
         test: (SafeFragmentScenario<BirthdayListFragment>) -> Unit
-    ) = SafeFragmentScenario.launchInHiltContainer<BirthdayListFragment> {
+    ) = SafeFragmentScenario.launchInHiltContainer<BirthdayListFragment> { scenario ->
+        scenario.onFragment { frag ->
+            frag.validateAuthentication()
+        }
         onRecycler.perform(UITestUtils.waitUntilPopulated())
 
-        test.invoke(it)
+        test.invoke(scenario)
     }
 
     private val onRecycler: ViewInteraction get() = onView(withId(R.id.birthday_list_recycler))
