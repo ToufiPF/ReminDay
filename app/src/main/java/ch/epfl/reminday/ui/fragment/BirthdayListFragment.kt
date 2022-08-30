@@ -42,21 +42,13 @@ class BirthdayListFragment : Fragment(R.layout.fragment_birthday_list) {
             )
         }
 
-        viewModel.authenticated.observe(viewLifecycleOwner) { authenticated ->
-            if (authenticated) {
-                val adapter = BirthdayListAdapter(locale)
-                recyclerView.adapter = adapter
+        val adapter = BirthdayListAdapter(locale)
+        recyclerView.adapter = adapter
 
-                viewLifecycleOwner.lifecycleScope.launch {
-                    viewModel.flow.collectLatest { pagingData ->
-                        adapter.submitData(pagingData)
-                    }
-                }
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.flow.collectLatest { pagingData ->
+                adapter.submitData(pagingData)
             }
         }
-    }
-
-    fun validateAuthentication() {
-        viewModel.authenticated.value = true
     }
 }

@@ -23,6 +23,4 @@ class BirthdayListViewModel @Inject constructor(
     }
 
     val flow = pager.flow.cachedIn(viewModelScope)
-
-    val authenticated = MutableLiveData<Boolean>(false)
 }

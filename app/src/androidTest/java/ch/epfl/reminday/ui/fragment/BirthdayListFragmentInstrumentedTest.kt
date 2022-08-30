@@ -58,9 +58,6 @@ class BirthdayListFragmentInstrumentedTest {
     private fun launchBirthdayListFragment(
         test: (SafeFragmentScenario<BirthdayListFragment>) -> Unit
     ) = SafeFragmentScenario.launchInHiltContainer<BirthdayListFragment> { scenario ->
-        scenario.onFragment { frag ->
-            frag.validateAuthentication()
-        }
         onRecycler.perform(UITestUtils.waitUntilPopulated())
 
         test.invoke(scenario)
