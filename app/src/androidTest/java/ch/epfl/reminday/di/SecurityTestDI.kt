@@ -1,7 +1,7 @@
 package ch.epfl.reminday.di
 
-import ch.epfl.reminday.data.security.PromptUserUnlock
-import ch.epfl.reminday.data.security.SecurityDI
+import ch.epfl.reminday.security.PromptUserUnlock
+import ch.epfl.reminday.security.SecurityDI
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.android.components.ActivityComponent

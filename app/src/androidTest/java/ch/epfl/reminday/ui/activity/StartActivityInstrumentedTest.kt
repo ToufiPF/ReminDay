@@ -1,7 +1,5 @@
 package ch.epfl.reminday.ui.activity
 
-import android.app.Activity
-import androidx.lifecycle.Lifecycle
 import androidx.test.core.app.ActivityScenario
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.ViewInteraction
@@ -11,7 +9,7 @@ import androidx.test.espresso.intent.Intents.intended
 import androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import ch.epfl.reminday.R
-import ch.epfl.reminday.data.security.PromptUserUnlock
+import ch.epfl.reminday.security.PromptUserUnlock
 import ch.epfl.reminday.di.SecurityTestDI
 import ch.epfl.reminday.testutils.MockitoMatchers.any
 import ch.epfl.reminday.testutils.UITestUtils.assertNoUnverifiedIntentIgnoringBootstrap
@@ -19,7 +17,6 @@ import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.runBlocking
 import org.junit.After
-import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test

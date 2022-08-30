@@ -1,7 +1,6 @@
-package ch.epfl.reminday.data.security
+package ch.epfl.reminday.security
 
 import android.content.Context
-import androidx.biometric.BiometricManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

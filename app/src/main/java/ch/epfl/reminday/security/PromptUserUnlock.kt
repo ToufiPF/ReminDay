@@ -1,4 +1,4 @@
-package ch.epfl.reminday.data.security
+package ch.epfl.reminday.security
 
 import androidx.fragment.app.FragmentActivity
 

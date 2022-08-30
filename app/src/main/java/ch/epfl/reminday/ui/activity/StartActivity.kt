@@ -4,7 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import ch.epfl.reminday.data.security.PromptUserUnlock
+import ch.epfl.reminday.security.PromptUserUnlock
 import ch.epfl.reminday.databinding.ActivityStartBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
