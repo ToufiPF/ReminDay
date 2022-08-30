@@ -12,7 +12,6 @@ import androidx.test.espresso.matcher.ViewMatchers.*
 import ch.epfl.reminday.R
 import ch.epfl.reminday.data.birthday.Birthday
 import ch.epfl.reminday.data.birthday.BirthdayDao
-import ch.epfl.reminday.testutils.EspressoMatchers
 import ch.epfl.reminday.testutils.EspressoMatchers.withBackgroundColorRes
 import ch.epfl.reminday.testutils.SafeFragmentScenario
 import ch.epfl.reminday.testutils.UITestUtils

@@ -1,7 +1,6 @@
 package ch.epfl.reminday.viewmodel.activity
 
 import android.Manifest.permission.READ_CONTACTS
-import android.content.Context
 import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.os.Build
 import android.provider.ContactsContract

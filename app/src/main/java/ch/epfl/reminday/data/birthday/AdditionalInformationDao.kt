@@ -1,6 +1,5 @@
 package ch.epfl.reminday.data.birthday
 
-import androidx.paging.PagingSource
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert

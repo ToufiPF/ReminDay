@@ -9,8 +9,8 @@ import androidx.test.espresso.intent.Intents.intended
 import androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import ch.epfl.reminday.R
-import ch.epfl.reminday.security.PromptUserUnlock
 import ch.epfl.reminday.di.SecurityTestDI
+import ch.epfl.reminday.security.PromptUserUnlock
 import ch.epfl.reminday.testutils.MockitoMatchers.any
 import ch.epfl.reminday.testutils.UITestUtils.assertNoUnverifiedIntentIgnoringBootstrap
 import dagger.hilt.android.testing.HiltAndroidRule

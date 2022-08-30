@@ -3,7 +3,6 @@ package ch.epfl.reminday.data.birthday
 import ch.epfl.reminday.data.birthday.Comparators.monthDayYearNameOrder
 import ch.epfl.reminday.data.birthday.Comparators.nameYearMonthDayOrder
 import ch.epfl.reminday.data.birthday.Comparators.yearMonthDayNameOrder
-import org.junit.Assert
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
