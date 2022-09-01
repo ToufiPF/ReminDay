@@ -13,7 +13,6 @@ import dagger.hilt.android.scopes.ActivityScoped
 object SecurityDI {
 
     @Provides
-    @ActivityScoped
     fun provideBiometricManager(@ActivityContext context: Context): PromptUserUnlock =
         PromptUserUnlockImpl(context)
 }

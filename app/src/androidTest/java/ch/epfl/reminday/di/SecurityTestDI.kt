@@ -22,7 +22,6 @@ object SecurityTestDI {
     }
 
     @Provides
-    @ActivityScoped
     fun providePromptUserUnlock(): PromptUserUnlock = prompt
 
     fun reset() {
