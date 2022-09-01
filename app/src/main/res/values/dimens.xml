@@ -1,4 +1,5 @@
 <resources>
+    <dimen name="tiny_padding">6dp</dimen>
     <dimen name="small_padding">10dp</dimen>
     <dimen name="default_padding">18dp</dimen>
     <dimen name="large_padding">26dp</dimen>

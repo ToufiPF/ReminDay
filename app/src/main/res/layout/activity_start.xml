@@ -11,7 +11,7 @@
         android:fontFamily="@font/caslon_antique_bold"
         android:text="@string/app_name"
         android:textColor="@color/black"
-        android:textSize="32sp"
+        android:textSize="42sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -19,8 +19,8 @@
         app:layout_constraintVertical_bias="0.25" />
 
     <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
         android:layout_marginTop="@dimen/huge_padding"
         android:contentDescription="@null"
         android:src="@drawable/ic_calendar_empty"
@@ -29,14 +29,18 @@
         app:layout_constraintTop_toBottomOf="@id/title"
         app:tint="@color/dim_gray" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/continue_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/continue_button"
         android:layout_marginBottom="@dimen/huge_padding"
         android:backgroundTint="@color/dim_gray"
+        android:fontFamily="@font/montserrat_regular"
+        android:paddingHorizontal="@dimen/default_padding"
+        android:paddingVertical="@dimen/tiny_padding"
         android:text="@string/continue_"
         android:textAllCaps="false"
+        android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
