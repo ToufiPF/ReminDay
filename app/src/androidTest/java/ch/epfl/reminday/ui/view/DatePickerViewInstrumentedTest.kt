@@ -7,10 +7,10 @@ import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import ch.epfl.reminday.R
-import ch.epfl.reminday.testutils.SafeViewScenario
 import ch.epfl.reminday.testutils.NumberPickerTestUtils
 import ch.epfl.reminday.testutils.NumberPickerTestUtils.setValueByJumping
 import ch.epfl.reminday.testutils.NumberPickerTestUtils.setValueIncrementally
+import ch.epfl.reminday.testutils.SafeViewScenario
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import org.hamcrest.Matchers.not

@@ -12,7 +12,6 @@ import androidx.test.espresso.matcher.ViewMatchers.*
 import ch.epfl.reminday.R
 import ch.epfl.reminday.data.birthday.Birthday
 import ch.epfl.reminday.data.birthday.BirthdayDao
-import ch.epfl.reminday.testutils.EspressoMatchers
 import ch.epfl.reminday.testutils.EspressoMatchers.withBackgroundColorRes
 import ch.epfl.reminday.testutils.SafeFragmentScenario
 import ch.epfl.reminday.testutils.UITestUtils
@@ -53,12 +52,14 @@ class BirthdayListFragmentInstrumentedTest {
         Intents.release()
     }
 
+    // necessary otherwise frag.validateAuthentication() won't compile
+    @Suppress("RemoveExplicitTypeArguments")
     private fun launchBirthdayListFragment(
         test: (SafeFragmentScenario<BirthdayListFragment>) -> Unit
-    ) = SafeFragmentScenario.launchInHiltContainer<BirthdayListFragment> {
+    ) = SafeFragmentScenario.launchInHiltContainer<BirthdayListFragment> { scenario ->
         onRecycler.perform(UITestUtils.waitUntilPopulated())
 
-        test.invoke(it)
+        test.invoke(scenario)
     }
 
     private val onRecycler: ViewInteraction get() = onView(withId(R.id.birthday_list_recycler))

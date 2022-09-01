@@ -3,7 +3,6 @@ package ch.epfl.reminday
 import android.util.Log
 import androidx.multidex.MultiDexApplication
 import androidx.work.Configuration
-import androidx.work.DelegatingWorkerFactory
 import ch.epfl.reminday.background.BirthdayWorkerFactory
 import ch.epfl.reminday.background.CheckBirthdaysWorker
 import ch.epfl.reminday.background.CheckBirthdaysWorker.Companion.enqueueOneTimeWorkRequest

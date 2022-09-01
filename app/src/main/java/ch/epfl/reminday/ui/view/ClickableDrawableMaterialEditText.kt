@@ -5,9 +5,9 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.MotionEvent
 import androidx.core.view.ViewCompat
+import ch.epfl.reminday.ui.view.ClickableDrawableMaterialEditText.Place.*
 import com.google.android.material.R
 import com.google.android.material.textfield.TextInputEditText
-import ch.epfl.reminday.ui.view.ClickableDrawableMaterialEditText.Place.*
 
 @Suppress("unused")
 class ClickableDrawableMaterialEditText @JvmOverloads constructor(

@@ -29,19 +29,21 @@ class BirthdayListFragment : Fragment(R.layout.fragment_birthday_list) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val adapter = BirthdayListAdapter(locale)
-
         recyclerView = view.findViewById(R.id.birthday_list_recycler)
-        recyclerView.adapter = adapter
-        recyclerView.layoutManager =
-            LinearLayoutManager(view.context, LinearLayoutManager.VERTICAL, false)
-        recyclerView.addItemDecoration(
-            MarginItemDecoration(
-                orientation = LinearLayoutManager.VERTICAL,
-                verticalSpace = resources.getDimensionPixelSize(R.dimen.small_padding),
-                horizontalSpace = 0,
+        recyclerView.apply {
+            layoutManager =
+                LinearLayoutManager(view.context, LinearLayoutManager.VERTICAL, false)
+            addItemDecoration(
+                MarginItemDecoration(
+                    orientation = LinearLayoutManager.VERTICAL,
+                    verticalSpace = resources.getDimensionPixelSize(R.dimen.small_padding),
+                    horizontalSpace = 0,
+                )
             )
-        )
+        }
+
+        val adapter = BirthdayListAdapter(locale)
+        recyclerView.adapter = adapter
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.flow.collectLatest { pagingData ->

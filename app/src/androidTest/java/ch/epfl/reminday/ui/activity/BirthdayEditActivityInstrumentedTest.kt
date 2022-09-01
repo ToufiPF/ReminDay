@@ -18,10 +18,10 @@ import ch.epfl.reminday.data.birthday.AdditionalInformationDao
 import ch.epfl.reminday.data.birthday.Birthday
 import ch.epfl.reminday.data.birthday.BirthdayDao
 import ch.epfl.reminday.testutils.IdlingResources
-import ch.epfl.reminday.ui.view.ClickableDrawableMaterialEditText.Place
 import ch.epfl.reminday.testutils.NumberPickerTestUtils.setValueByJumping
 import ch.epfl.reminday.testutils.NumberPickerTestUtils.withValue
 import ch.epfl.reminday.testutils.UITestUtils
+import ch.epfl.reminday.ui.view.ClickableDrawableMaterialEditText.Place
 import ch.epfl.reminday.util.Mocks
 import ch.epfl.reminday.util.constant.ArgumentNames
 import dagger.hilt.android.testing.HiltAndroidRule

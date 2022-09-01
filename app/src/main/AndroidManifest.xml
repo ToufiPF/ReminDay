@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="ch.epfl.reminday">
 
-    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
@@ -18,14 +18,16 @@
         android:theme="@style/Theme.ReminDay">
 
         <activity
-            android:name=".ui.activity.MainActivity"
-            android:exported="true">
+            android:name=".ui.activity.StartActivity"
+            android:exported="true"
+            android:theme="@style/Theme.ReminDay.NoTitleBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
+        <activity android:name=".ui.activity.MainActivity" />
         <activity android:name=".ui.activity.BirthdayEditActivity" />
         <activity android:name=".ui.activity.BirthdaySummaryActivity" />
 
@@ -35,7 +37,8 @@
             android:authorities="${applicationId}.androidx-startup"
             tools:node="remove" />
         <!-- Call BirthdayWorkerLauncher::onReceive when phone starts up -->
-        <receiver android:name=".background.BirthdayBootBroadcastReceiver"
+        <receiver
+            android:name=".background.BirthdayBootBroadcastReceiver"
             android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
