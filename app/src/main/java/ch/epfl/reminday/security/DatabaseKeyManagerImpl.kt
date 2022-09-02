@@ -42,14 +42,22 @@ class DatabaseKeyManagerImpl(
             SecureRandom().nextBytes(this)
     }
 
-    override fun loadDatabaseKey(): ByteArray? {
-        val preferences = openEncryptedPreferences()
+    // TODO: androidx.security.crypto requires API >= 23 for now.
+    //  Once 1.1.0 is out, check if API >= 21 is possible.
+    override fun isDatabaseEncryptionSupported(): Boolean =
+        Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
 
+    override fun loadDatabaseKey(): ByteArray? {
+        if (!isDatabaseEncryptionSupported()) return null
+
+        val preferences = openEncryptedPreferences()
         val base64Key = preferences.getString(DATABASE_KEY, null) ?: return null
         return Base64.decode(base64Key, Base64.DEFAULT)
     }
 
     override fun storeDatabaseKey(key: ByteArray?) {
+        if (!isDatabaseEncryptionSupported()) return
+
         val preferences = openEncryptedPreferences()
         preferences.edit().apply {
             if (key == null) {
