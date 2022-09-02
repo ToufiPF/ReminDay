@@ -7,6 +7,9 @@
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
+    <!-- TODO: Maybe to remove once androidx.security.ktx 1.1.0 is out -->
+    <uses-sdk tools:overrideLibrary="androidx.security.ktx" />
+
     <application
         android:name=".MainApplication"
         android:allowBackup="false"

@@ -78,7 +78,7 @@ class CheckBirthdaysWorkerTest {
             UITestUtils.clearAllNotifications()
 
             preferences.edit()
-                .remove(LAST_BIRTHDAY_CHECK)
+                .clear()
                 .apply()
         }
 
@@ -115,7 +115,7 @@ class CheckBirthdaysWorkerTest {
         BirthdayDatabaseTestDI.clear(dao)
 
         preferences.edit()
-            .remove(LAST_BIRTHDAY_CHECK)
+            .clear()
             .apply()
         formatter = DateFormatter.shortFormatter(locale)
         faker = Mocks.makeFaker()
