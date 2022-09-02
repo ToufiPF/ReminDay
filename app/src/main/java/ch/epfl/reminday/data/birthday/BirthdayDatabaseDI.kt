@@ -32,10 +32,11 @@ object BirthdayDatabaseDI {
     ).apply {
         fallbackToDestructiveMigrationFrom(1, 2, 3, 4, 5)
 
-        val key = keyMgr.loadDatabaseKey()
-        if (key != null) {
-            val supportFactory = SupportFactory(key)
-            openHelperFactory(supportFactory)
+        if (keyMgr.isDatabaseEncryptionSupported()) {
+            keyMgr.loadDatabaseKey()?.let { key ->
+                val supportFactory = SupportFactory(key)
+                openHelperFactory(supportFactory)
+            }
         }
     }.build()
 

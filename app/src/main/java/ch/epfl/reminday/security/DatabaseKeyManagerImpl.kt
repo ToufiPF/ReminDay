@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.os.Build
 import android.util.Base64
+import androidx.annotation.VisibleForTesting
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.EncryptedSharedPreferences.PrefKeyEncryptionScheme
 import androidx.security.crypto.EncryptedSharedPreferences.PrefValueEncryptionScheme
@@ -16,7 +17,19 @@ class DatabaseKeyManagerImpl(
     private val appContext: Context
 ) : DatabaseKeyManager {
 
-    private fun openEncryptedPreferences(): SharedPreferences {
+    @Suppress("SameParameterValue")
+    private fun newRandom(bits: Int): ByteArray = ByteArray(bits / Byte.SIZE_BITS).apply {
+        if (bits % Byte.SIZE_BITS != 0)
+            throw IllegalArgumentException("Number of bits should be a multiple of ${Byte.SIZE_BITS}")
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+            SecureRandom.getInstanceStrong().nextBytes(this)
+        else
+            SecureRandom().nextBytes(this)
+    }
+
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    fun openEncryptedPreferences(): SharedPreferences {
         val mainKey = MasterKey.Builder(appContext)
             .setUserAuthenticationRequired(false)
             .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
@@ -31,24 +44,14 @@ class DatabaseKeyManagerImpl(
         )
     }
 
-    @Suppress("SameParameterValue")
-    private fun newRandom(bits: Int): ByteArray = ByteArray(bits / Byte.SIZE_BITS).apply {
-        if (bits % Byte.SIZE_BITS != 0)
-            throw IllegalArgumentException("Number of bits should be a multiple of ${Byte.SIZE_BITS}")
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-            SecureRandom.getInstanceStrong().nextBytes(this)
-        else
-            SecureRandom().nextBytes(this)
-    }
-
     // TODO: androidx.security.crypto requires API >= 23 for now.
     //  Once 1.1.0 is out, check if API >= 21 is possible.
     override fun isDatabaseEncryptionSupported(): Boolean =
         Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
 
     override fun loadDatabaseKey(): ByteArray? {
-        if (!isDatabaseEncryptionSupported()) return null
+        if (!isDatabaseEncryptionSupported())
+            throw IllegalStateException("Cannot load key from encrypted database: encryption not supported in this Android version.")
 
         val preferences = openEncryptedPreferences()
         val base64Key = preferences.getString(DATABASE_KEY, null) ?: return null
@@ -56,7 +59,8 @@ class DatabaseKeyManagerImpl(
     }
 
     override fun storeDatabaseKey(key: ByteArray?) {
-        if (!isDatabaseEncryptionSupported()) return
+        if (!isDatabaseEncryptionSupported())
+            throw IllegalStateException("Cannot store key to encrypted database: encryption not supported in this Android version.")
 
         val preferences = openEncryptedPreferences()
         preferences.edit().apply {

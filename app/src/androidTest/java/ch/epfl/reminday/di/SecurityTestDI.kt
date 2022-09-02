@@ -5,7 +5,6 @@ import ch.epfl.reminday.security.SecurityDI
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.android.components.ActivityComponent
-import dagger.hilt.android.scopes.ActivityScoped
 import dagger.hilt.testing.TestInstallIn
 import org.mockito.Mockito
 import org.mockito.Mockito.`when` as whenever

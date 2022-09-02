@@ -3,6 +3,8 @@ package ch.epfl.reminday.di
 import android.content.Context
 import androidx.room.Room
 import ch.epfl.reminday.data.birthday.*
+import ch.epfl.reminday.security.DatabaseKeyManager
+import ch.epfl.reminday.security.DatabaseKeyManagerImpl
 import ch.epfl.reminday.util.Mocks
 import dagger.Module
 import dagger.Provides
@@ -22,6 +24,10 @@ import javax.inject.Singleton
     replaces = [BirthdayDatabaseDI::class]
 )
 object BirthdayDatabaseTestDI {
+
+    @Provides
+    fun provideDbKeyManager(@ApplicationContext context: Context): DatabaseKeyManager =
+        DatabaseKeyManagerImpl(context)
 
     @Provides
     @Singleton
