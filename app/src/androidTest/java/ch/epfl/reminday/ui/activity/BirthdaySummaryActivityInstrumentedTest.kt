@@ -30,7 +30,6 @@ import ch.epfl.reminday.util.Mocks
 import ch.epfl.reminday.util.constant.ArgumentNames.BIRTHDAY
 import ch.epfl.reminday.util.constant.ArgumentNames.BIRTHDAY_EDIT_MODE_ORDINAL
 import ch.epfl.reminday.util.constant.PreferenceNames.GENERAL_PREFERENCES
-import ch.epfl.reminday.util.constant.PreferenceNames.GeneralPreferenceNames.SKIP_DELETE_CONFIRMATION
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.runBlocking
@@ -58,6 +57,7 @@ class BirthdaySummaryActivityInstrumentedTest {
     @Inject
     lateinit var infoDao: AdditionalInformationDao
 
+    private lateinit var context: Context
     private lateinit var preferences: SharedPreferences
 
     @Before
@@ -65,19 +65,15 @@ class BirthdaySummaryActivityInstrumentedTest {
         Intents.init()
         hiltRule.inject()
 
-        val context = getApplicationContext<Context>()
+        context = getApplicationContext()
         preferences = context.getSharedPreferences(GENERAL_PREFERENCES, Context.MODE_PRIVATE)
-        preferences.edit()
-            .remove(SKIP_DELETE_CONFIRMATION)
-            .commit()
+        preferences.edit().clear().commit()
     }
 
     @After
     fun release() {
         Intents.release()
-        preferences.edit()
-            .remove(SKIP_DELETE_CONFIRMATION)
-            .commit()
+        preferences.edit().clear().commit()
 
         IdlingResources.unregisterAll()
     }
@@ -126,7 +122,7 @@ class BirthdaySummaryActivityInstrumentedTest {
     @Test
     fun deleteActionDoesDeleteBirthdayFromDaoAndCloseActivity(): Unit = runBlocking {
         preferences.edit()
-            .putBoolean(SKIP_DELETE_CONFIRMATION, true)
+            .putBoolean(context.getString(R.string.prefs_show_delete_confirmation), false)
             .commit()
 
         BirthdayDatabaseTestDI.fillIn(birthdayDao)

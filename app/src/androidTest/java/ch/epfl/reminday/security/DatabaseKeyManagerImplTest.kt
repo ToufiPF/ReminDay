@@ -66,8 +66,8 @@ class DatabaseKeyManagerImplTest {
     }
 
     @Test
-    fun loadKeyReturnsNullIfNoKeyStored() {
-        assertNull(keyMgr.loadDatabaseKey())
+    fun loadKeyGeneratesNewKeyIfNoKeyStoredYet() {
+        assertNotNull(keyMgr.loadDatabaseKey())
     }
 
     @Test

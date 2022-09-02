@@ -9,6 +9,8 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="continue_">Continue</string>
+    <string name="restart_required">Need to restart the app</string>
+    <string name="do_not_ask_again">Do not ask again</string>
 
     <!-- Used in forms -->
     <string name="full_name">Name</string>
@@ -22,6 +24,7 @@
     <!-- Menu items -->
     <string name="add_birthday_item_text">Add birthday</string>
     <string name="import_from_contacts_item_text">Import from contacts</string>
+    <string name="options_text">Options</string>
     <string name="edit_birthday_item_text">Edit birthday</string>
     <string name="delete_birthday_item_text">Delete birthday</string>
 
@@ -37,11 +40,20 @@
     <string name="birthday_will_be_overwritten">A birthday for a person with the same name already exists. Are you sure you want to overwrite that entry?</string>
     <string name="import_from_contacts_no_contacts">Found no contacts to import</string>
 
-    <string name="do_not_ask_again">Do not ask again</string>
+    <string name="button_info_add_content_description">Add additional information</string>
 
+    <!-- Notifications -->
     <string name="notif_channel_title">ReminDay - Birthday</string>
     <string name="notif_title">Happy Birthday %1$s !</string>
     <string name="notif_text">"Today is the %1$s, it's %2$s's birthday."</string>
     <string name="notif_additional_text_year_known">"They are %1$d!"</string>
-    <string name="button_info_add_content_description">Add additional information</string>
+
+    <!-- Preferences ids (not translatable) -->
+    <string name="prefs_show_delete_confirmation" translatable="false">show_delete_confirmation</string>
+    <string name="prefs_require_user_unlock" translatable="false">prefs_require_user_unlock</string>
+
+    <!-- Preferences strings for display -->
+    <string name="prefs_show_delete_confirmation_title">Display confirmation dialog when deleting a birthday</string>
+    <string name="prefs_require_user_unlock_title">Require user unlock at startup</string>
+
 </resources>

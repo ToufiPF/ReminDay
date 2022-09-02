@@ -33,6 +33,7 @@
         <activity android:name=".ui.activity.MainActivity" />
         <activity android:name=".ui.activity.BirthdayEditActivity" />
         <activity android:name=".ui.activity.BirthdaySummaryActivity" />
+        <activity android:name=".ui.activity.PreferencesActivity" />
 
         <!-- Disable default Worker factory, we'll use our custom one -->
         <provider

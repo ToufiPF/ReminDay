@@ -23,7 +23,6 @@ import ch.epfl.reminday.util.Extensions.showConfirmationDialogWithDoNotAskAgain
 import ch.epfl.reminday.util.constant.ArgumentNames.BIRTHDAY
 import ch.epfl.reminday.util.constant.ArgumentNames.BIRTHDAY_EDIT_MODE_ORDINAL
 import ch.epfl.reminday.util.constant.PreferenceNames.GENERAL_PREFERENCES
-import ch.epfl.reminday.util.constant.PreferenceNames.GeneralPreferenceNames.SKIP_DELETE_CONFIRMATION
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import java.util.*
@@ -47,16 +46,17 @@ class BirthdaySummaryActivity : BackArrowActivity() {
 
     private lateinit var birthday: Birthday
 
-    private val editActivityLauncher = registerForActivityResult(StartActivityForResult()) { result ->
-        if (result.resultCode == Activity.RESULT_OK) {
-            // refresh modified data if EditActivity was exited successfully
-            result.data?.getParcelableExtra<Birthday>(BIRTHDAY)?.let {
-                intent.putExtra(BIRTHDAY, it)
-            }
+    private val editActivityLauncher =
+        registerForActivityResult(StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                // refresh modified data if EditActivity was exited successfully
+                result.data?.getParcelableExtra(BIRTHDAY, Birthday::class.java)?.let {
+                    intent.putExtra(BIRTHDAY, it)
+                }
 
-            recreate()
+                recreate()
+            }
         }
-    }
 
     val recyclerIdlingResource = CountingIdlingResource("additional_information_idling_res")
 
@@ -65,7 +65,7 @@ class BirthdaySummaryActivity : BackArrowActivity() {
         binding = ActivityBirthdaySummaryBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        birthday = intent.getParcelableExtra(BIRTHDAY)!!
+        birthday = intent.getParcelableExtra(BIRTHDAY, Birthday::class.java)!!
 
         binding.apply {
             name.text = birthday.personName
@@ -98,7 +98,7 @@ class BirthdaySummaryActivity : BackArrowActivity() {
                 R.string.are_you_sure,
                 R.string.delete_birthday_are_you_sure,
                 getSharedPreferences(GENERAL_PREFERENCES, Context.MODE_PRIVATE),
-                SKIP_DELETE_CONFIRMATION
+                getString(R.string.prefs_show_delete_confirmation)
             ) {
                 deleteAndCloseActivity()
             }
@@ -118,7 +118,7 @@ class BirthdaySummaryActivity : BackArrowActivity() {
     private fun deleteAndCloseActivity() {
         lifecycleScope.launch {
             birthdayDao.delete(birthday)
-            onBackPressed()
+            finish()
         }
     }
 }

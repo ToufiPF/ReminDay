@@ -73,7 +73,7 @@ class BirthdayEditActivity : BackArrowActivity() {
         binding = ActivityBirthdayEditBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        birthday = intent.getParcelableExtra(BIRTHDAY)
+        birthday = intent.getParcelableExtra(BIRTHDAY, Birthday::class.java)
         mode = Mode.ALL[intent.getIntExtra(
             ArgumentNames.BIRTHDAY_EDIT_MODE_ORDINAL,
             Mode.DEFAULT_ORDINAL
