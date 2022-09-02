@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.os.Build
 import android.util.Base64
+import android.util.Log
 import androidx.annotation.VisibleForTesting
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.EncryptedSharedPreferences.PrefKeyEncryptionScheme
@@ -18,14 +19,14 @@ class DatabaseKeyManagerImpl(
 ) : DatabaseKeyManager {
 
     @Suppress("SameParameterValue")
-    private fun newRandom(bits: Int): ByteArray = ByteArray(bits / Byte.SIZE_BITS).apply {
+    private fun newRandom(bits: Int): ByteArray = ByteArray(bits / Byte.SIZE_BITS).also {
         if (bits % Byte.SIZE_BITS != 0)
             throw IllegalArgumentException("Number of bits should be a multiple of ${Byte.SIZE_BITS}")
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-            SecureRandom.getInstanceStrong().nextBytes(this)
+            SecureRandom.getInstanceStrong().nextBytes(it)
         else
-            SecureRandom().nextBytes(this)
+            SecureRandom().nextBytes(it)
     }
 
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
@@ -53,9 +54,18 @@ class DatabaseKeyManagerImpl(
         if (!isDatabaseEncryptionSupported())
             throw IllegalStateException("Cannot load key from encrypted database: encryption not supported in this Android version.")
 
+        // Return the stored key (if any)
         val preferences = openEncryptedPreferences()
-        val base64Key = preferences.getString(DATABASE_KEY, null) ?: return null
-        return Base64.decode(base64Key, Base64.DEFAULT)
+        val base64Key = preferences.getString(DATABASE_KEY, null)
+        if (base64Key != null)
+            return Base64.decode(base64Key, Base64.DEFAULT)
+
+        // TODO: add option: may not want to generate a new key and simply store the db in clear
+        // No key was set up yet: generate a new one
+        Log.i(this::class.simpleName, "Generating new key.")
+        val newKey = newDatabaseKey()
+        storeDatabaseKey(newKey)
+        return newKey
     }
 
     override fun storeDatabaseKey(key: ByteArray?) {

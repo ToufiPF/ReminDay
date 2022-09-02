@@ -1,6 +1,7 @@
 package ch.epfl.reminday.data.birthday
 
 import android.content.Context
+import android.util.Log
 import androidx.room.Room
 import ch.epfl.reminday.security.DatabaseKeyManager
 import ch.epfl.reminday.security.DatabaseKeyManagerImpl
@@ -15,6 +16,8 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object BirthdayDatabaseDI {
+
+    private const val LOG_TAG = "BirthdayDatabaseDI"
 
     @Provides
     fun provideDbKeyManager(@ApplicationContext context: Context): DatabaseKeyManager =
@@ -34,9 +37,13 @@ object BirthdayDatabaseDI {
 
         if (keyMgr.isDatabaseEncryptionSupported()) {
             keyMgr.loadDatabaseKey()?.let { key ->
+                Log.i(LOG_TAG, "Opening encrypted database.")
+
                 val supportFactory = SupportFactory(key)
                 openHelperFactory(supportFactory)
-            }
+            } ?: Log.i(LOG_TAG, "Opening database in clear (key not set up).")
+        } else {
+            Log.i(LOG_TAG, "Opening database in clear (API too low).")
         }
     }.build()
 
