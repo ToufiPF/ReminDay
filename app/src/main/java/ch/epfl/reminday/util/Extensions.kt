@@ -48,13 +48,11 @@ object Extensions {
         @StringRes title: Int,
         @StringRes text: Int,
         preferences: SharedPreferences,
-        skipConfirmationFlag: String,
+        showConfirmationFlag: String,
         onConfirm: () -> Unit
     ) {
-        val skipConfirmation = preferences.getBoolean(skipConfirmationFlag, false)
-        if (skipConfirmation) {
-            onConfirm.invoke()
-        } else {
+        val showConfirmation = preferences.getBoolean(showConfirmationFlag, true)
+        if (showConfirmation) {
             val binding = DialogDoNotAskAgainBinding.inflate(layoutInflater)
             binding.messageTextView.text = getString(text)
 
@@ -64,12 +62,14 @@ object Extensions {
                 .setPositiveButton(R.string.confirm) { dialog, _ ->
                     dialog.dismiss()
                     preferences.edit()
-                        .putBoolean(skipConfirmationFlag, binding.checkboxDoNotAskAgain.isChecked)
-                        .commit()
+                        .putBoolean(showConfirmationFlag, !binding.checkboxDoNotAskAgain.isChecked)
+                        .apply()
                     onConfirm.invoke()
                 }.setNegativeButton(R.string.cancel) { dialog, _ ->
                     dialog.cancel()
                 }.show()
+        } else {
+            onConfirm.invoke()
         }
     }
 }

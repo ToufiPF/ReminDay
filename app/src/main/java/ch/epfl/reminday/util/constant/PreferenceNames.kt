@@ -10,17 +10,9 @@ object PreferenceNames {
     // =============================================================================================
     /**
      * Name of the [SharedPreferences] that stores general app options.
+     * These preferences names are accessible via the android resources (R.string.prefs_***).
      */
     const val GENERAL_PREFERENCES = "general"
-
-    /** Preferences related to general app options go here. */
-    object GeneralPreferenceNames {
-        /**
-         * Whether future delete confirmations should be skipped.
-         * Defaults to false.
-         */
-        const val SKIP_DELETE_CONFIRMATION = "skip_delete_confirmation"
-    }
 
     // =============================================================================================
     /**

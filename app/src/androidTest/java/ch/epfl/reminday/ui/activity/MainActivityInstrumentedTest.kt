@@ -26,6 +26,9 @@ import ch.epfl.reminday.testutils.MockitoMatchers.anyNullable
 import ch.epfl.reminday.testutils.UITestUtils
 import ch.epfl.reminday.util.Mocks
 import ch.epfl.reminday.util.constant.ArgumentNames.BIRTHDAY_EDIT_MODE_ORDINAL
+import ch.epfl.reminday.util.constant.ArgumentNames.PREFERENCES_ID
+import ch.epfl.reminday.util.constant.PreferenceNames
+import ch.epfl.reminday.util.constant.PreferenceNames.GENERAL_PREFERENCES
 import ch.epfl.reminday.viewmodel.activity.MainViewModel
 import dagger.hilt.android.testing.BindValue
 import dagger.hilt.android.testing.HiltAndroidRule
@@ -111,6 +114,19 @@ class MainActivityInstrumentedTest {
     }
 
     @Test
+    fun optionsButtonLaunchesPreferencesActivity() {
+        UITestUtils.onMenuItem(withText(R.string.options_text))
+            .perform(click())
+
+        intended(
+            allOf(
+                hasComponent(PreferencesActivity::class.java.name),
+                hasExtra(PREFERENCES_ID, GENERAL_PREFERENCES),
+            )
+        )
+    }
+
+    @Test
     fun birthdayListIsDisplayed(): Unit = runBlocking {
         dao.insertAll(Mocks.birthday(yearKnown = false))
 
@@ -139,7 +155,8 @@ class MainActivityInstrumentedTest {
         val bDays = Mocks.birthdays(3, yearKnown = { it == 0 })
         val names = bDays.map { it.personName }
         val dates = bDays.map {
-            if (it.isYearKnown) LocalDate.of(it.year!!.value, it.monthDay.month, it.monthDay.dayOfMonth).toString()
+            if (it.isYearKnown)
+                LocalDate.of(it.year!!.value, it.monthDay.month, it.monthDay.dayOfMonth).toString()
             else it.monthDay.toString()
         }
         whenever(cursor.getString(0)).thenReturn(names[0], names[1], names[2]).thenThrow()

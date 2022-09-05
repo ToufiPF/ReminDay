@@ -18,7 +18,6 @@ import ch.epfl.reminday.R
 import ch.epfl.reminday.util.Extensions.showConfirmationDialog
 import ch.epfl.reminday.util.Extensions.showConfirmationDialogWithDoNotAskAgain
 import ch.epfl.reminday.util.constant.PreferenceNames.GENERAL_PREFERENCES
-import ch.epfl.reminday.util.constant.PreferenceNames.GeneralPreferenceNames.SKIP_DELETE_CONFIRMATION
 import org.junit.After
 import org.junit.Assert.*
 import org.junit.Before
@@ -34,7 +33,11 @@ class ExtensionsInstrumentedTest {
     @get:Rule
     val scenarioRule = ActivityScenarioRule(EmptyRegularTestActivity::class.java)
 
+    private lateinit var context: Context
     private lateinit var preferences: SharedPreferences
+    private val showDeleteConfirmation: String by lazy {
+        context.getString(R.string.prefs_show_delete_confirmation)
+    }
 
     private val onConfirm: ViewInteraction
         get() = onView(withText(R.string.confirm)).inRoot(isDialog())
@@ -49,18 +52,14 @@ class ExtensionsInstrumentedTest {
     fun init() {
         counter.getAndSet(0)
 
-        val context = getApplicationContext<Context>()
+        context = getApplicationContext()
         preferences = context.getSharedPreferences(GENERAL_PREFERENCES, Context.MODE_PRIVATE)
-        preferences.edit()
-            .remove(SKIP_DELETE_CONFIRMATION)
-            .commit()
+        preferences.edit().clear().commit()
     }
 
     @After
     fun clean() {
-        preferences.edit()
-            .remove(SKIP_DELETE_CONFIRMATION)
-            .commit()
+        preferences.edit().clear().commit()
     }
 
     @Test
@@ -120,13 +119,14 @@ class ExtensionsInstrumentedTest {
                 R.string.are_you_sure,
                 R.string.import_from_contacts_are_you_sure,
                 preferences,
-                SKIP_DELETE_CONFIRMATION,
+                showDeleteConfirmation,
                 incrementCounter
             )
         }
 
         onView(withText(R.string.are_you_sure)).inRoot(isDialog()).check(matches(isDisplayed()))
-        onView(withText(R.string.import_from_contacts_are_you_sure)).inRoot(isDialog()).check(matches(isDisplayed()))
+        onView(withText(R.string.import_from_contacts_are_you_sure)).inRoot(isDialog())
+            .check(matches(isDisplayed()))
         onDoNotAskAgain.check(matches(isDisplayed()))
         onCancel.check(matches(isDisplayed()))
         onConfirm.check(matches(isDisplayed()))
@@ -140,7 +140,7 @@ class ExtensionsInstrumentedTest {
                 R.string.are_you_sure,
                 R.string.import_from_contacts_are_you_sure,
                 preferences,
-                SKIP_DELETE_CONFIRMATION,
+                showDeleteConfirmation,
                 incrementCounter
             )
         }
@@ -151,7 +151,7 @@ class ExtensionsInstrumentedTest {
         onIdle()
 
         assertEquals(counter.get(), 1)
-        assertTrue(preferences.getBoolean(SKIP_DELETE_CONFIRMATION, false))
+        assertFalse(preferences.getBoolean(showDeleteConfirmation, false))
     }
 
     @Test
@@ -161,7 +161,7 @@ class ExtensionsInstrumentedTest {
                 R.string.are_you_sure,
                 R.string.import_from_contacts_are_you_sure,
                 preferences,
-                SKIP_DELETE_CONFIRMATION,
+                showDeleteConfirmation,
                 incrementCounter
             )
         }
@@ -172,13 +172,13 @@ class ExtensionsInstrumentedTest {
         onIdle()
 
         assertEquals(counter.get(), 0)
-        assertFalse(preferences.getBoolean(SKIP_DELETE_CONFIRMATION, false))
+        assertTrue(preferences.getBoolean(showDeleteConfirmation, true))
     }
 
     @Test
     fun doNotAskAgainDialogDirectlyRunsCallableWhenPreferenceIsSet() {
         preferences.edit()
-            .putBoolean(SKIP_DELETE_CONFIRMATION, true)
+            .putBoolean(showDeleteConfirmation, false)
             .commit()
 
         scenarioRule.scenario.onActivity {
@@ -186,7 +186,7 @@ class ExtensionsInstrumentedTest {
                 R.string.are_you_sure,
                 R.string.import_from_contacts_are_you_sure,
                 preferences,
-                SKIP_DELETE_CONFIRMATION,
+                showDeleteConfirmation,
                 incrementCounter
             )
         }

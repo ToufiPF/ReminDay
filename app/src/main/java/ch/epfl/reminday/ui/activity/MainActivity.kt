@@ -16,6 +16,8 @@ import ch.epfl.reminday.data.birthday.BirthdayDao
 import ch.epfl.reminday.databinding.ActivityMainBinding
 import ch.epfl.reminday.util.Extensions.showConfirmationDialog
 import ch.epfl.reminday.util.constant.ArgumentNames.BIRTHDAY_EDIT_MODE_ORDINAL
+import ch.epfl.reminday.util.constant.ArgumentNames.PREFERENCES_ID
+import ch.epfl.reminday.util.constant.PreferenceNames
 import ch.epfl.reminday.viewmodel.activity.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -52,7 +54,17 @@ class MainActivity : AppCompatActivity() {
             importBirthdaysFromContacts()
             true
         }
+        R.id.options_item -> {
+            launchOptionsActivity()
+            true
+        }
         else -> super.onOptionsItemSelected(item)
+    }
+
+    private fun launchOptionsActivity() {
+        val intent = Intent(this, PreferencesActivity::class.java)
+        intent.putExtra(PREFERENCES_ID, PreferenceNames.GENERAL_PREFERENCES)
+        startActivity(intent)
     }
 
     private fun launchAddBirthdayActivity() {

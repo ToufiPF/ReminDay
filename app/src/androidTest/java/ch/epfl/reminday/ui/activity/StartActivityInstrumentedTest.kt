@@ -1,6 +1,10 @@
 package ch.epfl.reminday.ui.activity
 
+import android.content.Context
+import android.content.Context.MODE_PRIVATE
+import android.content.SharedPreferences
 import androidx.test.core.app.ActivityScenario
+import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.ViewInteraction
 import androidx.test.espresso.action.ViewActions.click
@@ -13,6 +17,8 @@ import ch.epfl.reminday.di.SecurityTestDI
 import ch.epfl.reminday.security.PromptUserUnlock
 import ch.epfl.reminday.testutils.MockitoMatchers.any
 import ch.epfl.reminday.testutils.UITestUtils.assertNoUnverifiedIntentIgnoringBootstrap
+import ch.epfl.reminday.util.constant.PreferenceNames
+import ch.epfl.reminday.util.constant.PreferenceNames.GENERAL_PREFERENCES
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.runBlocking
@@ -40,14 +46,22 @@ class StartActivityInstrumentedTest {
     private val onButton: ViewInteraction
         get() = onView(withId(R.id.continue_button))
 
+    private lateinit var context: Context
+    private lateinit var prefs: SharedPreferences
+
     @Before
     fun init() {
         Intents.init()
         SecurityTestDI.reset()
+
+        context = getApplicationContext()
+        prefs = context.getSharedPreferences(GENERAL_PREFERENCES, MODE_PRIVATE)
+        prefs.edit().clear().apply()
     }
 
     @After
     fun clear() {
+        prefs.edit().clear().apply()
         Intents.release()
     }
 
@@ -79,6 +93,23 @@ class StartActivityInstrumentedTest {
             intended(hasComponent(MainActivity::class.java.name), Intents.times(1))
 
             assertNoUnverifiedIntentIgnoringBootstrap()
+        }
+    }
+
+    @Test
+    fun launchesActivityIfUserUnlockNotRequired() {
+        prefs.edit()
+            .putBoolean(context.getString(R.string.prefs_require_user_unlock), false)
+            .apply()
+        whenever(prompt.canAuthenticate()).thenReturn(true)
+
+        launchStartActivity {
+            intended(hasComponent(MainActivity::class.java.name))
+            assertNoUnverifiedIntentIgnoringBootstrap()
+
+            runBlocking {
+                verify(prompt, Mockito.times(0)).authenticate(any())
+            }
         }
     }
 }
