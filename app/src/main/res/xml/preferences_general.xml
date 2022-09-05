@@ -1,18 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <PreferenceCategory app:title="General settings">
-        <SwitchPreferenceCompat
-            app:defaultValue="true"
-            app:key="@string/prefs_show_delete_confirmation"
-            app:persistent="true"
-            app:title="@string/prefs_show_delete_confirmation_title" />
-
+    <PreferenceCategory app:title="@string/prefs_category_general">
         <SwitchPreferenceCompat
             app:defaultValue="true"
             app:key="@string/prefs_require_user_unlock"
             app:persistent="true"
             app:title="@string/prefs_require_user_unlock_title" />
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="@string/prefs_category_dialogs">
+        <SwitchPreferenceCompat
+            app:defaultValue="true"
+            app:key="@string/prefs_show_delete_confirmation"
+            app:persistent="true"
+            app:summary="@string/prefs_show_delete_confirmation_subtitle"
+            app:title="@string/prefs_show_delete_confirmation_title" />
 
     </PreferenceCategory>
 </PreferenceScreen>

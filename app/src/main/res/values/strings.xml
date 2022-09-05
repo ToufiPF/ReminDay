@@ -53,7 +53,11 @@
     <string name="prefs_require_user_unlock" translatable="false">prefs_require_user_unlock</string>
 
     <!-- Preferences strings for display -->
-    <string name="prefs_show_delete_confirmation_title">Display confirmation dialog when deleting a birthday</string>
+    <string name="prefs_category_general">General settings</string>
     <string name="prefs_require_user_unlock_title">Require user unlock at startup</string>
+
+    <string name="prefs_category_dialogs">Dialog settings</string>
+    <string name="prefs_show_delete_confirmation_title">Delete confirmation dialog</string>
+    <string name="prefs_show_delete_confirmation_subtitle">Display confirmation dialog when deleting a birthday</string>
 
 </resources>
