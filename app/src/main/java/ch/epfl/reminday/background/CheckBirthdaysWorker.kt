@@ -123,7 +123,7 @@ class CheckBirthdaysWorker(
                     todayYear - bDay.year!!.value
                 )
 
-            // Build notif and display it
+            // Build notification and display it
             val notif = NotificationCompat.Builder(applicationContext, CHANNEL_ID)
                 .setContentTitle(title)
                 .setContentText(text)
