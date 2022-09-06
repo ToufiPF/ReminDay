@@ -47,8 +47,9 @@ class DatabaseKeyManagerImpl(
 
     // TODO: androidx.security.crypto requires API >= 23 for now.
     //  Once 1.1.0 is out, check if API >= 21 is possible.
-    override fun isDatabaseEncryptionSupported(): Boolean =
-        Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
+    // FIXME: Seems crashes are introduced by the DB encryption
+    override fun isDatabaseEncryptionSupported(): Boolean = false
+//        Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
 
     override fun loadDatabaseKey(): ByteArray? {
         if (!isDatabaseEncryptionSupported())

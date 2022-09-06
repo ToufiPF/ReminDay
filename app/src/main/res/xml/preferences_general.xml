@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <PreferenceCategory app:title="@string/prefs_category_general">
         <SwitchPreferenceCompat
@@ -7,6 +8,14 @@
             app:key="@string/prefs_require_user_unlock"
             app:persistent="true"
             app:title="@string/prefs_require_user_unlock_title" />
+
+        <ch.epfl.reminday.ui.view.TimePickerPreference
+            android:layout="@layout/view_time_preference"
+            app:defaultValue="08:00"
+            app:key="@string/prefs_notification_time"
+            app:persistent="true"
+            app:summary="@string/prefs_notification_time_summary"
+            app:title="@string/prefs_notification_time_title" />
     </PreferenceCategory>
 
     <PreferenceCategory app:title="@string/prefs_category_dialogs">
@@ -14,8 +23,7 @@
             app:defaultValue="true"
             app:key="@string/prefs_show_delete_confirmation"
             app:persistent="true"
-            app:summary="@string/prefs_show_delete_confirmation_subtitle"
+            app:summary="@string/prefs_show_delete_confirmation_summary"
             app:title="@string/prefs_show_delete_confirmation_title" />
-
     </PreferenceCategory>
 </PreferenceScreen>
