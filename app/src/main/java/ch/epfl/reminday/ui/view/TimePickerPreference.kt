@@ -87,7 +87,7 @@ class TimePickerPreference @JvmOverloads constructor(
             .setTimeFormat(TimeFormat.CLOCK_24H)
             .setHour(hours)
             .setMinute(minutes)
-            .setTitleText(R.string.prefs_notification_time_title)
+            .setTitleText(title)
             .build()
 
         picker.addOnPositiveButtonClickListener {
