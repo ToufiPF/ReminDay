@@ -17,6 +17,7 @@ import ch.epfl.reminday.data.birthday.Birthday
 import ch.epfl.reminday.data.birthday.BirthdayDao
 import ch.epfl.reminday.databinding.ActivityBirthdayEditBinding
 import ch.epfl.reminday.ui.activity.utils.BackArrowActivity
+import ch.epfl.reminday.util.Extensions.parcelable
 import ch.epfl.reminday.util.Extensions.set
 import ch.epfl.reminday.util.Extensions.showConfirmationDialog
 import ch.epfl.reminday.util.constant.ArgumentNames
@@ -73,7 +74,7 @@ class BirthdayEditActivity : BackArrowActivity() {
         binding = ActivityBirthdayEditBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        birthday = intent.getParcelableExtra(BIRTHDAY, Birthday::class.java)
+        birthday = intent.parcelable(BIRTHDAY)
         mode = Mode.ALL[intent.getIntExtra(
             ArgumentNames.BIRTHDAY_EDIT_MODE_ORDINAL,
             Mode.DEFAULT_ORDINAL

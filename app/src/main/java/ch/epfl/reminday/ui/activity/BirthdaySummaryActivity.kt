@@ -19,6 +19,7 @@ import ch.epfl.reminday.data.birthday.BirthdayDao
 import ch.epfl.reminday.databinding.ActivityBirthdaySummaryBinding
 import ch.epfl.reminday.format.date.DateFormatter
 import ch.epfl.reminday.ui.activity.utils.BackArrowActivity
+import ch.epfl.reminday.util.Extensions.parcelable
 import ch.epfl.reminday.util.Extensions.showConfirmationDialogWithDoNotAskAgain
 import ch.epfl.reminday.util.constant.ArgumentNames.BIRTHDAY
 import ch.epfl.reminday.util.constant.ArgumentNames.BIRTHDAY_EDIT_MODE_ORDINAL
@@ -50,7 +51,7 @@ class BirthdaySummaryActivity : BackArrowActivity() {
         registerForActivityResult(StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
                 // refresh modified data if EditActivity was exited successfully
-                result.data?.getParcelableExtra(BIRTHDAY, Birthday::class.java)?.let {
+                result.data?.parcelable<Birthday>(BIRTHDAY)?.let {
                     intent.putExtra(BIRTHDAY, it)
                 }
 
@@ -65,7 +66,7 @@ class BirthdaySummaryActivity : BackArrowActivity() {
         binding = ActivityBirthdaySummaryBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        birthday = intent.getParcelableExtra(BIRTHDAY, Birthday::class.java)!!
+        birthday = intent.parcelable(BIRTHDAY)!!
 
         binding.apply {
             name.text = birthday.personName
