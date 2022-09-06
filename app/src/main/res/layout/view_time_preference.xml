@@ -5,15 +5,13 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="@dimen/settings_padding"
-    android:paddingStart="?android:attr/listPreferredItemPaddingStart"
-    android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
     tools:ignore="HardcodedText">
 
     <TextView
         android:id="@+id/title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="56dp"
+        android:layout_marginStart="@dimen/settings_margin_start"
         android:layout_marginEnd="@dimen/settings_padding"
         android:text="Title"
         android:textColor="?android:attr/textColorPrimary"
@@ -37,7 +35,7 @@
         android:id="@+id/summary"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="56dp"
+        android:layout_marginStart="@dimen/settings_margin_start"
         android:layout_marginEnd="@dimen/settings_padding"
         android:text="Summary"
         android:textColor="?android:attr/textColorSecondary"
