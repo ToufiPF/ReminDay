@@ -1,13 +1,15 @@
 package ch.epfl.reminday.ui.view
 
 import android.content.Context
+import android.content.ContextWrapper
 import android.content.res.TypedArray
 import android.util.AttributeSet
+import android.util.Log
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.Preference
 import androidx.preference.PreferenceViewHolder
 import ch.epfl.reminday.R
-import ch.epfl.reminday.databinding.ViewTimePreferenceBinding
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
 import dagger.hilt.EntryPoint
@@ -24,9 +26,21 @@ class TimePickerPreference @JvmOverloads constructor(
 ) : Preference(context, attrs) {
 
     companion object {
+        private const val NAMESPACE_APP = "http://schemas.android.com/apk/res-auto"
+        private const val NAMESPACE_ANDROID = "http://schemas.android.com/apk/res/android"
+
         private fun totalMinutesToHours(total: Int) = total / 60
         private fun totalMinutesToMinutes(total: Int) = total % 60
         private fun hoursMinutesToTotal(hours: Int, minutes: Int) = hours * 60 + minutes
+
+        fun getActivity(context: Context): AppCompatActivity? {
+            var c = context
+            while (c is ContextWrapper) {
+                if (c is AppCompatActivity) return c
+                else c = c.baseContext
+            }
+            return null
+        }
     }
 
     // Can't use @AndroidEntryPoint because it needs to be a View/Fragment/Activity
@@ -36,13 +50,9 @@ class TimePickerPreference @JvmOverloads constructor(
         fun getLocale(): Locale
     }
 
-    private lateinit var binding: ViewTimePreferenceBinding
+    private lateinit var valueView: TextView
     private val locale: Locale by lazy {
         val entryPoint = EntryPoints.get(context.applicationContext, LocaleEntryPoint::class.java)
-//        val entryPoint = EntryPointAccessors.fromApplication(
-//            context.applicationContext,
-//            LocaleEntryPoint::class.java
-//        )
         entryPoint.getLocale()
     }
     private val formatter: DateTimeFormatter by lazy {
@@ -50,27 +60,29 @@ class TimePickerPreference @JvmOverloads constructor(
     }
     private var defaultTotal: Int = hoursMinutesToTotal(8, 0) // 08:00 (i.e. 8:00 AM)
 
+    init {
+        // Set the default layout if not specified
+        if (attrs?.getAttributeValue(NAMESPACE_APP, "widgetLayout") == null &&
+            attrs?.getAttributeValue(NAMESPACE_ANDROID, "widgetLayout") == null
+        ) {
+            Log.i(this::class.simpleName, "Setting default widget layout")
+            widgetLayoutResource = R.layout.widget_time_preference
+        }
+    }
+
     override fun onBindViewHolder(holder: PreferenceViewHolder) {
         super.onBindViewHolder(holder)
-        binding = ViewTimePreferenceBinding.bind(holder.itemView)
+        valueView = holder.itemView.findViewById(R.id.value)
 
-        // Set title/summary fields
-        binding.let {
-            it.title.text = title
-            it.summary.text = summary
-        }
-
+        // Set the time in the value field:
         refresh()
 
-        binding.root.setOnClickListener {
+        holder.itemView.setOnClickListener {
             showPicker()
         }
     }
 
-    override fun onGetDefaultValue(a: TypedArray, index: Int): Any? {
-        return a.getString(index)
-    }
-
+    override fun onGetDefaultValue(a: TypedArray, index: Int): Any? = a.getString(index)
     override fun onSetInitialValue(defaultValue: Any?) {
         if (defaultValue != null) {
             val time = LocalTime.parse(defaultValue as String, formatter)
@@ -97,11 +109,8 @@ class TimePickerPreference @JvmOverloads constructor(
             refresh()
         }
 
-        val activity = context as AppCompatActivity
-        picker.show(
-            activity.supportFragmentManager, this::
-            class.simpleName
-        )
+        val activity = getActivity(context)!!
+        picker.show(activity.supportFragmentManager, this::class.simpleName)
     }
 
     private fun refresh() {
@@ -110,7 +119,7 @@ class TimePickerPreference @JvmOverloads constructor(
         val minutes = totalMinutesToMinutes(total)
 
         val time = LocalTime.of(hours, minutes)
-        binding.value.text =
+        valueView.text =
             context.getString(R.string.prefs_notification_time_value, formatter.format(time))
     }
 }
