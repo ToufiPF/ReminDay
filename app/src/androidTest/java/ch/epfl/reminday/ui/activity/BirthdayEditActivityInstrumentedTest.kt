@@ -102,10 +102,7 @@ class BirthdayEditActivityInstrumentedTest {
         val expected = Mocks.birthday(yearKnown = true)
         val infoText = Mocks.makeFaker().coffee.blendName()
 
-        onName.perform(
-            replaceText(expected.personName),
-            closeSoftKeyboard(),
-        )
+        onName.perform(replaceText(expected.personName), closeSoftKeyboard())
 
         onYear.perform(setValueByJumping(expected.year!!.value))
         onMonth.perform(setValueByJumping(expected.monthDay.monthValue))

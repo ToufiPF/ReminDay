@@ -11,10 +11,17 @@ import androidx.test.espresso.matcher.ViewMatchers.withText
 import ch.epfl.reminday.R
 import ch.epfl.reminday.util.constant.ArgumentNames.PREFERENCES_ID
 import ch.epfl.reminday.util.constant.PreferenceNames.GENERAL_PREFERENCES
+import dagger.hilt.android.testing.HiltAndroidRule
+import dagger.hilt.android.testing.HiltAndroidTest
 import org.junit.Assert.assertEquals
+import org.junit.Rule
 import org.junit.Test
 
+@HiltAndroidTest
 class PreferencesActivityInstrumentedTest {
+
+    @get:Rule
+    val hiltRule = HiltAndroidRule(this)
 
     private fun launchPreferencesActivity(
         pref_name: String?,
