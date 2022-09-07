@@ -3,6 +3,7 @@ package ch.epfl.reminday.background
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
+import android.content.Context.MODE_PRIVATE
 import android.os.Build
 import androidx.annotation.StringRes
 import androidx.core.app.NotificationCompat
@@ -12,8 +13,10 @@ import androidx.work.*
 import ch.epfl.reminday.R
 import ch.epfl.reminday.data.birthday.BirthdayDao
 import ch.epfl.reminday.format.date.DateFormatter
+import ch.epfl.reminday.ui.view.TimePickerPreference
 import ch.epfl.reminday.util.constant.PreferenceNames.BACKGROUND_PREFERENCES
 import ch.epfl.reminday.util.constant.PreferenceNames.BackgroundPreferenceNames.LAST_BIRTHDAY_CHECK
+import ch.epfl.reminday.util.constant.PreferenceNames.GENERAL_PREFERENCES
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.time.LocalDate
@@ -38,14 +41,20 @@ class CheckBirthdaysWorker(
         fun getNotificationId(dayOfYear: Int, idx: Int): Int =
             (idx shl 10) or dayOfYear
 
-        private fun makePeriodicWorkRequest(): PeriodicWorkRequest {
-            val now = LocalDateTime.now()
-            val todayAt8 = now.withHour(8).truncatedTo(ChronoUnit.HOURS)
-            val future =
-                if (now.isBefore(todayAt8)) todayAt8
-                else todayAt8.plusDays(1)
+        private fun makePeriodicWorkRequest(context: Context): PeriodicWorkRequest {
+            val targetTime = TimePickerPreference.getStoredTime(
+                context.getSharedPreferences(GENERAL_PREFERENCES, MODE_PRIVATE),
+                context.getString(R.string.prefs_notification_time)
+            )
 
-            // set initial delay to do the check on the next 8:00
+            val now = LocalDateTime.now()
+            val targetDateTime = now.withHour(targetTime.hour).withMinute(targetTime.minute)
+                .truncatedTo(ChronoUnit.HOURS)
+            val future =
+                if (now.isBefore(targetDateTime)) targetDateTime
+                else targetDateTime.plusDays(1)
+
+            // set initial delay to do the check on the next target time
             val initialDelay = now.until(future, ChronoUnit.MINUTES)
 
             return PeriodicWorkRequestBuilder<CheckBirthdaysWorker>(
@@ -65,7 +74,7 @@ class CheckBirthdaysWorker(
          * @return [PeriodicWorkRequest] enqueued work request (mainly for tests)
          */
         fun enqueuePeriodicWorkRequest(appContext: Context): PeriodicWorkRequest {
-            val workRequest = makePeriodicWorkRequest()
+            val workRequest = makePeriodicWorkRequest(appContext)
             WorkManager.getInstance(appContext).apply {
                 enqueueUniquePeriodicWork(
                     CheckBirthdaysWorker::class.java.name,
@@ -124,21 +133,21 @@ class CheckBirthdaysWorker(
                 )
 
             // Build notification and display it
-            val notif = NotificationCompat.Builder(applicationContext, CHANNEL_ID)
+            val notification = NotificationCompat.Builder(applicationContext, CHANNEL_ID)
                 .setContentTitle(title)
                 .setContentText(text)
                 .setSmallIcon(R.drawable.ic_calendar_empty)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .build()
 
-            manager.notify(notifId, notif)
+            manager.notify(notifId, notification)
         }
         return Result.success()
     }
 
     private fun checkLastTimeCheckedFromPreferences(today: LocalDate): Boolean {
         val sharedPreferences =
-            applicationContext.getSharedPreferences(BACKGROUND_PREFERENCES, Context.MODE_PRIVATE)
+            applicationContext.getSharedPreferences(BACKGROUND_PREFERENCES, MODE_PRIVATE)
 
         // if there was another check, and it was not before today, early exit
         val lastCheck = sharedPreferences.getString(LAST_BIRTHDAY_CHECK, null)?.let {

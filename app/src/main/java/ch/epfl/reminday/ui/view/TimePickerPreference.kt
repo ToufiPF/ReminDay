@@ -1,15 +1,15 @@
 package ch.epfl.reminday.ui.view
 
 import android.content.Context
-import android.content.ContextWrapper
+import android.content.SharedPreferences
 import android.content.res.TypedArray
 import android.util.AttributeSet
 import android.util.Log
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.Preference
 import androidx.preference.PreferenceViewHolder
 import ch.epfl.reminday.R
+import ch.epfl.reminday.util.Extensions.getActivity
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
 import dagger.hilt.EntryPoint
@@ -34,13 +34,26 @@ class TimePickerPreference @JvmOverloads constructor(
         private fun totalMinutesToMinutes(total: Int) = total % 60
         private fun hoursMinutesToTotal(hours: Int, minutes: Int) = hours * 60 + minutes
 
-        fun getActivity(context: Context): AppCompatActivity? {
-            var c = context
-            while (c is ContextWrapper) {
-                if (c is AppCompatActivity) return c
-                else c = c.baseContext
-            }
-            return null
+        private val DEFAULT_TIME: LocalTime = LocalTime.of(8, 0)
+
+        /**
+         * Return the stored [LocalTime] corresponding to [key] in [pref]
+         * @param pref [SharedPreferences] that holds the stored time
+         * @param key [String] key corresponding to the time in the preferences
+         * @param defaultTime [LocalTime] default value if [pref] is null/doesn't contain [key]
+         * @return [LocalTime] the stored time corresponding to the given key
+         */
+        fun getStoredTime(
+            pref: SharedPreferences?,
+            key: String,
+            defaultTime: LocalTime = DEFAULT_TIME
+        ): LocalTime {
+            val targetTotal = pref?.getInt(key, -1) ?: -1
+            if (targetTotal < 0) return defaultTime
+
+            val hours = totalMinutesToHours(targetTotal)
+            val minutes = totalMinutesToMinutes(targetTotal)
+            return LocalTime.of(hours, minutes)
         }
     }
 
@@ -59,7 +72,7 @@ class TimePickerPreference @JvmOverloads constructor(
     private val formatter: DateTimeFormatter by lazy {
         DateTimeFormatter.ofPattern("HH:mm", locale)
     }
-    private var defaultTotal: Int = hoursMinutesToTotal(8, 0) // 08:00 (i.e. 8:00 AM)
+    private var defaultTime: LocalTime = LocalTime.of(8, 0) // 08:00 (i.e. 8:00 AM)
 
     init {
         // Set the default layout if not specified
@@ -86,20 +99,17 @@ class TimePickerPreference @JvmOverloads constructor(
     override fun onGetDefaultValue(a: TypedArray, index: Int): Any? = a.getString(index)
     override fun onSetInitialValue(defaultValue: Any?) {
         if (defaultValue != null) {
-            val time = LocalTime.parse(defaultValue as String, formatter)
-            defaultTotal = hoursMinutesToTotal(time.hour, time.minute)
+            defaultTime = LocalTime.parse(defaultValue as String, formatter)
         }
     }
 
     private fun showPicker() {
-        val total = sharedPreferences?.getInt(key, defaultTotal) ?: defaultTotal
-        val hours = totalMinutesToHours(total)
-        val minutes = totalMinutesToMinutes(total)
+        val targetTime = getStoredTime(sharedPreferences, key, defaultTime)
 
         val picker = MaterialTimePicker.Builder()
             .setTimeFormat(TimeFormat.CLOCK_24H)
-            .setHour(hours)
-            .setMinute(minutes)
+            .setHour(targetTime.hour)
+            .setMinute(targetTime.minute)
             .setTitleText(title)
             .build()
 
@@ -110,16 +120,12 @@ class TimePickerPreference @JvmOverloads constructor(
             refresh()
         }
 
-        val activity = getActivity(context)!!
+        val activity = context.getActivity()!!
         picker.show(activity.supportFragmentManager, this::class.simpleName)
     }
 
     private fun refresh() {
-        val total = sharedPreferences?.getInt(key, defaultTotal) ?: defaultTotal
-        val hours = totalMinutesToHours(total)
-        val minutes = totalMinutesToMinutes(total)
-
-        val time = LocalTime.of(hours, minutes)
+        val time = getStoredTime(sharedPreferences, key)
         valueView.text =
             context.getString(R.string.prefs_notification_time_value, formatter.format(time))
     }
