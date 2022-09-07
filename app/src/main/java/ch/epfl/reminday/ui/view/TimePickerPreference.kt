@@ -28,6 +28,7 @@ class TimePickerPreference @JvmOverloads constructor(
     companion object {
         private const val NAMESPACE_APP = "http://schemas.android.com/apk/res-auto"
         private const val NAMESPACE_ANDROID = "http://schemas.android.com/apk/res/android"
+        private const val WIDGET_RES = "widgetLayout"
 
         private fun totalMinutesToHours(total: Int) = total / 60
         private fun totalMinutesToMinutes(total: Int) = total % 60
@@ -62,8 +63,8 @@ class TimePickerPreference @JvmOverloads constructor(
 
     init {
         // Set the default layout if not specified
-        if (attrs?.getAttributeValue(NAMESPACE_APP, "widgetLayout") == null &&
-            attrs?.getAttributeValue(NAMESPACE_ANDROID, "widgetLayout") == null
+        if (attrs?.getAttributeValue(NAMESPACE_APP, WIDGET_RES) == null &&
+            attrs?.getAttributeValue(NAMESPACE_ANDROID, WIDGET_RES) == null
         ) {
             Log.i(this::class.simpleName, "Setting default widget layout")
             widgetLayoutResource = R.layout.widget_time_preference
