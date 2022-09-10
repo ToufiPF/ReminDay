@@ -51,13 +51,17 @@
     <!-- Preferences ids (not translatable) -->
     <string name="prefs_show_delete_confirmation" translatable="false">show_delete_confirmation</string>
     <string name="prefs_require_user_unlock" translatable="false">prefs_require_user_unlock</string>
+    <string name="prefs_notification_time" translatable="false">prefs_notification_time</string>
 
     <!-- Preferences strings for display -->
     <string name="prefs_category_general">General settings</string>
     <string name="prefs_require_user_unlock_title">Require user unlock at startup</string>
+    <string name="prefs_notification_time_title">Notification time</string>
+    <string name="prefs_notification_time_value">%1s</string>
+    <string name="prefs_notification_time_summary">Time at which the notification for a birthday should be fired.</string>
 
     <string name="prefs_category_dialogs">Dialog settings</string>
     <string name="prefs_show_delete_confirmation_title">Delete confirmation dialog</string>
-    <string name="prefs_show_delete_confirmation_subtitle">Display confirmation dialog when deleting a birthday</string>
+    <string name="prefs_show_delete_confirmation_summary">Display confirmation dialog when deleting a birthday</string>
 
 </resources>

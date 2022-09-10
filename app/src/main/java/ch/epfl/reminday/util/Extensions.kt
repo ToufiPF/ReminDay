@@ -1,5 +1,7 @@
 package ch.epfl.reminday.util
 
+import android.content.Context
+import android.content.ContextWrapper
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Build.VERSION.SDK_INT
@@ -43,6 +45,19 @@ object Extensions {
     inline fun <reified T> Bundle.parcelable(key: String): T? = when {
         SDK_INT >= 33 -> getParcelable(key, T::class.java)
         else -> @Suppress("DEPRECATION") getParcelable(key) as? T
+    }
+
+    /**
+     * Returns the [AppCompatActivity] tied to the [Context] (if any).
+     * @return [AppCompatActivity], or null if failed to get the activity.
+     */
+    fun Context.getActivity(): AppCompatActivity? {
+        var context = this
+        while (context is ContextWrapper) {
+            if (context is AppCompatActivity) return context
+            else context = context.baseContext
+        }
+        return null
     }
 
     /**
