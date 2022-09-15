@@ -1,9 +1,12 @@
 package ch.epfl.reminday.adapter
 
+import android.content.Context
 import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.ColorInt
+import androidx.annotation.ColorRes
 import androidx.core.content.res.ResourcesCompat
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
@@ -18,6 +21,7 @@ import java.time.LocalDate
 import java.util.*
 
 class BirthdayListAdapter(
+    context: Context,
     private val locale: Locale
 ) : PagingDataAdapter<Birthday, BirthdayListAdapter.ViewHolder>(DIFF_CALLBACK) {
 
@@ -31,18 +35,16 @@ class BirthdayListAdapter(
                 return oldItem == newItem
             }
         }
+
+        @ColorInt
+        private fun getColor(context: Context, @ColorRes colorRes: Int): Int =
+            ResourcesCompat.getColor(context.resources, colorRes, context.theme)
     }
 
-    class ViewHolder(view: View, locale: Locale) : RecyclerView.ViewHolder(view) {
+    inner class ViewHolder(view: View, locale: Locale) : RecyclerView.ViewHolder(view) {
 
         private val binding = FragmentBirthdayListItemBinding.bind(view)
         private val dateFormatter = DateFormatter.shortFormatter(locale)
-
-        private val highlightColor: Int by lazy {
-            view.context.let {
-                ResourcesCompat.getColor(it.resources, R.color.corn_silk, it.theme)
-            }
-        }
 
         fun bind(birthday: Birthday) {
             binding.apply {
@@ -63,11 +65,16 @@ class BirthdayListAdapter(
                 ) {
                     cardView.setCardBackgroundColor(highlightColor)
                     cardView.cardElevation = 4.0f
-                } else
-                    cardView.setCardBackgroundColor(null)
+                } else {
+                    cardView.setCardBackgroundColor(transparentColor)
+                    cardView.cardElevation = 0.0f
+                }
             }
         }
     }
+
+    private val highlightColor: Int = getColor(context, R.color.corn_silk)
+    private val transparentColor: Int = getColor(context, android.R.color.transparent)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         // Create a new view, which defines the UI of the list item

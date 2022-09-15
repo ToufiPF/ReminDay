@@ -42,7 +42,7 @@ class BirthdayListFragment : Fragment(R.layout.fragment_birthday_list) {
             )
         }
 
-        val adapter = BirthdayListAdapter(locale)
+        val adapter = BirthdayListAdapter(requireContext(), locale)
         recyclerView.adapter = adapter
 
         viewLifecycleOwner.lifecycleScope.launch {
