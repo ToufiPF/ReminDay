@@ -5,6 +5,7 @@ import android.content.ContextWrapper
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Build.VERSION.SDK_INT
+import android.os.Build.VERSION_CODES.TIRAMISU
 import android.os.Bundle
 import android.os.Parcelable
 import android.text.Editable
@@ -33,7 +34,7 @@ object Extensions {
      * @return [Parcelable] the parcel corresponding to [key]
      */
     inline fun <reified T> Intent.parcelable(key: String): T? = when {
-        SDK_INT >= 33 -> getParcelableExtra(key, T::class.java)
+        SDK_INT >= TIRAMISU -> getParcelableExtra(key, T::class.java)
         else -> @Suppress("DEPRECATION") getParcelableExtra(key) as? T
     }
 
@@ -43,7 +44,7 @@ object Extensions {
      * @return [Parcelable] the parcel corresponding to [key]
      */
     inline fun <reified T> Bundle.parcelable(key: String): T? = when {
-        SDK_INT >= 33 -> getParcelable(key, T::class.java)
+        SDK_INT >= TIRAMISU -> getParcelable(key, T::class.java)
         else -> @Suppress("DEPRECATION") getParcelable(key) as? T
     }
 

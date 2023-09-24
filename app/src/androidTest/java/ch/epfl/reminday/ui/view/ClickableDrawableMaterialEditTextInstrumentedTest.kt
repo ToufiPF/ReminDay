@@ -8,7 +8,10 @@ import androidx.test.espresso.matcher.ViewMatchers.withId
 import ch.epfl.reminday.R
 import ch.epfl.reminday.testutils.SafeFragmentScenario
 import ch.epfl.reminday.testutils.UITestUtils.clickOnCompoundDrawable
-import ch.epfl.reminday.ui.view.ClickableDrawableMaterialEditText.Place.*
+import ch.epfl.reminday.ui.view.ClickableDrawableMaterialEditText.Place.BOTTOM
+import ch.epfl.reminday.ui.view.ClickableDrawableMaterialEditText.Place.LEFT
+import ch.epfl.reminday.ui.view.ClickableDrawableMaterialEditText.Place.RIGHT
+import ch.epfl.reminday.ui.view.ClickableDrawableMaterialEditText.Place.TOP
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test

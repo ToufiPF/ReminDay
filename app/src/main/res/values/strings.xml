@@ -11,6 +11,8 @@
     <string name="continue_">Continue</string>
     <string name="restart_required">Need to restart the app</string>
     <string name="do_not_ask_again">Do not ask again</string>
+    <string name="are_you_sure">Are you sure?</string>
+
 
     <!-- Used in forms -->
     <string name="full_name">Name</string>
@@ -33,8 +35,6 @@
 
     <!-- Birthday summary screen -->
     <string name="additional_info">Additional information</string>
-
-    <string name="are_you_sure">Are you sure?</string>
     <string name="import_from_contacts_are_you_sure">Are you sure you want to import from contacts? Any existing birthday with a name conflict will be overwritten.</string>
     <string name="delete_birthday_are_you_sure">Are you sure you want to delete this entry? This action is irreversible.</string>
     <string name="birthday_will_be_overwritten">A birthday for a person with the same name already exists. Are you sure you want to overwrite that entry?</string>
