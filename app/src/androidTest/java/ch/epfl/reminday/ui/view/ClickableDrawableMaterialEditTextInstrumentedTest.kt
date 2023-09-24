@@ -29,7 +29,6 @@ class ClickableDrawableMaterialEditTextInstrumentedTest {
     }
 
     private fun runTest(testFunction: (SafeFragmentScenario<TestFragment>) -> Unit) {
-        @Suppress("RemoveExplicitTypeArguments") // otherwise fragment.view doesn't compile
         SafeFragmentScenario.launchInRegularContainer<TestFragment> { scenario ->
             scenario.onFragment { fragment ->
                 val editText: ClickableDrawableMaterialEditText =
