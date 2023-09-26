@@ -47,5 +47,12 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
+        <receiver
+            android:name=".background.AlarmBroadcastReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="ch.epfl.reminday.action.DAILY_BIRTHDAY_CHECK" />
+            </intent-filter>
+        </receiver>
     </application>
 </manifest>

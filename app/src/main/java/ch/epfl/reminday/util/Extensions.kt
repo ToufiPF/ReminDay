@@ -1,5 +1,6 @@
 package ch.epfl.reminday.util
 
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
@@ -14,6 +15,12 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import ch.epfl.reminday.R
 import ch.epfl.reminday.databinding.DialogDoNotAskAgainBinding
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlin.coroutines.CoroutineContext
+import kotlin.coroutines.EmptyCoroutineContext
 
 /**
  * Extension functions for various classes.
@@ -110,6 +117,21 @@ object Extensions {
                 }.show()
         } else {
             onConfirm.invoke()
+        }
+    }
+
+    fun BroadcastReceiver.goAsync(
+        context: CoroutineContext = EmptyCoroutineContext,
+        block: suspend CoroutineScope.() -> Unit
+    ) {
+        val pendingResult = goAsync()
+        @OptIn(DelicateCoroutinesApi::class) // Must run globally; there's no teardown callback.
+        GlobalScope.launch(context) {
+            try {
+                block()
+            } finally {
+                pendingResult.finish()
+            }
         }
     }
 }

@@ -1,6 +1,8 @@
 package ch.epfl.reminday.background
 
 import android.content.Context
+import android.content.Context.MODE_PRIVATE
+import android.util.Log
 import androidx.core.app.NotificationChannelCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -8,12 +10,16 @@ import androidx.core.app.NotificationManagerCompat.IMPORTANCE_DEFAULT
 import ch.epfl.reminday.R
 import ch.epfl.reminday.data.birthday.BirthdayDao
 import ch.epfl.reminday.format.date.DateFormatter
+import ch.epfl.reminday.ui.view.TimePickerPreference
 import ch.epfl.reminday.util.constant.PreferenceNames.BACKGROUND_PREFERENCES
 import ch.epfl.reminday.util.constant.PreferenceNames.BackgroundPreferenceNames.LAST_BIRTHDAY_CHECK
+import ch.epfl.reminday.util.constant.PreferenceNames.GENERAL_PREFERENCES
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.MonthDay
+import java.time.temporal.ChronoUnit
 
 class CheckBirthdayNotifier(
     context: Context,
@@ -21,7 +27,22 @@ class CheckBirthdayNotifier(
     private val formatter: DateFormatter,
 ) {
     companion object {
+        private const val TAG = "CheckBirthdayNotifier"
         private const val CHANNEL_ID = "BirthdayNotificationsChannel"
+
+        fun getInitialCheckTime(context: Context): LocalDateTime {
+            val targetTime = TimePickerPreference.getStoredTime(
+                context.getSharedPreferences(GENERAL_PREFERENCES, MODE_PRIVATE),
+                context.getString(R.string.prefs_notification_time)
+            )
+
+            val now = LocalDateTime.now()
+            val targetDateTime = now.withHour(targetTime.hour).withMinute(targetTime.minute)
+                .truncatedTo(ChronoUnit.HOURS)
+
+            return if (now.isBefore(targetDateTime)) targetDateTime
+            else targetDateTime.plusDays(1)
+        }
     }
 
     private val appContext: Context = context.applicationContext
@@ -32,13 +53,20 @@ class CheckBirthdayNotifier(
         val todayYear = today.year
 
         // Do not display notification several times in the same day.
-        if (!checkLastTimeCheckedFromPreferences(today)) return
+        if (!checkLastTimeCheckedFromPreferences(today)) {
+            Log.i(TAG, "Already checked for birthdays today.")
+            return
+        }
 
         // Get the birthdays on today, and return directly if no hits
         val hits = withContext(Dispatchers.IO) {
             birthdayDao.findByDay(MonthDay.from(today))
         }
-        if (hits.isEmpty()) return
+        if (hits.isEmpty()) {
+            Log.i(TAG, "Found no birthdays that occur today.")
+            return
+        }
+        Log.i(TAG, "Found ${hits.size} birthdays that occur today.")
 
         // Create the notification channel, and post notifications on it
         createNotificationChannel()
