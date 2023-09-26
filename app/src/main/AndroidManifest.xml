@@ -41,7 +41,7 @@
             tools:node="remove" />
         <!-- Call BirthdayWorkerLauncher::onReceive when phone starts up -->
         <receiver
-            android:name=".background.BirthdayBootBroadcastReceiver"
+            android:name=".background.BootBroadcastReceiver"
             android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />

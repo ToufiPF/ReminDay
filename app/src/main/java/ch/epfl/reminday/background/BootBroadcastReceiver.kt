@@ -8,7 +8,7 @@ import android.content.Intent
  * Registered to receive BOOT_COMPLETED signal from Android.
  * cf. AndroidManifest.xml
  */
-class BirthdayBootBroadcastReceiver : BroadcastReceiver() {
+class BootBroadcastReceiver : BroadcastReceiver() {
     companion object {
         private const val BOOT_COMPLETED_ACTION = "android.intent.action.BOOT_COMPLETED"
     }
