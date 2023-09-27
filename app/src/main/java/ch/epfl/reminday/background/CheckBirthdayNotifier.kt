@@ -38,7 +38,7 @@ class CheckBirthdayNotifier(
 
             val now = LocalDateTime.now()
             val targetDateTime = now.withHour(targetTime.hour).withMinute(targetTime.minute)
-                .truncatedTo(ChronoUnit.HOURS)
+                .truncatedTo(ChronoUnit.MINUTES)
 
             return if (now.isBefore(targetDateTime)) targetDateTime
             else targetDateTime.plusDays(1)
