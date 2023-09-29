@@ -7,7 +7,6 @@ import android.app.PendingIntent.FLAG_UPDATE_CURRENT
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.os.SystemClock
 import android.util.Log
 import androidx.core.content.ContextCompat
 import ch.epfl.reminday.data.birthday.BirthdayDao
@@ -28,20 +27,26 @@ class AlarmBroadcastReceiver : BroadcastReceiver() {
 
         fun enqueuePeriodicAlarmRequest(appContext: Context) {
             val manager = ContextCompat.getSystemService(appContext, AlarmManager::class.java)
+            if (manager == null) {
+                Log.e(TAG, "getSystemService(AlarmManager) returned null")
+                return
+            }
+
             val intent = Intent(appContext, AlarmBroadcastReceiver::class.java)
             intent.action = ACTION
             val pending = PendingIntent.getBroadcast(
-                appContext, REQUEST_CODE, intent,
+                appContext,
+                REQUEST_CODE,
+                intent,
                 FLAG_UPDATE_CURRENT or FLAG_IMMUTABLE
             )
-            pending.cancel()
 
             val checkTime = CheckBirthdayNotifier.getInitialCheckTime(appContext)
             val millis = LocalDateTime.now().until(checkTime, ChronoUnit.MILLIS)
-            manager?.setInexactRepeating(
-                AlarmManager.ELAPSED_REALTIME,
-                SystemClock.elapsedRealtime() + millis,
-                AlarmManager.INTERVAL_DAY,
+            manager.setInexactRepeating(
+                AlarmManager.RTC,
+                System.currentTimeMillis() + millis,
+                AlarmManager.INTERVAL_HALF_DAY,
                 pending,
             )
         }
