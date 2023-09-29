@@ -102,7 +102,7 @@ class CheckBirthdayNotifier(
 
     /** Returns true if the birthdays were not checked today yet */
     private fun checkLastTimeCheckedFromPreferences(today: LocalDate): Boolean {
-        val prefs = appContext.getSharedPreferences(BACKGROUND_PREFERENCES, Context.MODE_PRIVATE)
+        val prefs = appContext.getSharedPreferences(BACKGROUND_PREFERENCES, MODE_PRIVATE)
 
         // if there was another check, and it was not before today, early exit
         val lastCheck = prefs.getString(LAST_BIRTHDAY_CHECK, null)?.let {
