@@ -91,9 +91,6 @@ dependencies {
     def paging_version = "3.2.1"
     implementation "androidx.paging:paging-runtime-ktx:$paging_version"
 
-    def work_version = "2.8.1"
-    implementation "androidx.work:work-runtime-ktx:$work_version"
-
     // Hilt (dependency injection)
     implementation "com.google.dagger:hilt-android:$hilt_version"
     debugImplementation "com.google.dagger:hilt-android-testing:$hilt_version"
@@ -116,7 +113,6 @@ dependencies {
     androidTestImplementation 'org.mockito:mockito-android:4.10.0' // Mockito android
 
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
-    androidTestImplementation "androidx.work:work-testing:$work_version" // for testing Workers
 
     // Espresso 3.4.0 is buggy (java.lang.NoSuchMethodError: No static method loadSingleServiceOrNull) -> onView()
     // Espresso 3.5.0 is buggy (test hangs)

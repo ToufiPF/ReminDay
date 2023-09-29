@@ -34,11 +34,6 @@
         <activity android:name=".ui.activity.BirthdaySummaryActivity" />
         <activity android:name=".ui.activity.PreferencesActivity" />
 
-        <!-- Disable default Worker factory, we'll use our custom one -->
-        <provider
-            android:name="androidx.startup.InitializationProvider"
-            android:authorities="${applicationId}.androidx-startup"
-            tools:node="remove" />
         <!-- Call BirthdayWorkerLauncher::onReceive when phone starts up -->
         <receiver
             android:name=".background.BootBroadcastReceiver"
