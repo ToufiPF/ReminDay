@@ -105,6 +105,7 @@ dependencies {
 
     // Testing
     testImplementation 'junit:junit:4.13.2'
+    testImplementation 'org.hamcrest:hamcrest:2.2'
     testImplementation "androidx.room:room-testing:$room_version"
     testImplementation "androidx.paging:paging-common-ktx:$paging_version"
 
@@ -113,6 +114,7 @@ dependencies {
     androidTestImplementation 'org.mockito:mockito-android:4.10.0' // Mockito android
 
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+    androidTestImplementation 'org.hamcrest:hamcrest:2.2'
 
     // Espresso 3.4.0 is buggy (java.lang.NoSuchMethodError: No static method loadSingleServiceOrNull) -> onView()
     // Espresso 3.5.0 is buggy (test hangs)

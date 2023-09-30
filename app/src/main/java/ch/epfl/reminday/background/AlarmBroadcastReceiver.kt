@@ -8,6 +8,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.util.Log
+import androidx.annotation.VisibleForTesting
 import androidx.core.content.ContextCompat
 import ch.epfl.reminday.data.birthday.BirthdayDao
 import ch.epfl.reminday.format.date.DateFormatter
@@ -24,6 +25,9 @@ class AlarmBroadcastReceiver : BroadcastReceiver() {
         private const val TAG = "CheckBirthdayNotifier"
         private const val ACTION = "ch.epfl.reminday.action.DAILY_BIRTHDAY_CHECK"
         private const val REQUEST_CODE = 1234
+
+        @VisibleForTesting
+        fun getCurrentTimeMillis(): Long = System.currentTimeMillis()
 
         fun enqueuePeriodicAlarmRequest(appContext: Context) {
             val manager = ContextCompat.getSystemService(appContext, AlarmManager::class.java)
@@ -45,7 +49,7 @@ class AlarmBroadcastReceiver : BroadcastReceiver() {
             val millis = LocalDateTime.now().until(checkTime, ChronoUnit.MILLIS)
             manager.setInexactRepeating(
                 AlarmManager.RTC,
-                System.currentTimeMillis() + millis,
+                getCurrentTimeMillis() + millis,
                 AlarmManager.INTERVAL_HALF_DAY,
                 pending,
             )
