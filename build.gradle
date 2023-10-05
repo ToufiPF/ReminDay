@@ -4,7 +4,6 @@ buildscript {
     ext.java_version = JavaVersion.VERSION_11
     ext.hilt_version = '2.48'
 }
-
 plugins {
     id 'com.android.application' version '8.1.2' apply false
     id 'com.android.library' version '8.1.2' apply false

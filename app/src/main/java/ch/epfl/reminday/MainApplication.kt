@@ -10,7 +10,7 @@ import javax.inject.Inject
 
 @HiltAndroidApp
 class MainApplication : MultiDexApplication() {
-    
+
     @Inject
     lateinit var locale: Locale
 
