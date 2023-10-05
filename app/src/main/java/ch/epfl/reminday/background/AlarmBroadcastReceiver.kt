@@ -42,7 +42,7 @@ class AlarmBroadcastReceiver : BroadcastReceiver() {
                 appContext,
                 REQUEST_CODE,
                 intent,
-                FLAG_UPDATE_CURRENT or FLAG_IMMUTABLE
+                FLAG_IMMUTABLE
             )
 
             val checkTime = CheckBirthdayNotifier.getInitialCheckTime(appContext)
