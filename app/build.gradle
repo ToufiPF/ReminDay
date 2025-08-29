@@ -34,7 +34,8 @@ android {
         debug {
             minifyEnabled false
             debuggable true
-            testCoverageEnabled true
+            enableUnitTestCoverage true
+            enableAndroidTestCoverage true
         }
     }
 
