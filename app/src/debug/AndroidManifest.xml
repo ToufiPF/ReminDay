@@ -15,5 +15,23 @@
         <activity android:name=".EmptyRegularTestActivity" />
         <activity android:name=".EmptyHiltTestActivity" />
 
+        <!-- Declare receivers as exported = true for tests only -->
+        <receiver
+            android:name=".background.BootBroadcastReceiver"
+            android:exported="true"
+            tools:node="replace">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+        <receiver
+            android:name=".background.AlarmBroadcastReceiver"
+            android:exported="true"
+            android:permission=""
+            tools:node="replace">
+            <intent-filter>
+                <action android:name="ch.epfl.reminday.action.DAILY_BIRTHDAY_CHECK" />
+            </intent-filter>
+        </receiver>
     </application>
 </manifest>
