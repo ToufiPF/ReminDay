@@ -1,7 +1,7 @@
 package ch.epfl.reminday.util.constant
 
 import android.content.SharedPreferences
-import ch.epfl.reminday.background.CheckBirthdaysWorker
+import ch.epfl.reminday.background.CheckBirthdayNotifier
 
 /**
  * Holds all the constants used for loading/storing in [SharedPreferences].
@@ -24,7 +24,7 @@ object PreferenceNames {
     object BackgroundPreferenceNames {
 
         /**
-         * Serialized date of the last check executed by [CheckBirthdaysWorker]
+         * Serialized date of the last check executed by [CheckBirthdayNotifier]
          */
         const val LAST_BIRTHDAY_CHECK = "last_day_check"
     }

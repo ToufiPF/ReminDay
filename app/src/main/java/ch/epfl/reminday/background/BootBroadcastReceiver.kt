@@ -25,8 +25,8 @@ class BootBroadcastReceiver : BroadcastReceiver() {
         if (intent?.action != BOOT_COMPLETED_ACTION) return
 
         context?.let {
-            CheckBirthdaysWorker.enqueueOneTimeWorkRequest(context)
-            CheckBirthdaysWorker.enqueuePeriodicWorkRequest(context)
+            AlarmBroadcastReceiver.enqueuePeriodicAlarmRequest(context)
+            AlarmBroadcastReceiver.enqueueOneTimeAlarmRequest(context)
         }
     }
 }

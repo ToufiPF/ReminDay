@@ -34,17 +34,19 @@
         <activity android:name=".ui.activity.BirthdaySummaryActivity" />
         <activity android:name=".ui.activity.PreferencesActivity" />
 
-        <!-- Disable default Worker factory, we'll use our custom one -->
-        <provider
-            android:name="androidx.startup.InitializationProvider"
-            android:authorities="${applicationId}.androidx-startup"
-            tools:node="remove" />
         <!-- Call BirthdayWorkerLauncher::onReceive when phone starts up -->
         <receiver
             android:name=".background.BootBroadcastReceiver"
             android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+        <receiver
+            android:name=".background.AlarmBroadcastReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="ch.epfl.reminday.action.DAILY_BIRTHDAY_CHECK" />
             </intent-filter>
         </receiver>
     </application>
