@@ -4,8 +4,10 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.util.AttributeSet
 import android.view.MotionEvent
-import androidx.core.view.ViewCompat
-import ch.epfl.reminday.ui.view.ClickableDrawableMaterialEditText.Place.*
+import ch.epfl.reminday.ui.view.ClickableDrawableMaterialEditText.Place.BOTTOM
+import ch.epfl.reminday.ui.view.ClickableDrawableMaterialEditText.Place.LEFT
+import ch.epfl.reminday.ui.view.ClickableDrawableMaterialEditText.Place.RIGHT
+import ch.epfl.reminday.ui.view.ClickableDrawableMaterialEditText.Place.TOP
 import com.google.android.material.R
 import com.google.android.material.textfield.TextInputEditText
 
@@ -29,11 +31,11 @@ class ClickableDrawableMaterialEditText @JvmOverloads constructor(
 
     @Suppress("PrivatePropertyName")
     private val START: Int
-        get() = if (ViewCompat.getLayoutDirection(this) == ViewCompat.LAYOUT_DIRECTION_RTL) RIGHT.ordinal else LEFT.ordinal
+        get() = if (layoutDirection == LAYOUT_DIRECTION_RTL) RIGHT.ordinal else LEFT.ordinal
 
     @Suppress("PrivatePropertyName")
     private val END: Int
-        get() = if (ViewCompat.getLayoutDirection(this) == ViewCompat.LAYOUT_DIRECTION_RTL) LEFT.ordinal else RIGHT.ordinal
+        get() = if (layoutDirection == LAYOUT_DIRECTION_RTL) LEFT.ordinal else RIGHT.ordinal
 
     private val listeners: Array<OnClickListener?> = Array(4) { null }
 

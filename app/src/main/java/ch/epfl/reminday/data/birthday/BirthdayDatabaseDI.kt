@@ -10,7 +10,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import net.sqlcipher.database.SupportFactory
+import net.zetetic.database.sqlcipher.SupportOpenHelperFactory
 import javax.inject.Singleton
 
 @Module
@@ -33,13 +33,13 @@ object BirthdayDatabaseDI {
         BirthdayDatabase::class.java,
         BirthdayDatabase.NAME
     ).apply {
-        fallbackToDestructiveMigrationFrom(1, 2, 3, 4, 5)
+        fallbackToDestructiveMigrationFrom(true, 1, 2, 3, 4, 5)
 
         if (keyMgr.isDatabaseEncryptionSupported()) {
             keyMgr.loadDatabaseKey()?.let { key ->
                 Log.i(LOG_TAG, "Opening encrypted database.")
 
-                val supportFactory = SupportFactory(key)
+                val supportFactory = SupportOpenHelperFactory(key)
                 openHelperFactory(supportFactory)
             } ?: Log.i(LOG_TAG, "Opening database in clear (key not set up).")
         } else {

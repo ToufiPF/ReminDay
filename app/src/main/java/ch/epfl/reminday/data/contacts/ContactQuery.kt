@@ -3,8 +3,8 @@ package ch.epfl.reminday.data.contacts
 import android.content.Context
 import android.database.Cursor
 import android.net.Uri
+import android.os.CancellationSignal
 import androidx.core.content.ContentResolverCompat
-import androidx.core.os.CancellationSignal
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
